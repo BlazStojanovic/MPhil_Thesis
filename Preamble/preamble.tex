@@ -22,7 +22,7 @@
 
 % Add `customfont' in the document class option to use this section
 
-\ifsetCustomFont
+%\ifsetCustomFont
   % Set your custom font here and use `customfont' in options. Leave empty to
   % load computer modern font (default LaTeX font).
   %\RequirePackage{helvet}
@@ -39,7 +39,12 @@
 %    {libertine}
 %    % load font from system font
 %    \newfontfamily\libertinesystemfont{Linux Libertine O}
-\fi
+%\fi
+
+\usepackage{libertine}
+\usepackage{libertinust1math}
+\usepackage[T1]{fontenc}
+
 
 % *****************************************************************************
 % **************************** Custom Packages ********************************

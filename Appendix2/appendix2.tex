@@ -35,7 +35,7 @@ The problem of stochastic gradient estimation of an expectation of a function is
 		\centering
 		\subfloat[Original]{\includegraphics[height=7cm]{Appendix2/Figs/Vector/reparam_diagram.pdf}}
 		\subfloat[Reparametrized]{\includegraphics[height=7cm]{Appendix2/Figs/Vector/reparam_diagram2.pdf}}
-		\caption{The reparametrization trick, adapted from~\cite{kingma2017variational}. The stochasticity of the $\mathbf{z}$ node is pushed out into a separate input to the same node, resulting in deterministic gradients w.r.t $\boldsymbol{\phi}$ through the node.}
+		\caption[The reparametrization trick]{The reparametrization trick, adapted from~\cite{kingma2017variational}. The stochasticity of the $\mathbf{z}$ node is pushed out into a separate input to the same node, resulting in deterministic gradients w.r.t $\boldsymbol{\phi}$ through the node.}
 		\label{fig:reparam}
 	\end{figure}
 	This was the gradient estimator originally used in the VAE implementation~\cite{kingma2013auto} there named as the \emph{reparametrization trick}, see also Figure~\ref{fig:reparam}. In many cases the transformation paths are so simple they can be implemented in one line of code, referred to as \emph{one-liners}. The pathwise-estimator can only be used on differentiable cost functions, but is easy to implement and crucially has lower variance than the score-function estimator. 

@@ -18,7 +18,9 @@
 
 \subsection{Historical introduction}
 \label{subsec:latt-hist}
-I think starting from the magnetism point of view might be the best way to go, slowly lead into the field of condensed matter theory and lattice models. 
+\begin{itemize}
+	\item I think starting from the magnetism point of view might be the best way to go, slowly lead into the field of condensed matter theory and lattice models. 
+\end{itemize}
 
 \subsection{The Schr{\"o}dinger equation and the Feynman path integral}
 \label{subsec:latt-qm}
@@ -61,7 +63,7 @@ and the integral is over all paths that satisfy the endpoint conditions.
 \end{equation}
 
 
-\subsubsection{Transverse Field Ising model}
+\subsubsection{Transverse-field Field Ising model}
 \begin{equation}
 	\hat H_{\mathrm{Ising}}=-J \sum_{\langle i, j\rangle} \hat{\sigma}^z_{i} \hat{\sigma}^z_{j}-h \sum_{i} \sigma^x_{i}
 \end{equation}
@@ -78,9 +80,42 @@ and the integral is over all paths that satisfy the endpoint conditions.
 	\hat{H}_{\mathrm{BH}}= -t \sum_{\langle i, j\rangle} \hat{b}_{i}^{\dagger} \hat{b}_{j}+\frac{U}{2} \sum_{i} \hat{n}_{i}\left(\hat{n}_{i}-1\right)-\mu \sum_{i} \hat{n}_{i}
 \end{equation}
 
+%********************************** % ??? Section  *************************************
+\newpage
+\section{Solutions to the many-body problem and Quantum Monte Carlo}
+\label{sec:qmc}
 
-%********************************** %Second Section  *************************************
+\begin{itemize}
+	\item Mention Complexity of QMC for fermions and bosons
+	\item A more broad overview of methods that can be used for studying the many body problem (DRMG), with particular applications to lattice methods
+	\item Partition QMC into nicer subsections
+\end{itemize}
 
+The Schr{\"o}dinger equation underpins a large part of quantum chemistry and solid state physics. However, the quantum many-body problem, which amounts to solving the $3N$-dimensional Schr\"odinger equation is notoriously hard to solve. Ever since the postulation of the equation in 1925, great efforts have been made in solving the equation, both analytically and numerically. Perhaps most impactful was the development of various approximate methods to solve the many-body problem with the available computational resources. Hartree-Fock (HF) approaches solve an auxiliary system of independent electrons in a self-consistent field and assume that the wave function (for fermions) can be represented as a single Slater determinant. The HF method does not include electron correlation, which makes it a good approximation only in systems where correlation contributions are small. Post-HF methods, such as Coupled Cluster, Configuration interaction and M\o ller-Plesset theory include correlation by considering a linear combination of determinants. They can be extremely accurate but come at a high computational cost. 
+
+One of the most popular approaches used today is Density Functional Theory (DFT). It reformulates the many-body electron problem in terms of the $3$-dimensional electron density $n(\mathbf{r})$, which is found by minimising the total energy functional $E[n(\mathbf{r})]$~\cite{hohenberg1964inhomogeneous}. DFT provides an alternative line of thought to the truncated Hilbert space of single particle orbitals~\cite{kohn1999nobel} and is used extensively for simulating large systems as linear scaling variants of DFT exist~\cite{skylaris2005introducing}. 
+While DFT is theoretically exact the true energy functional $E[n(\mathbf{r})]$ is not known and its parameterisations employ more accurate \emph{ab initio} methods. One of which being Quantum Monte Carlo (QMC).
+
+\subsection{Overview}
+\label{subsec:qmc-overview}
+%% General about QMC
+Quantum Monte Carlo is a class of methods that uses statistical sampling to directly deal with high-dimensional integration that arises from working with the many-body wave function. QMC methods are among the most accurate achieving chemical accuracy for smaller systems~\cite{foulkes2001quantum}, and can achieve any degree of statistical precision sought. Quantum Monte Carlo is also very versatile and can be applied at both zero and finite temperatures~\cite{austin2012quantum}.	
+%% Zero temperature methods
+%% Variational quantum monte carlo
+The most basic zero temperature QMC method is variational QMC (VMC). The method is composed of two parts, firstly it directly evaluates the variational energy $E_V = \langle \Psi_{T} | \hat H | \Psi_{T} \rangle / \langle \Psi_{T} | \Psi_{T} \rangle$ of the system using Monte Carlo integration and a trial wave function $\Psi_{T}$. Secondly the parameters of the trial wave function are optimised such as to minimise the variational energy $E_V$, giving the method its name. The first application of VMC was to ground state ${}^4$He~\cite{mcmillan1965ground} and was later extended for studying many-body fermionic systems~\cite{ceperley1977monte}. A way of obtaining excitation energies using VMC is to use a trial wave function that models an excited state of the system, if the trial wave function obeys a certain symmetry, the variational principle guarantees that this VMC energy calculation gives an upper bound on the lowest exact eigenstate of this symmetry. Furthermore, the method can be extended to study non-equilibrium properties of bosonic~\cite{carleo2012localization, carleo2014light}, and fermionic~\cite{ido2015time} systems. The main advantage of VMC is its simplicity while the main drawback is that the accuracy is limited by the flexibility and form of the trial wave function~\cite{austin2012quantum}. As such VMC is usually employed as a first step in more advanced QMC simulations. 
+
+%% Green function QMC and Diffusion QMC
+Projector quantum Monte Carlo (PMC) is a class of QMC methods which are in essence nothing more than stochastic implementations of the power method to obtain the dominant eigenvector of a matrix or a kernel function~\cite{gubernatis_kawashima_werner_2016}. Their distinct advantage over VMC is that they are not constrained by our parametrisation of the trial wave function, as they can describe arbitrary probability distributions. The projector $\hat P$ has to be chosen in such a way, that the ground state of the system becomes the dominant eigenvector, i.e. $| \Psi_{0}\rangle = \lim_{n\rightarrow \infty} \hat{P}^n |\Psi_{T}\rangle$. Different ways of achieving this give rise to different flavours of PMC methods, e.g choice of space (real or orbital space) in which the walk is done and choosing either first or second quantisation. Using an exponential projector $\hat{P} = e^{\tau (E_T \mathbb{1} - \hat{H})}$ can be interpreted as propagation in imaginary time $\tau \rightarrow it$ in turn transforming the Schr\"odinger equation into a diffusion equation, which is a continuous limit of the random walk and lends itself to stochastic integration~\cite{reynolds1990diffusion}. Directly sampling from the exact Green function is known as Projector Green Function Monte Carlo (GFMC) method~\cite{kalos1962monte, kalos1966stochastic}. A convenient approximation to GFMC is its short-time approximation which leads to one of the most popular QMC methods, diffusion Monte Carlo (DMC)~\cite{foulkes2001quantum, reynolds1990diffusion}. In this regime one can exploit analytical solutions to diffusion and rate problems to write an explicit form of the Green's function. Additionally, by using the Trotter-Suzuki formula the time-step bias can be expressed and accounted for~\cite{austin2012quantum}. DMC is statistically implemented by using a population of walkers which either branch or die, over which the average is calculated. Reptation quantum Monte Carlo~\cite{reynolds1990diffusion} (RMC) is an alternative formulation which only uses a single walker, and instead of branching and dying the MC moves mutate the path of that single walker. The use of a guiding wave function for importance sampling greatly improves the statistical efficiency of PMC methods. The guiding wave function is usually obtained by means of VMC or some mean field calculation. 
+
+PMC methods suffer from the \emph{sign problem}, which is present in Markov chain simulation of distributions that are not strictly positive, thus in fermionic and frustrated systems~\cite{gubernatis_kawashima_werner_2016}. The problem refers to an exponential decrease in sampling efficiency with system size. The search for solutions of this problem is still an area of active research~\cite{foulkes2001quantum} but is in practice remedied by the \emph{fixed-node} approximation~\cite{anderson1975random}. It imposes a boundary condition into the projection, such that the projected state shares the same zero crossings (nodal surface) with a trial wave function, which is again usually obtained with VMC. The projected state is now only exact when the nodal surface is exact. Nevertheless this approximation is quite accurate~\cite{foulkes2001quantum}. Fixed node is widely used, one of its first applications being the electron gas~\cite{ceperley1980ground}, which is used in parameterisations of the  exchange correlation functional in LSDA~\cite{vosko1980accurate}.
+
+%% Finite temperature methods
+Quantum Monte Carlo methods have had a lot of success at finite temperatures. Auxiliary-field Monte Carlo, or Path Integral Monte Carlo~\cite{ceperley1995path}, which leads to ring-polymer molecular dynamics, may be used for this purpose. Additionally QMC is not limited to continuum space applications and has been extensively used to study lattice models, notable examples being the cluster/loop algorithm and the worm algorithm~\cite{gubernatis_kawashima_werner_2016, prokof1998exact}.
+
+%% Computational considerations
+Quantum Monte Carlo methods are generally more computationally expensive than DFT approaches, but on the other hand QMC codes are, as a rule of thumb, simpler to implement. Furthermore, since the wave function does not need to be stored directly, QMC has reasonable storage requirements. The high computational cost of the QMC methods is remedied by the fact that they are intrinsically parallelisable, the core calculation involves generating (pseudo)-random numbers, performing a simple calculation and in the end averaging over the results. Therefore, implementations of QMC algorithms that have been applied to practical problems are optimised to run on massively parallel hardware with little overhead~\cite{needs2020variational}. Finally, the repetitive nature of the Monte Carlo calculation lends itself to hardware acceleration using either graphical processing units (GPUs) or field-programmable gate arrays (FPGAs)~\cite{austin2012quantum}.
+
+%********************************** %???? Section  *************************************
 \newpage
 \section[The Feynman-Kac formula]{Feynman-Kac: connecting Quantum Mechanics and Stochastic Processes}
 \label{subsec:FK}
@@ -91,14 +126,9 @@ Introduce minimal necessary basics to understand the following section/discussio
 \begin{itemize}
 	\item Random variables
 	\item Markov chains
-	\item Transition matrices
-	\item Brownian walk, measures on the Brownian walk. 
+	\item Transition matrices, Fokker Planck?
+	\item Brownian walk
 \end{itemize}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{example-image-golden}
-\end{figure}
 
 \subsection{Feynman-Kac formula}
 \label{subsec:fk-fk}
@@ -137,8 +167,8 @@ where only the \textbf{endpoint} at time $t$ of the Brownian process fixed, wher
 		\frac{1}{\sqrt{2 \pi t}} \int  e^{-\left(x-x^{\prime}\right)^{2} / 2 t} \psi_{0}\left(x^{\prime}\right) \mathrm{d} x^{\prime}
 	\end{aligned}
 \end{equation}
-An illustration of the Feynman-Kac approach to the problem with no external potential $V(x)$ in 1D is depicted in figure~\ref{fig:fk_1d_example}
-\begin{figure}[h]
+An illustration of the Feynman-Kac approach to the problem with no external potential $V(x)$ in 1D is depicted in Fig.~\ref{fig:fk_1d_example}.
+\begin{figure}[H]
 	\centering
 	\subfloat
 	{\includegraphics[width = \linewidth]{Chapter2/Figs/Raster/fkac_vs_fplanck_top.pdf}} \\
@@ -150,39 +180,76 @@ An illustration of the Feynman-Kac approach to the problem with no external pote
 	\caption[Feynman-Kac for a 1D free particle]{\textbf{Feynman-Kac for a 1D free particle.} \textbf{top:} $N=400$ Brownian walks starting from different $x_0$, the color signifies initial position. In order to evaluate $\psi$ between $x-\frac{\delta x}{2}$ and $x+\frac{\delta x}{2}$ at some time $t$ we must first find Brownian paths that end there. \textbf{middle:} The paths that pass through at $x \in (1.5, 1.6)$ (blue) and through $x \in (-0.4,-0.3)$ (red) are colored, others are left in grey. \textbf{bottom:} Time evolution of the initial condition $\psi_{0} = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^{2}}$, by estimating ${\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right]$ from the filtered paths at each timestep.}
 	\label{fig:fk_1d_example}
 \end{figure}
-
+This simple case, does not involve the potential $V(x)$. The role of the potential in the Feynman-Kac formula is to weight the Brownian paths, in turn defining the Feynman-Kac \emph{path measure} $\mathbb{P}_{\mathrm{FK}}$. A path measure is simply a measure on the path space and the Feynman-Kac measure is related to the Brownian measure $\mathbb{P}_{0}$ by the \emph{Radon-Nykodym} derivative
+\begin{equation}
+	\frac{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}{\mathrm{d} \mathbb{P}_{0}}=\mathcal{N} \exp \left(-\int V\left(X_{t}\right) d t\right),
+\end{equation}
+where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}. Moreover, this new stochastic process can be described as a Markov process, \hl{which will be important for our approach}.
+\begin{figure}[H]
+	\centering
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter2/Figs/Raster/reweight1.pdf}}
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter2/Figs/Raster/reweight2.png}}
+	\caption[Feynman-Kac measure in a linear potential]{\textbf{Feynman-Kac measure in a linear potential.} 
+	\textbf{left:} $N=30$ Brownian paths. \textbf{right:} The paths colored by their likelihood under the Feynman-Kac measure with $V(x)=x$. }
+	\label{fig:fkac_measure_reweight}
+\end{figure}
 
 \subsection{Stoquastic Hamiltonians and Lattice-model representations}
 \label{subsec:fk-latt}
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.3\textwidth]{example-grid-100x100pt}
-\end{figure}
+
 
 general Stochquastic hamiltonian -> Feynman kac for general process
 
-\subsubsection{Quantum Ising model}
+\subsubsection{Single Particle on a Lattice}
+\begin{equation}
+	\partial_{t} \psi_{j}=\frac{1}{2}\left[\psi_{j+1}+\psi_{j-1}-2 \psi_{j}\right]+V_{j} \psi_{j}
+\end{equation}
+
+\begin{equation}
+	\psi_{j}(t)=\underset{X \sim \mathrm{SRW} \text { with } X_{t}=j}{\mathbb{E}} \left[\exp \left(-\int_{0}^{t}  V\left(X_{\tau}, \tau\right) \mathrm{d} \tau \right) \psi_{X_{0}}(0)\right]
+\end{equation}
+
+\subsubsection{Transverse-field Ising model}
+
 \subsubsection{Heisenberg model}
+Heisenberg ferromagnet
+\begin{equation}
+	\hat H_{\mathrm{F}}=-\frac{1}{2} \sum_{j}\left[\hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+\hat{\sigma}_{j}^{y} \hat{\sigma}_{j+1}^{y}+\hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z}\right]
+\end{equation}
+
+The XY model.
+\begin{equation}
+	\begin{aligned} 
+		\hat H_{X Y}=-\sum_{j}\left[\hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+\hat{\sigma}_{j}^{y} \hat{\sigma}_{j+1}^{y}\right] &=H_{\mathrm{F}}+\frac{1}{2} \sum_{j} \hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z} \\ 						&=-\mathcal{W}+\sum_{j}\left[n_{j}\left(1-n_{j+1}\right)+n_{j+1}\left(1-n_{j}\right)\right] 
+	\end{aligned}
+\end{equation}
+
+\begin{equation}
+	\psi_{s_{1: N}}(t)=\underset{\Sigma_{[0, t]} \sim \operatorname{SEP} \text{ with } \Sigma_{t}=s_{1: N}}{\mathbb{E}}\left[\exp \left(-\int_{0}^{t} d t^{\prime} \sum_{j}\left[n_{j}\left(1-n_{j+1}\right)+n_{j+1}\left(1-n_{j}\right)\right]\right) \psi_{\Sigma_{0}}(0)\right]
+\end{equation}
+
 \subsubsection{Bose-Hubbard model}
 
-
-%********************************** % ??? Section  *************************************
-\newpage
-\section{Quantum Monte Carlo}
-\label{sec:qmc}
-
-Nekje povej, kaksen complexity imajo QMC problemi za fermione in bozone. 
-
-\subsection{Overview}
-\label{subsec:qmc-overview}
 
 %********************************** % ??? Section  *************************************
 \newpage
 \section{Machine Learning}
 \label{sec:ml}
 
-\subsection{Convolutional Neural Networks}
-\label{subsec:ml-cnn}
-
 \subsection{Overview of ML approaches to the Quantum many-body problem}
 \label{subsec:ml-overview}
+
+\subsubsection{Neural Network Ansatzes}
+\begin{itemize}
+	\item
+	\item
+	\item
+	\item
+\end{itemize}
+
+\subsection{Neural Networks}
+
+\subsubsection{Convolutional Neural Networks}
+\label{subsubsec:ml-cnn}
+
+

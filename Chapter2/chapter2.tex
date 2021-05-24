@@ -122,13 +122,21 @@ Quantum Monte Carlo methods are generally more computationally expensive than DF
 
 \subsection{Stochastic processes}
 \label{subsec:fk-stoch}
+
+
 Introduce minimal necessary basics to understand the following section/discussions. This includes
 \begin{itemize}
 	\item Random variables
-	\item Markov chains
-	\item Transition matrices, Fokker Planck?
-	\item Brownian walk
+	\item Markov processes
+	\item Master equation, Transition matrices and Fokker Planck?
 \end{itemize}
+
+\subsubsection{Master equation}
+Describes the time evolution of a system which can be described as a probabilistic combination of states and the transitions between these states is encapsulated with the \emph{transition rate matrix}.
+\begin{equation}
+	\partial_{t} \mathbf{P} = A \mathbf{P},
+\end{equation}
+where $A$ are the \emph{connections} and $\mathbf{P}$ are the probabilities.  
 
 \subsection{Feynman-Kac formula}
 \label{subsec:fk-fk}
@@ -196,9 +204,14 @@ where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the
 
 \subsection{Stoquastic Hamiltonians and Lattice-model representations}
 \label{subsec:fk-latt}
+For a Markov process over discrete states, we can write the master equation as 
+\begin{equation}
+	\frac{\partial P_{j}}{\partial t}=\sum_{k \neq j}\left[\Gamma_{k \rightarrow j} P_{k}-\Gamma_{j \rightarrow k} P_{j}\right]
+\end{equation}
 
 
-general Stochquastic hamiltonian -> Feynman kac for general process
+
+
 
 \subsubsection{Single Particle on a Lattice}
 \begin{equation}
@@ -229,6 +242,15 @@ The XY model.
 \end{equation}
 
 \subsubsection{Bose-Hubbard model}
+
+%********************************** % ??? Section  *************************************
+\newpage
+\section{Quantum Mechanics, Control and loss functions}
+
+\subsection{Continuous space}
+
+\subsection{Discrete space}
+
 
 
 %********************************** % ??? Section  *************************************

@@ -47,7 +47,7 @@ The solution to  equation
 and the \textit{propagator} $\mathcal{K}\left(\boldsymbol{r}_{2}, t_{2} ; \boldsymbol{r}_{1}, t_{1}\right)$ is expressed using the Feynman path integral
 \begin{equation}
 	\label{eq:FPI}
-	\mathcal{K}\left(\boldsymbol{r}_{2}, t_{2} ; \boldsymbol{r}_{1}, t_{1}\right)=\int_{\boldsymbol{r}\left(t_{1}\right)=r_{1} \atop \boldsymbol{r}\left(t_{2}\right)=r_{2}} \mathcal{D} \boldsymbol{r}(t) \exp \left(i \int_{t_{1}}^{t_{2}} \mathcal{L}(\boldsymbol{r}, \dot{\boldsymbol{r}}) d t\right),
+	\mathcal{K}\left(\boldsymbol{r}_{2}, t_{2} ; \boldsymbol{r}_{1}, t_{1}\right)=\int_{\substack{\boldsymbol{r}\left(t_{1}\right)=r_{1} \\ \boldsymbol{r}\left(t_{2}\right)=r_{2}}}  \mathcal{D} \boldsymbol{r}(t) \exp \left(i \int_{t_{1}}^{t_{2}} \mathcal{L}(\boldsymbol{r}, \dot{\boldsymbol{r}}) d t\right),
 \end{equation}
 where $\mathcal{L}$ is the classical Lagrangian function of the system
 \begin{equation}
@@ -82,7 +82,7 @@ and the integral is over all paths that satisfy the endpoint conditions.
 
 %********************************** % ??? Section  *************************************
 \newpage
-\section{Solutions to the many-body problem and Quantum Monte Carlo}
+\section{Solutions to the many-body problem and QMC}
 \label{sec:qmc}
 
 \begin{itemize}
@@ -127,8 +127,10 @@ Quantum Monte Carlo methods are generally more computationally expensive than DF
 Introduce minimal necessary basics to understand the following section/discussions. This includes
 \begin{itemize}
 	\item Random variables
-	\item Markov processes
-	\item Master equation, Transition matrices and Fokker Planck?
+	\item Markov processes, Markov process generator
+	\item Wiener process
+	\item 
+	\item Master equation, Transition matrices and Fokker-Plank, Fokker-Planck generator?
 \end{itemize}
 
 \subsubsection{Master equation}
@@ -148,6 +150,7 @@ To illustrate the Feynman-Kac formula let us consider a single particle with Ham
 \end{equation}
 and the Schr\" odinger equation in \textit{imaginary time}, which is of the elliptic type, 
 \begin{equation}
+	\label{eq:imag_sch}
 	\partial_t | \psi_t \rangle = - \hat{H} | \psi_t \rangle.
 \end{equation}
 Its formal solution, the time propagation of an initial wave function $|\phi_0\rangle$ at $t=0$, is written as
@@ -192,7 +195,7 @@ This simple case, does not involve the potential $V(x)$. The role of the potenti
 \begin{equation}
 	\frac{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}{\mathrm{d} \mathbb{P}_{0}}=\mathcal{N} \exp \left(-\int V\left(X_{t}\right) d t\right),
 \end{equation}
-where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}. Moreover, this new stochastic process can be described as a Markov process, \hl{which will be important for our approach}.
+where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}.
 \begin{figure}[H]
 	\centering
 	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter2/Figs/Raster/reweight1.pdf}}
@@ -201,12 +204,41 @@ where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the
 	\textbf{left:} $N=30$ Brownian paths. \textbf{right:} The paths colored by their likelihood under the Feynman-Kac measure with $V(x)=x$. }
 	\label{fig:fkac_measure_reweight}
 \end{figure}
+Moreover, this new stochastic process is Markovian. This is crucial for our approach because of the connection with SDEs. In the continuous case we have discussed so far, the mapping between the Fokker-Planck equation and the Schr\" odinger equation is straightforward in terms of a similarity transform. Starting from the FP equation with drift $v(x)=-U^\prime(x)$ given as a gradient of some potential function $U(x)$ and its solution $\rho(t, x)$ 
+\begin{equation}
+	\frac{\partial \rho}{\partial t}=\mathcal{L}_{\mathrm{FP}} \rho=\frac{\partial}{\partial x}\left[\frac{\partial \rho}{\partial x}+U^{\prime}(x) \rho\right],
+\end{equation}
+we can define the function 
+\begin{equation}
+	\psi(x, t)=\frac{\rho(x, t)}{\sqrt{\rho_{0}(x)}},
+\end{equation}
+with $\rho_{0}$ being the stationary distribution of the FP equation
+\begin{equation}
+	\frac{\partial}{\partial x}\left[\frac{\partial \rho}{\partial x}+U^{\prime}(x) \rho\right] = 0 \quad \rightarrow \quad \rho_{0}(x) \propto \exp (-U(x)).
+\end{equation}
+Function $\psi(x, t)$ satisfies the imaginary time Schr\" odinger equation~\eqref{eq:imag_sch} with the Hamiltonian
+\begin{equation}
+	H=-\frac{\partial^{2}}{\partial x^{2}}-\frac{U^{\prime \prime}}{2}+\frac{U^{\prime 2}}{4}, 
+\end{equation}
+its ground state wavefunction is 
+\begin{equation}
+	\psi_{0}(x)=\sqrt{\rho_{0}(x)}.
+\end{equation}
+In other words, the quantum ground state probability distribution $|\psi_{0}|^2$ is the same as classical stationary distribution $\rho_{0}$ of the stochastic process $X_{t}$
+\begin{equation}
+	\mathrm{d} X_{t}=\mathrm{d} W_{t}+v\left(X_{t}\right) \mathrm{d} t,
+\end{equation}
+in the literature referred to as the \emph{Nelson's ground state process}~\cite{nelson1967dynamical, albeverio1977energy}. \hl{This connection serves as the backbone of our solution approach (revisit)}, as the ability to efficiently sample from the stochastic process is equivalent to sampling from the ground state of the quantum system. Even though the connection is simple, it comes with a caveat. Starting from the Schr\" odinger equation one needs to find the drift $v(x)$ and while the connection with the potential of the Hamiltonian is clear-cut in 1D, this is not the case in many-body systems, i.e. the \emph{inverse problem} of finding the stochastic process of a given Hamiltonian is difficult, and is one of the core problems approached in this thesis.
 
+\newpage
 \subsection{Stoquastic Hamiltonians and Lattice-model representations}
 \label{subsec:fk-latt}
+A similar connection between stochastic processes and the ground state exists in the discrete space, the difference being that instead of FP we have the Master equation
+
+
 For a Markov process over discrete states, we can write the master equation as 
 \begin{equation}
-	\frac{\partial P_{j}}{\partial t}=\sum_{k \neq j}\left[\Gamma_{k \rightarrow j} P_{k}-\Gamma_{j \rightarrow k} P_{j}\right]
+	\frac{\partial P_{j}}{\partial t}=\sum_{k \neq j}\left[\Gamma_{k \rightarrow j} P_{k}-\Gamma_{j \rightarrow k} P_{j}\right].
 \end{equation}
 
 
@@ -238,7 +270,8 @@ The XY model.
 \end{equation}
 
 \begin{equation}
-	\psi_{s_{1: N}}(t)=\underset{\Sigma_{[0, t]} \sim \operatorname{SEP} \text{ with } \Sigma_{t}=s_{1: N}}{\mathbb{E}}\left[\exp \left(-\int_{0}^{t} d t^{\prime} \sum_{j}\left[n_{j}\left(1-n_{j+1}\right)+n_{j+1}\left(1-n_{j}\right)\right]\right) \psi_{\Sigma_{0}}(0)\right]
+	\psi_{s_{1: N}}(t)=\underset{\Sigma_{[0, t]} \sim \operatorname{SEP} \text{ with } \Sigma_{t}=s_{1: N}}{\mathbb{E}}
+\left[\exp \left(-\int_{0}^{t} d t^{\prime} \sum_{j}\left[n_{j}\left(1-n_{j+1}\right)+n_{j+1}\left(1-n_{j}\right)\right]\right) \psi_{\Sigma_{0}}(0)\right]
 \end{equation}
 
 \subsubsection{Bose-Hubbard model}
@@ -274,4 +307,6 @@ The XY model.
 \subsubsection{Convolutional Neural Networks}
 \label{subsubsec:ml-cnn}
 
-
+%********************************** % Ch2 Nomenclature *************************************
+\nomenclature[z-sde]{SDE}{Stochastic Differential Equations}
+\nomenclature[z-fp]{FP}{Fokker-Planck}

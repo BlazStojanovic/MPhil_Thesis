@@ -58,9 +58,9 @@ X, t = bmotion(v, -2, 2, N=N) # generate Brownian walks
 # plt.show()
 # plt.close()
 
-# Second figure, at query point t=t2, and illustration of random walks passing through query positions between
+# """Second figure, at query point t=t2, and illustration of random walks passing through query positions between
 # (x11, x12) and (x21, x22), plot of wave function will be betweeen (-2, 2), thus for a histogram with ~80 
-# bars, we will have width of gate 0.05
+# bars, we will have width of gate 0.05"""
 # x11 = 1.50 # gate 1
 # x12 = 1.60
 # x21 = -0.40 # gate 2
@@ -83,8 +83,8 @@ X, t = bmotion(v, -2, 2, N=N) # generate Brownian walks
 
 # # plot the rest of the walks
 # for i in range(np.shape(non_walks)[0]):
-#     ax.plot(t, non_walks[i,:], color='grey', alpha=0.2, linewidth=0.5, zorder=2)
-#     axins.plot(t, non_walks[i,:], color='grey', alpha=0.2, linewidth=0.5, zorder=2)
+#     ax.plot(t, non_walks[i,:], color='grey', alpha=0.2, linewidth=0.5, zorder=1)
+#     axins.plot(t, non_walks[i,:], color='grey', alpha=0.2, linewidth=0.5, zorder=1)
 
 # # plot the walks going through gate1
 # for i in range(np.shape(gate1_walks)[0]):
@@ -93,8 +93,8 @@ X, t = bmotion(v, -2, 2, N=N) # generate Brownian walks
 
 # # plot the walks going through gate2
 # for i in range(np.shape(gate2_walks)[0]):
-#     ax.plot(t, gate2_walks[i,:], color=plt.cm.coolwarm(0.9), alpha=1.0, linewidth=2, zorder=1)
-#     axins.plot(t, gate2_walks[i,:], color=plt.cm.coolwarm(0.9), alpha=1.0, linewidth=2, zorder=1)
+#     ax.plot(t, gate2_walks[i,:], color=plt.cm.coolwarm(0.9), alpha=1.0, linewidth=2, zorder=2)
+#     axins.plot(t, gate2_walks[i,:], color=plt.cm.coolwarm(0.9), alpha=1.0, linewidth=2, zorder=2)
 
 
 # ax.vlines([t2], -3.5, 3.5, color='black', linewidth=2, zorder=4)
@@ -124,9 +124,9 @@ X, t = bmotion(v, -2, 2, N=N) # generate Brownian walks
 # plt.show()
 # plt.close()
 
-# Figure 3: Paths reweighted on the basis of a potential
-def V(x):
-	return np.square(0.5-x)
+# # Figure 3: Paths reweighted on the basis of a potential
+# def V(x):
+# 	return np.square(0.5-x)
 
 # Figure 4: F-Kac solution to the problem from the generated paths
 dx = 0.1
@@ -150,7 +150,7 @@ def FKac(X, dt, t, w, xmin, xmax, dx):
 
 	return psi
 
-
+N = 10000 # bigger N for nicer results
 fig = plt.figure(figsize=(14, 5))
 x = np.linspace(-2, 2, 1000)
 

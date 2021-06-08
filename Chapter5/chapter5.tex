@@ -128,8 +128,6 @@ This was the gradient estimator originally used in the VAE implementation~\cite{
 \subsubsection{Measure-valued gradient estimator}
 Which exploits the properties of signed-measures, is beyond the scope of this report.	
 
-%Unbiased gradient estimation makes training on the ELBO objective possible. During training the VAE learns a mapping between a complicated observed space of $\mathbf{x}$ and the latent space of $\mathbf{z}$, which is usually defined to be relatively simple. The \emph{decoder} network or the \emph{generative} part of the VAE $p_{\boldsymbol{\theta}}(\mathbf{x} | \mathbf{z})$ learns to map from the latent space to the data space, while the \emph{inference} or \emph{encoder} network $q_{\mathbf{\phi}}(\mathbf{z}|\mathbf{x})$ approximates the true posterior $p_{\mathbf{\theta}}(\mathbf{z}|\mathbf{x})$ of this process, see Figure. 
-
 \subsection{Automatic differentiation}
 \label{subsec:gbopt-autograd}
 

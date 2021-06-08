@@ -13,16 +13,22 @@
     \graphicspath{{Chapter3/Figs/Vector/}{Chapter3/Figs/}}
 \fi
 
+In this chapter we will provide a bridge between the quantum many-body problem discussed in the previous chapter and stochastic processes. This will entail introducing the Feynman-Kac formula and relating it to the Fokker-Planck equation and optimal control approaches to QM. Moreover, a probabilistic view of the cost function will lead us to proposals for loss functions that can be used to learn optimal transition rates and consequently sample the ground state.
+
+The field of stochastic processes is a vast body of work, approached from different angles by mathematicians, physicists and engineers. A necessary consequence of this is that the literature ranges from extremely thorough and rigorous~\cite{rogers1994diffusions, rogers2000diffusions} to more applied and intuitive~\cite{sarkka2019applied}. For this reason, the mentioned discussion will be preceded by an overview of the mathematical notation, lemmas and results from stochastic processes that will be necessary for understanding and derivation of some core ideas in this thesis.
+
 \section{Stochastic processes}
 \label{subsec:fk-stoch}
 
-\subsection{The Weiner process}
+\
+
+\subsection{Fundamentals}
 \begin{itemize}
 	\item definition
 	\item figure displaying it, alongside it figure of SDE for next section
 \end{itemize}
 
-\subsection{Stochastic Differential Equations and Ito Calculus}
+%\subsection{Stochastic Differential Equations and Ito Calculus}
 \begin{itemize}
 	\item Basic SDE
 	\item Examples of famous cases (Ornstein-Uhlenbeck?)
@@ -30,7 +36,7 @@
 	\item Fokker-Planck and the FP generator
 \end{itemize}
 
-
+\subsection{Markov processes}
 \subsection{Discrete time Markov Chains}
 More formally, the Markov process generator.
 
@@ -144,41 +150,6 @@ For a Markov process over discrete states, we can write the master equation as
 \begin{equation}
 	\frac{\partial P_{j}}{\partial t}=\sum_{k \neq j}\left[\Gamma_{k \rightarrow j} P_{k}-\Gamma_{j \rightarrow k} P_{j}\right].
 \end{equation}
-
-
-
-
-
-\subsection{Single Particle on a Lattice}
-\begin{equation}
-	\partial_{t} \psi_{j}=\frac{1}{2}\left[\psi_{j+1}+\psi_{j-1}-2 \psi_{j}\right]+V_{j} \psi_{j}
-\end{equation}
-
-\begin{equation}
-	\psi_{j}(t)=\underset{X \sim \mathrm{SRW} \text { with } X_{t}=j}{\mathbb{E}} \left[\exp \left(-\int_{0}^{t}  V\left(X_{\tau}, \tau\right) \mathrm{d} \tau \right) \psi_{X_{0}}(0)\right]
-\end{equation}
-
-\subsection{Transverse-field Ising model}
-
-\subsection{Heisenberg model}
-Heisenberg ferromagnet
-\begin{equation}
-	\hat H_{\mathrm{F}}=-\frac{1}{2} \sum_{j}\left[\hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+\hat{\sigma}_{j}^{y} \hat{\sigma}_{j+1}^{y}+\hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z}\right]
-\end{equation}
-
-The XY model.
-\begin{equation}
-	\begin{aligned} 
-		\hat H_{X Y}=-\sum_{j}\left[\hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+\hat{\sigma}_{j}^{y} \hat{\sigma}_{j+1}^{y}\right] &=H_{\mathrm{F}}+\frac{1}{2} \sum_{j} \hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z} \\ 						&=-\mathcal{W}+\sum_{j}\left[n_{j}\left(1-n_{j+1}\right)+n_{j+1}\left(1-n_{j}\right)\right] 
-	\end{aligned}
-\end{equation}
-
-\begin{equation}
-	\psi_{s_{1: N}}(t)=\underset{\Sigma_{[0, t]} \sim \operatorname{SEP} \text{ with } \Sigma_{t}=s_{1: N}}{\mathbb{E}}
-	\left[\exp \left(-\int_{0}^{t} d t^{\prime} \sum_{j}\left[n_{j}\left(1-n_{j+1}\right)+n_{j+1}\left(1-n_{j}\right)\right]\right) \psi_{\Sigma_{0}}(0)\right]
-\end{equation}
-
-\subsection{Bose-Hubbard model}
 
 
 %********************************** % ??? Section  *************************************

@@ -19,22 +19,22 @@
 \fi
 In this chapter we will provide a bridge between the quantum many-body problem discussed in the previous chapter and stochastic processes. This will entail introducing the Feynman-Kac formula and relating it to the Fokker-Planck equation and optimal control approaches to QM. Moreover, a probabilistic view of the cost function will lead us to proposals for loss functions that can be used to learn optimal transition rates and consequently sample the ground state.
 
-The field of stochastic processes is a vast body of work, approached from different angles by mathematicians, physicists and engineers. A necessary consequence of this is that the literature ranges from extremely thorough and rigorous~\cite{rogers1994diffusions, rogers2000diffusions} to more applied and intuitive~\cite{sarkka2019applied}. For this reason, the mentioned discussion will be preceded by an overview of the mathematical notation, lemmas and results from stochastic processes that will be necessary for understanding and derivation of some core ideas in this thesis.
+The field of stochastic processes is a vast body of work, approached from different angles by mathematicians, physicists and engineers. A necessary consequence of this is that the literature ranges from extremely thorough and rigorous~\cite{rogers1994diffusions, rogers2000diffusions} to more applied and intuitive~\cite{sarkka2019applied}. For this reason, the mentioned discussion will be preceded by an overview of the mathematical notation, lemmas and results from stochastic processes and measure theory that underpin some core ideas of this thesis. To avoid including a whole textbook of material on measure and stochastic processes some concepts will not be rigorously defined, the text will point to relevant literature where this is the case.
 
 \section{Stochastic processes}
 \label{subsec:fk-stoch}
 \subsection{Fundamentals}
 This brief, more formal, discussion of stochastic processes is based mostly upon classic texts~\cite{durrett2019probability, rogers1994diffusions, rogers2000diffusions} and borrows some intuitions from~\cite{sarkka2019applied}. The most basic quantity that we will need is the \textbf{probability space}. 
 \begin{definition}[Probability space]
-	The probability space is a tuple $(\Omega, \mathcal{F}, \mathbb{P})$, where $\Omega$ is the \textbf{sample space}, $\mathcal{F}$ is a $\sigma$-\textbf{field}, and $\mathbb{P}$ is the measure.
+	The probability space is a tuple $(\Omega, \mathcal{F}, \mathbb{P})$, where $\Omega$ is the \textbf{sample space}, $\mathcal{F}$ is a $\sigma$-\textbf{field}, and $\mathbb{P}$ is the \textbf{measure}.
 \end{definition}
 The sample space is simply the set of all possible outcomes. A canonical example would be the roll of a 6-sided dice, $\Omega=\{1, 2, 3, 4, 5, 6\}$. Without measure $\mathbb{P}$, the tuple $(\Omega, \mathcal{F})$ is termed a \textbf{measurable space}.
 \begin{definition}[$\sigma$-field]
 	A $\sigma$-field $\mathcal{F}$ on a set $\Omega$, is a nonempty collection of subsets of $\Omega$ that includes $\Omega$ itself, is closed under complement, i.e. if $A \in \mathcal{F}$ then $A^c \in \mathcal{F}$, and is closed under countable unions, $\cup_{i} A_{i} \in \mathcal{F}$ if $A_{i} \in \mathcal{F}$ is a countable union of sets.
 \end{definition}
-The main utility of the $\sigma$-field to us is its use in defining measures. We want to be able to assign a non-negative real number to all subsets of $\Omega$, as well as the size of the union of the disjoint sets to be the sum of their individual sizes. This is not always possible, a counterexample for the real line being Vitali sets. The collection $\mathcal{F}$, must thus only include \emph{measurable} sets, which are precisely the ones that satisfy the constraints imposed by the $\sigma$-field. \hl{TODO Add an example of an $\mathcal{F}$}
+The main utility of the $\sigma$-field to us is its use in defining measures. We want to be able to assign a non-negative real number to all subsets of $\Omega$, as well as the size of the union of the disjoint sets to be the sum of their individual sizes. This is not always possible, a counterexample for the real line being Vitali sets~\cite{}. The collection $\mathcal{F}$, must thus only include \emph{measurable} sets, which are precisely the ones that satisfy the constraints imposed by the $\sigma$-field. \hl{TODO Add an example of an $\mathcal{F}$}
 \begin{definition}[Measure]
-	A non-negative countably additive set function $\sigma: \mathcal{F} \rightarrow \mathbb{R}$ that satisfies
+	A non-negative countably additive set function $\mu: \mathcal{F} \rightarrow \mathbb{R}$ that satisfies
 	\begin{enumerate}[label=\roman*]
 		\item $\mu(A) \geq \mu(\emptyset)=0$ for all $A \in \mathcal{F}$
 		\item if $A_{i} \in \mathcal{F}$ is a countable sequence of disjoint sets, then $\mu\left(\cup_{i} A_{i}\right)=\sum_{i} \mu\left(A_{i}\right)$
@@ -43,42 +43,147 @@ The main utility of the $\sigma$-field to us is its use in defining measures. We
 \end{definition}
 If $\mu(\Omega)=1$, then $\mu$ is a \textbf{probability measure} and will be denoted by $\mathbb{P}$. With this notion we are now able to define a random variable (r.v) and a stochastic process (s.p.).
 \begin{definition}[Random variable]
-	A \textbf{random variable} is a $X$
+	 A \textbf{random variable} $X$ defined on $\Omega$ is a real-valued measurable function $X(\omega)$, $X: \Omega \rightarrow \mathbb{R}^d$.
 \end{definition}
+For a function to be measurable, we require that its preimage $X^{-1}$ is in the $\sigma$-field $\mathcal{F}$
+\begin{equation}
+	X^{-1}(B) = \{ \omega : X(\omega) \in B \} \in \mathcal{F},
+\end{equation}
+and that this holds for every Borel set $B$ in the Borel $\sigma$-field~\footnote{For a proper definition of the Borell set see ch. 3 of~\cite{salamon2016measure}.} of $\mathbb{R}^d$, which is simply the smallest $\sigma$-field that contains all measurable sets in $\mathbb{R}^d$. 
 
-\begin{definition}[stochastic process]
-	
+A random variable $X$ induces a probability measure $\mu$ on $\mathbb{R}^d$ called its \textbf{distribution}, this is done by setting $\mu(A)=P(X \in A)$ for Borel sets $A$. Moreover, the distribution is usually given in terms of a \textbf{distribution function} $F(x)$
+\begin{equation}
+	 F(x) = \mathbb{P}(\{\omega \in \Omega: X(\omega) \leq x\}) = \mathbb{P}(X \leq x),
+\end{equation}
+and $X$ is said to have a \textbf{density function} $f(x)$ if $F(x)$ can be written as 
+\begin{equation}
+	\label{eq:pdf}
+	F(x)=\int_{-\infty}^{x} f(y) \mathrm{d}y. 
+\end{equation}
+In essence, the random variable provides a connection between the less familiar probability measure $\mathbb{P}$ and the cumulative distribution function (CDF).
+
+\subsection{Stochastic process}
+\begin{definition}[Stochastic process]
+		Given a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ and a measurable (state) space $(E, \mathcal{E})$, we define the collection $\left\{X_{t}: t \in T\right\}$ of set $T$ indexed and $(E, \mathcal{E})$ valued random variables a \textbf{stochastic process}.
 \end{definition}
-
+By far the most common case for the index set $T$, is time $T = \mathbb{R}^+$. Such s.p's are called \emph{temporal}, examples include the model of velocity of a Brownian particle under influence of friction, in Fig.~\ref{fig:sp-brown}, or the Black-Scholes model. Nevertheless, the index set is not limited to time, as is often the case with Gaussian Process regression~\cite{rasmussen2006gaussian}. In this thesis we will mostly deal with temporal s.p's of the kind that do not "see into the future". This notion is formalized using \textbf{filtrations}. A filtration $\mathbb{F}=\left(\mathcal{F}_{t}\right)_{t \in T}$ on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is just an increasing sequence or order of $\sigma$-fields
+\begin{equation}
+	\mathcal{F}_{s} \subset \mathcal{F}_{t} \text { if } 0 \leq s \leq t<\infty
+\end{equation}
+The filtration associated to a process that records its "past behaviour" at each time is called the \textbf{natural filtration}. 
+\begin{definition}[Adapted process]
+	A process $\{X_t\}$ is said to be \textbf{adapted to the filtration} $\left(\mathcal{F}_{t}\right)_{t \in T}$ if the random variable $X_t : \Omega \rightarrow E$ is $\mathcal{F}_t$-measurable function for each $t \in T$. 
+\end{definition}
+A process that is \emph{non-anticipating}, i.e. depends only on the past and present, is adapted to the filtration $\left(\mathcal{F}_{t}\right)_{t \in T}$.
 \begin{definition}[Brownian motion]
-	
+	\textbf{Brownian motion} or a non-anticipating \textbf{Wiener process} is a stochastic process $W_t$, with the following properties:
+	\begin{enumerate}[label=\roman*]
+		\item $W_0 = 0$
+		\item $W_t$ is almost surely continuous in t
+		\item $W_t$ has independent increments
+		\item $W_t - W_s \sim \mathcal{N} (0, t-s)$ for $0 \leq s \leq t$
+	\end{enumerate}
 \end{definition}
+A realisation of Brownian motion can be found in Fig.~\ref{fig:sp-brown}.
+\begin{figure}[h]
+	\centering
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight1.pdf}}
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight2.png}}
+	\caption[Brownian motion and Ornstein–Uhlenbeck process
+	]{\textbf{Brownian motion and Ornstein–Uhlenbeck process.} 
+		\textbf{left:} A single realisation of the Brownian process. \textbf{right:} Ohrnstein-Uhlenbeck process, the model of a Brownian particle with friction, mean $m(t)$ and covariance $\sigma(t)$.}
+	\label{fig:sp-brown}
+\end{figure}
 
-\begin{definition}[It\^ o integral]
-	
+\subsection{Integrals}
+In order to proceed and define stochastic differential equations (SDE's) and the Radon-Nikodyn derivative, we must spend some time discussing various integrals we will use. In particular, alongside the usual Riemann integral, we will need three more types of integrals, which we will briefly describe without mathematical derivation. The simplest kind of integral we will introduce is the integral of a stochastic process
+\begin{equation}
+	I = \int_{0}^{t} X_t \mathrm{d}t.
+\end{equation}
+The simple appearance of the integral is deceiving as the integrand is a realisation of a $\mathcal{F}_t$-adapted stochastic process $\{X_t\}: \Omega \times T \rightarrow \mathbb{R}^{d}$, meaning that $I$ itself is a random variable. However, since each realisation of $X_t$ is almost surely continuous, $I$ can be expanded as a Riemann sum, which converges under mean-squared norm to $I$, so long as the mean $\mathbf{m}(t) = \mathbb{E}[X_t]$ and covariance $\textbf{k}(t,s) = \operatorname{Cov}(X_t, X_s)$ are continuous. In practice, computing the mean and covariance of $I$ is usually enough to understand the resulting stochastic process. Importantly, integrals of continuous functions of s.p's $h(X_t),~ h: \mathbb{R} \rightarrow \mathbb{R}$ can be computed in a similar manner.
+
+The second type of integrals we need to consider, are integrals with respect to a s.p, known as \textbf{It\^ o integrals}
+\begin{equation}
+	\label{eq:ito}
+	Y_t = \int_{0}^{t} H_s \mathrm{d}X_s,
+\end{equation}
+where both $H_s$ and $X_s$ are stochastic processes. The result integral $Y_t$ is itself a stochastic process which resides in the probability space $(\Omega, \mathcal{F}, \mathbb{P})$, filtered by $\left(\mathcal{F}_t\right)_{t\in T}$. The integral can be formalised by putting slight constraints on what sort of stochastic processes $X_s$ and $H_t$ can be, expanding $Y_t$ as a Riemann sum and proving convergence. Details of this procedure can be found in~\cite{rogers2000diffusions}.
+
+Finally we must define the \textbf{Lebesgue-Stieltjes integral}~\cite{halmos2013measure}, which we need to properly define expectations of stochastic processes. 
+\begin{definition}[Lebesgue-Stieltjes Integral]
+		Given probability space $(\Omega, \mathcal{F}, \mathbb{P})$ and measurable function $f:\Omega \rightarrow \mathbb{R}$, the \textbf{Lebesgue-Stieltjes integral} 
+		\begin{equation}
+			I = \int_A f(x) \mathrm{d}\mathbb{P}(x),
+		\end{equation}
+		is the Lebesgue integral~\footnote{For proper definition of the Lebesgue integral see ch. 1 of~\cite{salamon2016measure}.} with respect to measure $\mathbb{P}$, $A \in \mathcal{F}$.
 \end{definition}
+With it we can define expectations in the probability space $(\Omega, \mathcal{F}, \mathbb{P})$ as
+\begin{equation}
+	\underset{{\mathbb{P}}}{\mathbb{E}}[f(x)]=\int_{\Omega} f(x) d \mathbb{P}(\boldsymbol{x}).
+\end{equation}
+For a newcomer to stochastic processes this formulation may seem redundant, can we not just calculate expectations using a Riemann integral and the PDF? We can, and when the distribution $\mathbb{P}$ can be expressed in terms of the PDF~\eqref{eq:pdf}, the Lebesgue integral can be interpreted in this way. However, stochastic processes need not admit a PDF, that is when the Lebesgue-Stieltjes integral is necessary.
+%\begin{equation}
+%	\int_{\Omega} f(x) \mathrm{d} \mathbb{P}(x)=\int_{\Omega} f(x) p(x) d \lambda(x)
+%\end{equation}
+\subsection{Stochastic Differential Equations}
+In this thesis we will refer to a SDE as an informal notation of an It\^ o integral equation or \textbf{It\^ o process}. 
+\begin{definition}[It\^ o process]
+	Given deterministic functions $v: \mathbb{R}^{d} \times \mathbb{R}^{+} \rightarrow \mathbb{R}^{d}$ and $\sigma: \mathbb{R}^{d} \times \mathbb{R}^{+} \rightarrow \mathbb{R}^{d \times d}$, we define the \textbf{It\^ o process} $X_t$ as the sum of It\^ o and Lebesgue integrals
+	\begin{equation}
+		\label{eq:ito-process}
+		X_{t+s}-X_{t}=\int_{t}^{t+s} \sigma\left(X_{u}, u\right) \mathrm{d} W_{u} + \int_{t}^{t+s} v\left(X_{u}, u\right) \mathrm{d} u,
+	\end{equation}
+	where $W_t$ is a Brownian motion.
+\end{definition}
+In simplified notation we can write~\eqref{eq:ito-process} as
+\begin{equation}
+	\mathrm{d} X_t = \sigma \left(X_{t}, t\right)\mathrm{d}W_t + v\left(X_{t}, t\right) \mathrm{d}t,
+\end{equation}
+this is what we refer to as an SDE. The functions $v$ and $\sigma$, we will refer to as the \textbf{drift} and \textbf{volatility} of the It\^ o process respectively. The most intuitive interpretation of a SDE is in terms of the time evolution of the PDF of the process $X_t$. It is described by the \textbf{Fokker-Planck equation}~\footnote{Derivation in~\cite{sarkka2019applied}.} 
+\begin{equation}
+	\frac{\partial p(\mathbf{x}, t)}{\partial t}=
+	-\sum_{i=1}^{N} \frac{\partial}{\partial x_{i}}\left[\mu_{i}(\mathbf{x}, t) p(\mathbf{x}, t)\right]
+	+\sum_{i=1}^{N} \sum_{j=1}^{N} \frac{\partial^{2}}{\partial x_{i} \partial x_{j}}\left[D_{i j}(\mathbf{x}, t) p(\mathbf{x}, t)\right],
+\end{equation}
+where $p(\mathbb{x}, t)$ is the PDF of the solution to the SDE and $\mathbf{D}=\frac{1}{2} \boldsymbol{\sigma} \boldsymbol{\sigma}^{\top}$ is the diffusion tensor. Finally we state without proof a consequence of It\^ o calculus, most commonly named \textbf{It\^ o's rule} or \textbf{lemma}, it is the stochastic calculus equivalent of the chain rule
+\begin{lemma}[It\^ o's lemma]
+	Given an It\^ o process $X_t$ as given by ~\eqref{eq:ito-process} and a twice differentiable scalar function $f(X_t, t)$, then the It\^ o process for $f$ is
+	\begin{equation}
+		\mathrm{d} f = \frac{\partial f}{\partial t}\mathrm{d}t + \sum_i \frac{\partial f}{\partial x_i} \mathrm{d}x_i + \frac{1}{2}\sum_{ij} \frac{\partial^{2}}{\partial x_{i} \partial x_{j}} f \mathrm{d}x_i \mathrm{d}x_j,
+	\end{equation}
+\end{lemma}
+when compared to ordinary calculus we notice an additional quadratic term.
 
-\begin{itemize}
-	\item definition
-	\item figure displaying it, alongside it figure of SDE for next section
-\end{itemize}
+\subsection{Radon-Nikodym Derivative and Girsanov theorem}
+To perform importance sampling we perform a change of measure in an integral
+\begin{equation}
+	\int_{A} f(x) \mathrm{d} \mathbb{P}(x)=\int_{A} f(x) \frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x) \mathrm{d} \mathbb{Q}(x).
+\end{equation}
+The function that measures the rate of change of density of one measure w.r.t another is the \textbf{Radon-Nikodym derivative} $\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x)$.
 
-%\subsection{Stochastic Differential Equations and Ito Calculus}
-\begin{itemize}
-	\item Basic SDE
-	\item Examples of famous cases (Ornstein-Uhlenbeck?)
-	\item Ito calculus (the essentials)
-	\item Fokker-Planck and the FP generator
-\end{itemize}
+\begin{theorem}[Radon-Nikodym theorem]
+	Let $\mathbb{P}$ and $\mathbb{Q}$ be probability measures on the measurable space $(\Omega, \mathcal{F})$, then the measurable function \textbf{Radon-Nikodym derivative} $\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x): \Omega \rightarrow[0, \infty)$ exists and 
+	\begin{equation}
+		\mathbb{P}(A)=\int_{A} \frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x) \mathrm{d} \mathbb{Q}(x),
+	\end{equation}
+	for set $A \subseteq \mathcal{F}$.
+\end{theorem}
+The RN derivative will also be useful in defining the KL divergence between two \textbf{path measures}. 
+
+\begin{theorem}[Girsanov Theorem]
+	content...
+\end{theorem}
+
 
 \subsection{Markov processes}
-\subsection{Discrete time Markov Chains}
+
+\subsubsection{Discrete time Markov Chains}
 More formally, the Markov process generator.
 
-\subsection{Continuous time Markov Chains}
+\subsubsection{Continuous time Markov Chains}
 Rate matrix etc.
 
-\subsection{Master equation}
+\subsubsection{Master equation}
 Describes the time evolution of a system which can be described as a probabilistic combination of states and the transitions between these states is encapsulated with the \emph{transition rate matrix}.
 \begin{equation}
 	\partial_{t} \mathbf{P} = A \mathbf{P},
@@ -127,13 +232,13 @@ An illustration of the Feynman-Kac approach to the problem with no external pote
 \begin{figure}[H]
 	\centering
 	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter2/Figs/Raster/fkac_vs_fplanck_top.pdf}} \\
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_top.pdf}} \\
 	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter2/Figs/Raster/fkac_vs_fplanck_mid1.pdf}} \\
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_mid1.pdf}} \\
 	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter2/Figs/Raster/fkac_vs_fplanck_bottom.pdf}}
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_bottom.pdf}}
 	
-	\caption[Feynman-Kac for a 1D free particle]{\textbf{Feynman-Kac for a 1D free particle.} \textbf{top:} $N=400$ Brownian walks starting from different $x_0$, the color signifies initial position. In order to evaluate $\psi$ between $x-\frac{\delta x}{2}$ and $x+\frac{\delta x}{2}$ at some time $t$ we must first find Brownian paths that end there. \textbf{middle:} The paths that pass through at $x \in (1.5, 1.6)$ (blue) and through $x \in (-0.4,-0.3)$ (red) are colored, others are left in grey. \textbf{bottom:} Time evolution of the initial condition $\psi_{0} = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^{2}}$, by estimating ${\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right]$ from the filtered paths at each timestep.}
+	\caption[Feynman-Kac for a free particle in 1D]{\textbf{Feynman-Kac for a free particle  in 1D.} \textbf{top:} $N=400$ Brownian walks starting from different $x_0$, the color signifies initial position. In order to evaluate $\psi$ between $x-\frac{\delta x}{2}$ and $x+\frac{\delta x}{2}$ at some time $t$ we must first find Brownian paths that end there. \textbf{middle:} The paths that pass through at $x \in (1.5, 1.6)$ (blue) and through $x \in (-0.4,-0.3)$ (red) are colored, others are left in grey. \textbf{bottom:} Time evolution of the initial condition $\psi_{0} = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^{2}}$, by estimating ${\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right]$ from the filtered paths at each timestep.}
 	\label{fig:fk_1d_example}
 \end{figure}
 This simple case, does not involve the potential $V(x)$. The role of the potential in the Feynman-Kac formula is to weight the Brownian paths, in turn defining the Feynman-Kac \emph{path measure} $\mathbb{P}_{\mathrm{FK}}$. A path measure is simply a measure on the path space and the Feynman-Kac measure is related to the Brownian measure $\mathbb{P}_{0}$ by the \emph{Radon-Nykodym} derivative
@@ -143,8 +248,8 @@ This simple case, does not involve the potential $V(x)$. The role of the potenti
 where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}.
 \begin{figure}[H]
 	\centering
-	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter2/Figs/Raster/reweight1.pdf}}
-	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter2/Figs/Raster/reweight2.png}}
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight1.pdf}}
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight2.png}}
 	\caption[Feynman-Kac measure in a linear potential]{\textbf{Feynman-Kac measure in a linear potential.} 
 		\textbf{left:} $N=30$ Brownian paths. \textbf{right:} The paths colored by their likelihood under the Feynman-Kac measure with $V(x)=x$. }
 	\label{fig:fkac_measure_reweight}
@@ -207,15 +312,16 @@ For a Markov process over discrete states, we can write the master equation as
 %********************************** % Ch3 Nomenclature *************************************
 \nomenclature[Z-sde]{SDE}{Stochastic Differential Equations}
 \nomenclature[Z-fp]{FP}{Fokker-Planck}
-\nomenclature[z-randomvar]{r.v}{Random variable}
 \nomenclature[z-pdf]{pdf}{Probability density function}
 \nomenclature[z-cdf]{cdf}{Cumulative density function}
 \nomenclature[z-stochprocs]{s.p.}{Stochastic process}
 
 
-\nomenclature[x-reals]{\mathbb{R}}{The set of real numbers}
-\nomenclature[x-normal]{\mathcal{N}}{The Gaussian distribution}
+\nomenclature[x-reals]{$\mathbb{R}$}{The set of real numbers}
+\nomenclature[x-normal]{$\mathcal{N}$}{The Gaussian distribution}
 \nomenclature[x-measure]{$\mathbb{P}$}{Measure}
-
-%\nomenclature[]{}{}
-%\nomenclature[]{}{}
+\nomenclature[x-filtration]{$\mathbb{F}$}{Filtration}
+\nomenclature[x-field]{"$\mathcal{F}$"}{$\sigma$-field (algebra)}
+\nomenclature[x-stochprocs]{$\{X_t\}$}{Stochastic process}
+\nomenclature[x-randomvariable]{$\{X\}$}{Random variable}
+\nomenclature[x-wiener]{$W_t$}{Wiener process, mathematical Brownian motion}

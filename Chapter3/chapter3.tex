@@ -32,7 +32,7 @@ The sample space is simply the set of all possible outcomes. A canonical example
 \begin{definition}[$\sigma$-field]
 	A $\sigma$-field $\mathcal{F}$ on a set $\Omega$, is a nonempty collection of subsets of $\Omega$ that includes $\Omega$ itself, is closed under complement, i.e. if $A \in \mathcal{F}$ then $A^c \in \mathcal{F}$, and is closed under countable unions, $\cup_{i} A_{i} \in \mathcal{F}$ if $A_{i} \in \mathcal{F}$ is a countable union of sets.
 \end{definition}
-The main utility of the $\sigma$-field to us is its use in defining measures. We want to be able to assign a non-negative real number to all subsets of $\Omega$, as well as the size of the union of the disjoint sets to be the sum of their individual sizes. This is not always possible, a counterexample for the real line being Vitali sets~\cite{}. The collection $\mathcal{F}$, must thus only include \emph{measurable} sets, which are precisely the ones that satisfy the constraints imposed by the $\sigma$-field. \hl{TODO Add an example of an $\mathcal{F}$}
+The main utility of the $\sigma$-field to us is its use in defining measures. We want to be able to assign a non-negative real number to all subsets of $\Omega$, as well as the size of the union of the disjoint sets to be the sum of their individual sizes. This is not always possible, a counterexample for the real line being Vitali sets. The collection $\mathcal{F}$, must thus only include \emph{measurable} sets, which are precisely the ones that satisfy the constraints imposed by the $\sigma$-field. \hl{TODO Add an example of an $\mathcal{F}$}
 \begin{definition}[Measure]
 	A non-negative countably additive set function $\mu: \mathcal{F} \rightarrow \mathbb{R}$ that satisfies
 	\begin{enumerate}[label=\roman*]
@@ -168,12 +168,26 @@ The function that measures the rate of change of density of one measure w.r.t an
 	\end{equation}
 	for set $A \subseteq \mathcal{F}$.
 \end{theorem}
-The RN derivative will also be useful in defining the KL divergence between two \textbf{path measures}. 
-
+The RN derivative will also be useful in defining the KL divergence between two \textbf{path measures}. Properly defining the path measure would bring a lot of notational overhead, it is enough to think of it as a measure on the \textbf{path space}, i.e all possible paths of a SDE, for rigour see~\cite{leonard2014pathmeasure}. 
+Finally, we state the \textbf{Girsanov theorem} that is often used for transforming or removing drift functions of SDE, it is the RN derivative between an It\^ o process and one with $v = 0$ and $\sigma = 1$, i.e. Brownian motion. 
 \begin{theorem}[Girsanov Theorem]
-	content...
+	Given It\^ o process
+	\begin{equation}
+		\mathrm{d}X_t = \mathrm{d}W_t + v(X_t, t)\mathrm{d}t \quad \text{and} \quad X_0 = 0 \\
+	\end{equation}
+	and Brownian motion $\mathrm{d}Y_t = \mathrm{d}W_t$, the RN derivative of their respective path measures $\mathbb{P}$ and $\mathbb{P}_0$	is
+	\begin{equation}
+		\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{P}_0}=
+		\exp \left(
+		-\frac{1}{2} \int_{0}^{t}\left|v(X_s, s)\right|^{2} \mathrm{d} s+\int_{0}^{t} v(X_s, s)^{\top} \mathrm{d} W_s\right)
+	\end{equation}
 \end{theorem}
-
+This \emph{change in dynamics} as we will call it later is true in the sense, that expectations for an arbitrary functional $h(\cdot)$ of the path from $0$ to $t$ are
+\begin{equation}
+	\label{eq:girsanov_consequence}
+	\underset{\mathbb{P}_0}{\mathbb{E}}\left[h(X_t)\right] = \underset{\mathbb{P}_0}{\mathbb{E}}\left[\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{P}_0} h(Y_t)\right]. 
+\end{equation}
+For a more general case and proof see~\cite{sarkka2019applied}.
 
 \subsection{Markov processes}
 
@@ -311,6 +325,7 @@ For a Markov process over discrete states, we can write the master equation as
 
 %********************************** % Ch3 Nomenclature *************************************
 \nomenclature[Z-sde]{SDE}{Stochastic Differential Equations}
+\nomenclature[Z-RN]{RN}{Radon-Nikodym}
 \nomenclature[Z-fp]{FP}{Fokker-Planck}
 \nomenclature[z-pdf]{pdf}{Probability density function}
 \nomenclature[z-cdf]{cdf}{Cumulative density function}

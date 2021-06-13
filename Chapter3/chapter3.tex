@@ -139,7 +139,7 @@ In simplified notation we can write~\eqref{eq:ito-process} as
 \begin{equation}
 	\mathrm{d} X_t = \sigma \left(X_{t}, t\right)\mathrm{d}W_t + v\left(X_{t}, t\right) \mathrm{d}t,
 \end{equation}
-this is what we refer to as an SDE. The functions $v$ and $\sigma$, we will refer to as the \textbf{drift} and \textbf{volatility} of the It\^ o process respectively. The most intuitive interpretation of a SDE is in terms of the time evolution of the PDF of the process $X_t$. It is described by the \textbf{Fokker-Planck equation}~\footnote{Derivation in~\cite{sarkka2019applied}.} 
+this is what we refer to as an SDE, an example can be found in figure~\ref{fig:sp-brown}. The functions $v$ and $\sigma$, we will refer to as the \textbf{drift} and \textbf{volatility} of the It\^ o process respectively. The most intuitive interpretation of a SDE is in terms of the time evolution of the PDF of the process $X_t$. It is described by the \textbf{Fokker-Planck equation}~\footnote{Derivation in~\cite{sarkka2019applied}.} 
 \begin{equation}
 	\frac{\partial p(\mathbf{x}, t)}{\partial t}=
 	-\sum_{i=1}^{N} \frac{\partial}{\partial x_{i}}\left[\mu_{i}(\mathbf{x}, t) p(\mathbf{x}, t)\right]
@@ -190,7 +190,7 @@ This \emph{change in dynamics} as we will call it later is true in the sense, th
 For a more general case and proof see~\cite{sarkka2019applied}.
 
 \subsection{Markov processes}
-We now shift our view to a special kind of s.p's, ones that satisfy the \textbf{Markov property} called \textbf{Markov processes} or \textbf{Markovian}. The property is sometimes referred to as \emph{memorylessness}, as the future of a Markov process depends only on the present state. We can classify the processes based on the system's \textbf{state-space} $S$, which can be either discrete (countable) or continuous, and the \textbf{time indexing} of the system, either discrete-time $(X_n)_{n \geq 0}$ or continuous-time $(X_t)_{t \geq 0}$. A taxonomy is given in Table~\ref{tab:MP-taxonomy}. From now on we refer to Markov processes in countable state-space as \textbf{Markov chains}. We base our discussion on~\cite{rogers1994diffusions} and~\cite{norris1998markov}.
+We now shift our view to a special kind of s.p's, ones that satisfy the \textbf{Markov property} called \textbf{Markov processes} or \textbf{Markovian}. The property is sometimes referred to as \emph{memorylessness}, as the future of a Markov process depends only on the present state. We can classify the processes based on the system's \textbf{state-space} $S$, which can be either discrete (countable) or continuous, and the \textbf{time indexing} of the system, either discrete-time $\{X_n\}_{n \geq 0}$ or continuous-time $\{X_t\}_{t \geq 0}$. A taxonomy is given in Table~\ref{tab:MP-taxonomy}. From now on we refer to Markov processes in countable state-space as \textbf{Markov chains}. We base our discussion on~\cite{rogers1994diffusions} and~\cite{norris1998markov}.
 \begin{table}[h]
 	\begin{center}
 		\begin{tabular}{l|p{5cm}|p{5cm}}
@@ -372,8 +372,10 @@ For a Markov process over discrete states, we can write the master equation as
 \nomenclature[z-pdf]{pdf}{Probability density function}
 \nomenclature[z-cdf]{cdf}{Cumulative density function}
 \nomenclature[z-stochprocs]{s.p.}{Stochastic process}
-\nomenclature[x-statespace]{S}{State space of a Markov process}
+\nomenclature[z-dtmc]{DTMC}{Discrete time Markov Chain}
+\nomenclature[z-ctmc]{DTMC}{Discrete time Markov Chain}
 
+\nomenclature[x-statespace]{S}{State space of a Markov process}
 \nomenclature[x-reals]{$\mathbb{R}$}{The set of real numbers}
 \nomenclature[x-normal]{$\mathcal{N}$}{The Gaussian distribution}
 \nomenclature[x-measure]{$\mathbb{P}$}{Measure}

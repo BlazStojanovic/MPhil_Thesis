@@ -54,7 +54,7 @@ X, t = bmotion(v, -2, 2, N=N) # generate Brownian walks
 # plt.ylabel('$X_t$')
 # plt.xlim([0,1])
 # plt.ylim([-3.5, 3.5])
-# plt.savefig("../Chapter2/Figs/Raster/fkac_vs_fplanck_top.pdf", bbox_inches='tight')
+# plt.savefig("../Chapter3/Figs/Raster/fkac_vs_fplanck_top.pdf", bbox_inches='tight')
 # plt.show()
 # plt.close()
 
@@ -120,7 +120,7 @@ X, t = bmotion(v, -2, 2, N=N) # generate Brownian walks
 # axins.xaxis.tick_top()
 # axins.xaxis.set_label_position('top') 
 
-# plt.savefig("../Chapter2/Figs/Raster/fkac_vs_fplanck_mid1.pdf", bbox_inches='tight')
+# plt.savefig("../Chapter3/Figs/Raster/fkac_vs_fplanck_mid1.pdf", bbox_inches='tight')
 # plt.show()
 # plt.close()
 
@@ -175,5 +175,5 @@ plt.step(xs, psi_t3, where='mid', color='green', linewidth=2, label=r"$\psi(x, t
 plt.legend()
 plt.ylabel("$\psi(x, t)$")
 plt.xlabel("$x$")
-plt.savefig("../Chapter2/Figs/Raster/fkac_vs_fplanck_bottom.pdf", bbox_inches='tight')
+plt.savefig("../Chapter3/Figs/Raster/fkac_vs_fplanck_bottom.pdf", bbox_inches='tight')
 plt.show()

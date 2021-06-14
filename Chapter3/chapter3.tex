@@ -32,10 +32,10 @@ The sample space is simply the set of all possible outcomes. A canonical example
 \begin{definition}[$\sigma$-field]
 	A $\sigma$-field $\mathcal{F}$ on a set $\Omega$, is a nonempty collection of subsets of $\Omega$ that includes $\Omega$ itself, is closed under complement, i.e. if $A \in \mathcal{F}$ then $A^c \in \mathcal{F}$, and is closed under countable unions, $\cup_{i} A_{i} \in \mathcal{F}$ if $A_{i} \in \mathcal{F}$ is a countable union of sets.
 \end{definition}
-The main utility of the $\sigma$-field to us is its use in defining measures. We want to be able to assign a non-negative real number to all subsets of $\Omega$, as well as the size of the union of the disjoint sets to be the sum of their individual sizes. This is not always possible, a counterexample for the real line being Vitali sets. The collection $\mathcal{F}$, must thus only include \emph{measurable} sets, which are precisely the ones that satisfy the constraints imposed by the $\sigma$-field. \hl{TODO Add an example of an $\mathcal{F}$}
+The main utility of the $\sigma$-field to us is its use in defining measures. We want to be able to assign a non-negative real number to all subsets of $\Omega$, as well as the size of the union of the disjoint sets to be the sum of their individual sizes. This is not always possible, a counterexample for the real line being Vitali sets. The collection $\mathcal{F}$, must thus only include \emph{measurable} sets, which are precisely the ones that satisfy the constraints imposed by the $\sigma$-field.
 \begin{definition}[Measure]
 	A non-negative countably additive set function $\mu: \mathcal{F} \rightarrow \mathbb{R}$ that satisfies
-	\begin{enumerate}[label=\roman*]
+	\begin{enumerate}[label=\roman*)]
 		\item $\mu(A) \geq \mu(\emptyset)=0$ for all $A \in \mathcal{F}$
 		\item if $A_{i} \in \mathcal{F}$ is a countable sequence of disjoint sets, then $\mu\left(\cup_{i} A_{i}\right)=\sum_{i} \mu\left(A_{i}\right)$
 	\end{enumerate}
@@ -77,7 +77,7 @@ The filtration associated to a process that records its "past behaviour" at each
 A process that is \emph{non-anticipating}, i.e. depends only on the past and present, is adapted to the filtration $\left(\mathcal{F}_{t}\right)_{t \in T}$.
 \begin{definition}[Brownian motion]
 	\textbf{Brownian motion} or a non-anticipating \textbf{Wiener process} is a stochastic process $W_t$, with the following properties:
-	\begin{enumerate}[label=\roman*]
+	\begin{enumerate}[label=\roman*)]
 		\item $W_0 = 0$
 		\item $W_t$ is almost surely continuous in t
 		\item $W_t$ has independent increments
@@ -139,7 +139,7 @@ In simplified notation we can write~\eqref{eq:ito-process} as
 \begin{equation}
 	\mathrm{d} X_t = \sigma \left(X_{t}, t\right)\mathrm{d}W_t + v\left(X_{t}, t\right) \mathrm{d}t,
 \end{equation}
-this is what we refer to as an SDE, an example can be found in figure~\ref{fig:sp-brown}. The functions $v$ and $\sigma$, we will refer to as the \textbf{drift} and \textbf{volatility} of the It\^ o process respectively. The most intuitive interpretation of a SDE is in terms of the time evolution of the PDF of the process $X_t$. It is described by the \textbf{Fokker-Planck equation}~\footnote{Derivation in~\cite{sarkka2019applied}.} 
+this is what we refer to as an SDE, an example can be found in Fig.~\ref{fig:sp-brown}. The functions $v$ and $\sigma$, we will refer to as the \textbf{drift} and \textbf{volatility} of the It\^ o process respectively. The most intuitive interpretation of a SDE is in terms of the time evolution of the PDF of the process $X_t$. It is described by the \textbf{Fokker-Planck equation}~\footnote{Derivation in~\cite{sarkka2019applied}.} 
 \begin{equation}
 	\frac{\partial p(\mathbf{x}, t)}{\partial t}=
 	-\sum_{i=1}^{N} \frac{\partial}{\partial x_{i}}\left[\mu_{i}(\mathbf{x}, t) p(\mathbf{x}, t)\right]
@@ -190,27 +190,30 @@ This \emph{change in dynamics} as we will call it later is true in the sense, th
 For a more general case and proof see~\cite{sarkka2019applied}.
 
 \subsection{Markov processes}
-We now shift our view to a special kind of s.p's, ones that satisfy the \textbf{Markov property} called \textbf{Markov processes} or \textbf{Markovian}. The property is sometimes referred to as \emph{memorylessness}, as the future of a Markov process depends only on the present state. We can classify the processes based on the system's \textbf{state-space} $S$, which can be either discrete (countable) or continuous, and the \textbf{time indexing} of the system, either discrete-time $\{X_n\}_{n \geq 0}$ or continuous-time $\{X_t\}_{t \geq 0}$. A taxonomy is given in Table~\ref{tab:MP-taxonomy}. From now on we refer to Markov processes in countable state-space as \textbf{Markov chains}. We base our discussion on~\cite{rogers1994diffusions} and~\cite{norris1998markov}.
+We now shift our view to a special kind of s.p's, ones that satisfy the \textbf{Markov property} called \textbf{Markov processes} or \textbf{Markovian}. The property is sometimes referred to as \emph{memorylessness}, as the future of a Markov process depends only on the present state. We can classify the processes based on the system's \textbf{state-space} $S$, which can be either discrete (countable) or continuous, and the \textbf{time indexing} of the system, either discrete-time $\{X_n\}_{n \geq 0}$ or continuous-time $\{X_t\}_{t \geq 0}$. A taxonomy is given in Table~\ref{tab:MP-taxonomy}. We will not specifically discuss Markov processes in continuous state-space, but it is important to note that any It\^ o process with time-homogenous drift $v = v(X_t)$ and volatility $\sigma = \sigma(X_t)$ is Markovian.
+
+From now on we refer to Markov processes in countable state-space as \textbf{Markov chains}. We base our discussion on~\cite{rogers1994diffusions} and~\cite{norris1998markov}. 
 \begin{table}[h]
 	\begin{center}
-		\begin{tabular}{l|p{5cm}|p{5cm}}
+		\caption[Taxonomy of Markov processes]{\textbf{Taxonomy of Markov processes}}
+		\label{tab:MP-taxonomy}
+		\begin{tabular}{p{2cm}|p{6cm}|p{6cm}}
 %			\toprule % <-- Toprule here
 			 & Countable state-space & Continuous state-space\\
 			\midrule
-			Discrete time & 
-			\parbox{5cm}{$n \in \mathbb{Z}^{+}=\{0,1,2, \ldots\}$}  & \parbox{5cm}{Betty Botter Thought: \\ If I Put This Bitter Butter in My Batter it Will Make My Batter Bitter}\\
+			Discrete time 
+			&\parbox{5cm}{\textbf{index: }$\{X_n\}_{n \geq 0}$, $n \in \mathbb{Z}^{+}$ \\ \textbf{state-space: } countable set $I$ \\ \textbf{define: } stochastic $\{P\}_{ij}$ \\ \textbf{example:} DTMC}  
+			&\parbox{5cm}{\textbf{index: }$\{X_n\}_{n \geq 0}$, $n \in \mathbb{Z}^{+}$ \\ \textbf{state-space: } general state-space $\Omega$ \\ \textbf{define: } stochastic kernel $K$ \\ \textbf{example:} Harris Chain}\\
 			\midrule
-			Continuous time & 
-			\parbox{5cm}{Betty Botter Thought: \\ $t \in \mathbb{R}^{+}=[0, \infty)$} & \parbox{5cm}{Betty Botter Thought: \\ If I Put This Bitter Butter in My Batter it Will Make My Batter Bitter}\\
-%			\bottomrule % <-- Bottomrule here
+			Continuous time 
+			&\parbox{5cm}{\textbf{index: }$\{X_t\}_{t \geq 0}$, $t \in \mathbb{R}^{+}=[0, \infty)$ \\ \textbf{state-space: } countable set $I$ \\ \textbf{define: } rate $\{\Gamma\}_{ij}$ equiv. to jump chain $\{J_n\}_{n\geq0}$ and hold times $\{S_n\}_{n\geq1}$. \\ \textbf{example:} CTMC}
+			&\parbox{5cm}{\textbf{index: }$\{X_t\}_{t \geq 0}$, $t \in \mathbb{R}^{+}=[0, \infty)$ \\ \textbf{state-space} general state-space $\Omega$ \\ \textbf{define: } stochastic kernel $K$ \\ \textbf{example:} Diffuson process}\\
+			\bottomrule % <-- Bottomrule here
 		\end{tabular}
-		\newline
-		\caption[Taxonomy of Markov processes]{\textbf{Taxonomy of Markov processes}}
-		\label{tab:MP-taxonomy}
 	\end{center}
 \end{table}
-\subsubsection{Discrete time Markov Chains}
-The simplest and most common Markov process is a Markov chain in discrete time. Its state-space is a countable set $I$ and we call each $i \in I$ a \textbf{state}. We define a distribution $\lambda$ in a familiar way
+\subsubsection{Discrete-time Markov Chains}
+The simplest and most common Markov process is a Markov chain in discrete time, an example of it can be found in Fig.~\ref{fig:mc-diagrams}. Its state-space is a countable set $I$ and we call each $i \in I$ a \textbf{state}. We define a distribution $\lambda$ in a familiar way
 \begin{equation}
 	\lambda = \{\lambda_i : i \in I\} \quad \text{where} \quad \forall i:~ 0 \leq \lambda_i < \infty \quad \text{and} \quad \sum_{i \in I} \lambda_i = 1.
 \end{equation}
@@ -221,7 +224,7 @@ We can now set $\lambda$ as a distribution of some random variable $X:\Omega \ri
 where we are still working in the probability space $(\Omega, \mathcal{F}, \mathbb{P})$. A discrete-time Markov chain is defined in terms of its \textbf{transition matrix} $P=\{p_{i j}: i, j \in I\}$, which is a \textbf{stochastic matrix} meaning all of its rows $\{p_{i j}: j \in I\}$ are distributions.
 \begin{definition}[Discrete-time Markov chain]
 	A discrete time stochastic process $\{X_n\}_{n \geq 0}$ is a \textbf{discrete-time Markov chain} with initial distribution $\lambda$ and transition matrix $P$ if for $i_1, \dots, i_n+1 \in I$ and $n \geq 0$
-	\begin{enumerate}[label=\roman*]
+	\begin{enumerate}[label=\roman*)]
 		\item $\mathbb{P}\left(X_{0}=i_{1}\right)=\lambda_{i_{1}}$
 		\item $\mathbb{P}\left(X_{n+1}=i_{n+1} \mid X_{0}=i_{0}, \dots, X_{n}=i_{n}\right)=p_{i_{n} i_{n+1}}$
 	\end{enumerate}
@@ -231,24 +234,73 @@ Rewriting the second condition above, it is clear that the Markov chain is witho
 	\mathbb{P}\left(X_{n+1}=i_{n+1} \mid X_{0}=i_{1}, \dots, X_{n}=i_{n}\right)=\mathbb{P}(X_{n+1} = i_{n+1} \mid X_{n} = i_{n}).
 \end{equation}
 Intuitively we understand the discrete-time Markov chain as a system changing its state at discrete time intervals, each time choosing the next state according to the row of the Transition matrix corresponding to the current state.
+\begin{figure}[h]
+	\centering
+	\subfloat{\includegraphics[width=0.5\linewidth]{Diagrams/mc_I/mc_I.pdf}}
+	\subfloat{\includegraphics[width=0.5\linewidth]{Diagrams/mc_II/mc_II.pdf}}
+	\caption[Discrete and continuous time Markov Chains.]{\textbf{Discrete and continuous time Markov Chains.} \textbf{left:} Discrete-time Markov Chain defined by $P$. \textbf{right:} Continuous-time Markov Chain defined by $\Gamma$.}
+	\label{fig:mc-diagrams}
+\end{figure}
 
-\subsubsection{Continuous time Markov Chains}
-
-
-
-\subsubsection{Continuous time Markov Process}
-
-
-\subsubsection{Master equation}
-Describes the time evolution of a system which can be described as a probabilistic combination of states and the transitions between these states is encapsulated with the \emph{transition rate matrix}.
+\subsubsection{Continuous-time Markov Chains}
+Defining a Markov chain in continuous time is slightly trickier as describing the system with a stochastic matrix does no longer suffice because transition probabilities become zero when considering an infinitesimal time. Instead a continuous-time Markov Chain (CTMC) is characterised by a \textbf{rate matrix} or \textbf{infinitesimal generator matrix} $\Gamma$ defined on the set $I$. A rate matrix has the following three properties
+\begin{enumerate}[label=\roman*)]
+	\item $0 \leq \Gamma_{ii} <\infty, \quad \forall i$
+	\item $\Gamma_{ij} \geq 0, \quad \forall i \neq j$
+	\item $\sum_{j \in I} \Gamma_{i j}=0, \quad \forall i$
+\end{enumerate}
+While the CTMC can be interpreted in a number of ways, we shall use the so called \textbf{jump chain} and \textbf{holding times} representation, see also Fig.~\ref{fig:holdingJumping}. 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{Diagrams/ctmc/ctmc}
+	\caption[Jump chain and Holding times]{\textbf{Jump chain and Holding times.} A discrete space Markov process $\{X_t\}_{t\geq 0}$ in continuous time. The holding times $S_n$ are independent exponential random variables and the transition probabilities at jump times $J_n$ are given with the jump matrix $\Pi$. Inspired by~\cite{norris1998markov}.}
+	\label{fig:holdingJumping}
+\end{figure}
+We can think of a CTMC as a series of discrete jumps, where the system remains in each state for a certain holding time. This suggests that we can construct the CTMC from a discrete-time chain with stochastic matrix $\Pi$, which we will call the \textbf{jump matrix}, and a set of independent random variables $\{S_n\}$ which determine the holding times. We construct matrix $\Pi$ by rescaling rows of $\Gamma$ so they add up to one, putting a $0$ on the diagonal
 \begin{equation}
-	\partial_{t} \mathbf{P} = A \mathbf{P},
+	\begin{array}{l}
+		\Pi_{i j}=\left\{
+		\begin{array}{ll}
+			\Gamma_{i j} / \Gamma_{ii} & \text { if } j \neq i \text { and } \Gamma_{ii} \neq 0 \\
+			 0 & \text { if } j \neq i \text { and } \Gamma_{ii}=0
+		\end{array}\right. 
+		\\ 
+		\Pi_{i i}=\left\{
+		\begin{array}{ll}
+			0 & \qquad  \text { if } \Gamma_{ii} \neq 0 \\
+			1 & \qquad \text { if } \Gamma_{ii}=0.
+		\end{array}\right.
+	\end{array}
 \end{equation}
-where $A$ are the \emph{connections} and $\mathbf{P}$ are the probabilities.  
+In order for the process to possess the Markov property, the distribution of holding times $\{S_n\}$ must be exponential~\cite{norris1998markov}, 
+\begin{equation}
+	S_{n+1} \sim \operatorname{Exp}(-{\Gamma_{ii}}(X_n)),
+\end{equation}
+with exponential parameters being $-\Gamma_{ii}$ where $i$ is the current state.
+Processes with different holding time distributions are called \textbf{semi-Markov}. The jump times $\{J_n\}$ are simply 
+\begin{equation}
+	J_{n}=S_{1}+\ldots+S_{n}.
+\end{equation}
+\begin{definition}[Continuous-time Markov chain]
+	A stochastic process $\{X_t\}_{t \geq 0}$ on set $I$ is a \textbf{continuous-time Markov chain} if its jump chain $\{Y_n\}_{n \geq 0}$ is a discrete-time Markov chain and its holding times $\{S_n\}_{n \geq 1}$ are independent exponential random variables $S_n \sim \operatorname{Exp}(-{\Gamma_{ii}}(X_n))$.
+\end{definition}
+An equivalent formulation is in terms of \textbf{competing exponentials}. Transitions $\Gamma_{j \rightarrow k}$ from $j$ to $k$ are defined as independent exponential random variables $\tau_{j \rightarrow k}$
+\begin{equation}
+	\tau_{j \rightarrow k} \sim \operatorname{Exp}(\Gamma_{jk}), \quad j \neq k
+\end{equation}
+the next state is then chosen as
+\begin{equation}
+	Y_{n+1} = \operatorname{argmin}_{k} \tau_{j \rightarrow k}.
+\end{equation}
+The chain $\{Y_n\}_{n\geq0}$ along with times 
+\begin{equation}
+	S_{n} = \min _{k} \tau_{j \rightarrow k},
+\end{equation}
+gives the full description of the CTMC. With this formulation in mind we now interpret $\Gamma_{ii}$ as the rate ob \emph{leaving} current state and $\Gamma_{i j}$ as the rate of \emph{going} from $i$ to $j$.
 
 \section{The Feynman-Kac formula}
 \label{subsec:fk-fk}
-The Feynman path integral formulation~\eqref{eq:FPI} was extensively used by physicists for decades, even in the absence of a formal mathematical formulation which is hard to define because of the difficulties with defining an appropriate measure on the path space. Kac~\cite{kac1949distributions} provided a rigorous formulation of the \textit{real-valued} case of the Feynman path integral, and the resulting \emph{Feynman-Kac} formula provides a bridge between \emph{parabolic} partial differential equations and stochastic processes.
+The Feynman path integral formulation~\eqref{eq:FPI} was extensively used by physicists for decades, even in the absence of a formal mathematical formulation which is hard to define because of the difficulties with defining an appropriate measure on the path space. Kac~\cite{kac1949distributions} provided a rigorous formulation of the \textit{real-valued} case of the Feynman path integral, and the resulting \emph{Feynman-Kac} formula provides a bridge between \emph{parabolic} partial differential equations and stochastic processes. 
 
 To illustrate the Feynman-Kac formula let us consider a single particle with Hamiltonian
 \begin{equation}
@@ -375,6 +427,7 @@ For a Markov process over discrete states, we can write the master equation as
 \nomenclature[z-dtmc]{DTMC}{Discrete time Markov Chain}
 \nomenclature[z-ctmc]{DTMC}{Discrete time Markov Chain}
 
+\nomenclature[x-ratematrix]{$\Gamma$}{Transition rate matrix}
 \nomenclature[x-statespace]{S}{State space of a Markov process}
 \nomenclature[x-reals]{$\mathbb{R}$}{The set of real numbers}
 \nomenclature[x-normal]{$\mathcal{N}$}{The Gaussian distribution}

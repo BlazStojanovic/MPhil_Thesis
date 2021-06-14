@@ -80,7 +80,7 @@ Xt = OU_samples(dt, t, theta, mu, x0, sigma, 10)
 fig, ax = plt.subplots(figsize=[7, 5])
 
 # Plot sample paths
-ax.plot(t, Xt.T, color='k', linewidth=0.5)
+ax.plot(t, Xt.T, color='k', linewidth=0.5, alpha=0.5)
 
 # Plot analytical solutions
 ax.plot(t, OU_avg(t, theta, mu, x0), color='blue', label='$m(t)$', linewidth=3)

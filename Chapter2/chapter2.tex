@@ -82,36 +82,128 @@ and the integral is over all paths that satisfy the endpoint conditions.
 
 %********************************** % ??? Section  *************************************
 \newpage
-\section{Solutions to the many-body problem and QMC}
-\label{sec:qmc}
+\section{Approaches to the quantum many-body problem}
+\label{sec:QMBP}
+The quantum many-body problem, which amounts to solving the $3N$-dimensional Schr\"odinger equation, underpins a large part of quantum chemistry, condensed matter physics and materials science. The problem is notoriously hard to solve and very few systems with analytical solutions exist, most of them constrained in some artificial way such that they lend themselves to mathematical analysis. Examples include the Hookium atom, an analogue of helium where two electrons interact with the nucleus via a Hookean potential, Spherium, a system of two electrons confined to the surface of a sphere, and the Luttinger liquid of fermions in a one-dimensional conductor. Great efforts have been made in the nearly 100 years since the conception of the Schr\" odinger equation, in developing both analytical and numerical techniques to produce insights into quantum systems. Perhaps the most impactful was the development of various approximate methods that solve the many-body problem with our limited computational resources. While there is ongoing work on quantum simulators and computers that could greatly speed-up solving quantum problems~\cite{feynman2018simulating, childs2010relationship}, we here discuss methods one can use with a classical computer. The commonality of all mentioned methods is that they try to tame the exponential growth of the underlying Hilbert space w.r.t the system size, they differ in how they achieve this. The three most common assumptions/simplifications to the many-body problem employed in condensed matter and quantum chemistry are the Born-Oppenheimer approximation, that electronic motion is instantaneous compared to the nuclear motion, the use of chemical basis sets, which transforms the PDE into an algebraic problem, and usually neglecting relativistic effects.
+%\begin{figure}[h]
+%	\centering
+%	\subfloat{\includegraphics[width=0.3\linewidth]{Chapter2/Figs/Vector/hookium_diagram.pdf}}
+%	\qquad\qquad\qquad
+%	\subfloat{\includegraphics[width=0.3\linewidth]{Chapter2/Figs/Vector/hookium_diagram.pdf}}
+%	\caption[Hookium and Spherium]{\textbf{Hookium and Spherium.}}
+%	\label{fig:qmbp-hookium_and_spherium}
+%\end{figure}
 
-\begin{itemize}
-	\item Mention Complexity of QMC for fermions and bosons
-	\item A more broad overview of methods that can be used for studying the many body problem (DRMG), with particular applications to lattice methods
-	\item Partition QMC into nicer subsections
-\end{itemize}
+\subsubsection{Hartree-Fock}
+One of the most common approaches to the many-body problem is to replace the original interacting many-body problem with a set of independent-particle problems with effective potential. \textbf{Hartree-Fock} (HF) approaches solve an auxiliary system of independent electrons in a self-consistent field and assume that the wave function (for fermions) can be represented as a single Slater determinant. The HF method does not include electron correlation, which makes it a good approximation only in systems where correlation contributions are small. 
 
-The Schr{\"o}dinger equation underpins a large part of quantum chemistry and solid state physics. However, the quantum many-body problem, which amounts to solving the $3N$-dimensional Schr\"odinger equation is notoriously hard to solve. Ever since the postulation of the equation in 1925, great efforts have been made in solving the equation, both analytically and numerically. Perhaps most impactful was the development of various approximate methods to solve the many-body problem with the available computational resources. Hartree-Fock (HF) approaches solve an auxiliary system of independent electrons in a self-consistent field and assume that the wave function (for fermions) can be represented as a single Slater determinant. The HF method does not include electron correlation, which makes it a good approximation only in systems where correlation contributions are small. Post-HF methods, such as Coupled Cluster, Configuration interaction and M\o ller-Plesset theory include correlation by considering a linear combination of determinants. They can be extremely accurate but come at a high computational cost. 
+\subsubsection{Post-Hartree-Fock methods}
+Post-HF methods, such as Coupled Cluster, Configuration interaction and M\o ller-Plesset theory include correlation by considering a linear combination of Slater determinants. They can be extremely accurate but come at a high computational cost. 
 
-One of the most popular approaches used today is Density Functional Theory (DFT). It reformulates the many-body electron problem in terms of the $3$-dimensional electron density $n(\mathbf{r})$, which is found by minimising the total energy functional $E[n(\mathbf{r})]$~\cite{hohenberg1964inhomogeneous}. DFT provides an alternative line of thought to the truncated Hilbert space of single particle orbitals~\cite{kohn1999nobel} and is used extensively for simulating large systems as linear scaling variants of DFT exist~\cite{skylaris2005introducing}. 
-While DFT is theoretically exact the true energy functional $E[n(\mathbf{r})]$ is not known and its parameterisations employ more accurate \emph{ab initio} methods. One of which being Quantum Monte Carlo (QMC).
+\subsubsection{Density Funcitonal Theory}
+Alternatively \textbf{Density Functional Theory} (DFT) reformulates the many-body electron problem in terms of the $3$-dimensional electron density $n(\mathbf{r})$, which is found by minimising the total energy functional $E[n(\mathbf{r})]$~\cite{hohenberg1964inhomogeneous}. In practice this is done by solving the Kohn-Sham auxiliary system. DFT is in theory exact, however only if the true energy functional $E[n(\mathbf{r})]$ is known. As this is not the case, much research has been done in constructing different energy functionals with varying degrees of accuracy, starting with local functionals e.g. LSDA and continuing towards more heavily parameterised, non-local formulations. DFT provides a good trade-off between accuracy and computation time, it is used extensively for simulating large systems as linear scaling variants of DFT exist~\cite{skylaris2005introducing}. 
 
-\subsection{Quantum Monte Carlo}
+\subsubsection{Dynamical Mean Field Theory}
+DMFT~\cite{held2007electronic} is a framework that is specialised in solving strongly correlated systems. It is intuitively similar to Weiss Mean Field Theory in classical statistical physics. The main idea is to map an intractable lattice problem into an impurity model in an effective medium, a many-body local problem which can be solved with any standard approach (QMC, DFT, exact diagonalisation, etc.). This mapping between lattice and impurity model is exact, the approximation comes in neglecting spatial fluctuations of the lattice self-energy $\Sigma$, the contribution to energy due to particle interaction with medium. DMFT assumes that $\Sigma$ is a function of frequency and not momentum $\Sigma(k, \omega) = \Sigma(\omega)$, which only holds in the infinite coordination case. Time fluctuations are taken into account, i.e. the effective medium is not static in DMFT, which is an advantage over other static mean field theories. 
+
+\subsubsection{Density Matrix Renormalization group}
+DMRG~\cite{white1992density} is considered the state of the art method for solving one-dimensional lattice problems, it has been widely adopted in condensed matter physics, first used to solve the system of a spin-0 particle in a box. It is an iterative method based on the renormalization group~\cite{wilson1975renormalization}, and uses matrix product states as the variational ansatz. The method has also been extended for time evolution of systems~\cite{feiguin2005time}, and higher dimensions~\cite{verstraete2004renormalization}.
+
+\subsection{Stochastic methods - Quantum Monte Carlo}
 \label{subsec:qmc-overview}
 %% General about QMC
-Quantum Monte Carlo is a class of methods that uses statistical sampling to directly deal with high-dimensional integration that arises from working with the many-body wave function. QMC methods are among the most accurate achieving chemical accuracy for smaller systems~\cite{foulkes2001quantum}, and can achieve any degree of statistical precision sought. Quantum Monte Carlo is also very versatile and can be applied at both zero and finite temperatures~\cite{austin2012quantum}.	
+Quantum Monte Carlo is a class of methods that uses statistical sampling to directly deal with high-dimensional integration that arises from working with the many-body wave function. QMC methods are among the most accurate achieving chemical accuracy for smaller systems~\cite{foulkes2001quantum}, and can in principle achieve any degree of statistical precision sought. A large ecosystem of QMC methods exists, and they have been adapted to study almost any quantum system imaginable, from discrete to continuous state space, fermionic and bosonic systems, as well as both finite and zero temperatures. Even though QMC methods are not computationally the cheapest, they have reasonable storage requirements as the wave function does not need to be stored directly. Moreover, the high computational cost of QMC methods can be aided by paralellisation and use of hardware acceleration, as the core calculation in is repetitive and usually involves generating (pseudo)-random numbers, performing a simple calculation and in the end averaging over the results. 
+
 %% Zero temperature methods
 %% Variational quantum monte carlo
-The most basic zero temperature QMC method is variational QMC (VMC). The method is composed of two parts, firstly it directly evaluates the variational energy $E_V = \langle \Psi_{T} | \hat H | \Psi_{T} \rangle / \langle \Psi_{T} | \Psi_{T} \rangle$ of the system using Monte Carlo integration and a trial wave function $\Psi_{T}$. Secondly the parameters of the trial wave function are optimised such as to minimise the variational energy $E_V$, giving the method its name. The first application of VMC was to ground state ${}^4$He~\cite{mcmillan1965ground} and was later extended for studying many-body fermionic systems~\cite{ceperley1977monte}. A way of obtaining excitation energies using VMC is to use a trial wave function that models an excited state of the system, if the trial wave function obeys a certain symmetry, the variational principle guarantees that this VMC energy calculation gives an upper bound on the lowest exact eigenstate of this symmetry. Furthermore, the method can be extended to study non-equilibrium properties of bosonic~\cite{carleo2012localization, carleo2014light}, and fermionic~\cite{ido2015time} systems. The main advantage of VMC is its simplicity while the main drawback is that the accuracy is limited by the flexibility and form of the trial wave function~\cite{austin2012quantum}. As such VMC is usually employed as a first step in more advanced QMC simulations. 
+\subsubsection{Variational quantum Monte Carlo (VMC)}
+The most straightforward QMC approach is based on the variational principle, which provides a clear path towards a solution to the ground state problem. Simply use a \emph{trial wave function} $\Psi_{T}$ to parameterise the ground state and optimise the parameters of $\Psi_{T}$ to reach the lowest-energy state. This lowest variational state should capture the behaviour of the ground state if the ansatz is expressive enough. The flexibility of easily defining the trial wave function for a variety of different problems and the ease of its evaluation is a clear advantage over methods described in the previous section. Moreover, given that the variational wave function should encapsulate the main aspects of the system studied it provides intuition into the system itself. Development of trial functions has played a key role in the applicability of VMC, famous examples of trial wave functions include the Slater-Jastrow and Backflow wave functions. The drawback of VMC is that the variational wave function might contain a bias that cannot be avoided through optimisation of the parameters alone, see Fig.~\ref{fig:qmc_blocking}. 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{Chapter2/Figs/Vector/blocking}
+	\caption[Ansatz quality in VMC]{\textbf{Ansatz quality in VMC}. Appropriateness of the variational wave function limits the quality of VMC, a poor choice of ansatz results in typical spikes in local energy  and biased result (\textbf{left}), as well as slower convergence than a good trial wave function (\textbf{right}). Figures show the local energy $E_L$, reblocked average energy $\langle E_b \rangle$ and variance $\sigma_b$ of a VMC simulation of Hookium.}
+	\label{fig:qmc_blocking}
+\end{figure}
+VMC necessarily contains two steps, first is the estimation of the variational energy and second is the optimisation of the parameters. Any expectation of an operator $\hat{O}$ can be expressed in terms of the trial wave function as
+\begin{equation}
+	\langle\hat{O}\rangle=\frac{\langle\Psi_{T}\mid\hat{O}\mid \Psi_{T}\rangle}{\langle\Psi_{T} \mid \Psi_{T}\rangle}=\frac{\sum_{x}\langle\Psi_{T} \mid x\rangle\langle x\mid\hat{O}\mid \Psi_{T}\rangle}{\sum_{x}\langle\Psi_{T} \mid x\rangle\langle x \mid \Psi_{T}\rangle},
+\end{equation}
+where $\mid x \rangle$ are orthogonal and normal states of the Hilbert space. If we rewrite the above expression as 
+\begin{equation}
+	\label{eq:vmc-local_op_sampling}
+	\langle \hat{O} \rangle = \frac{\sum_{x}\mid\Psi_{T}(x)\mid^{2} \hat{O}_{L}(x)}{\sum_{x}\mid\Psi_{T}(x)\mid^{2}},
+\end{equation}
+with $\hat{O}_L$ being the \emph{local operator}
+\begin{equation}
+	\hat{O}_{L}(x)=\frac{\langle x\mid\hat{O}\mid \Psi_{T}\rangle}{\langle x \mid \Psi_{T}\rangle}, 
+\end{equation}
+	we can interpret $|\Psi(x)|^{2}/\sum_{x}|\Psi(x)|^{2}$ as a probability. Meaning that eq.~\eqref{eq:vmc-local_op_sampling} can be estimated as an average of the local operator $\hat{O}_L$
+\begin{equation}
+	\langle\hat{O}\rangle \approx \frac{1}{M} \sum_{m=1}^{M} \hat{O}_{L}\left(x_{m}\right),
+\end{equation}
+sampled from this probability distribution. The sampling can be done using Markov Chain Monte Carlo (MCMC). The second step of the procedure is variational optimisation of the trial wave function, where the optimal parameters of the approximation are found by minimising the \emph{cost function}. The straightforward choice of the variational energy $E_V$ as a cost function turns out to be inferior to minimizing the \emph{variance} of the energy $\sigma_E$~\cite{foulkes2001quantum}. This is because $\sigma_E$ obeys the \emph{zero-variance} property, meaning that if $\Psi_{T}$ is an exact eigenvalue of the Hamiltonian
+\begin{equation}
+	\hat{H}\left|\Psi_{T}\right\rangle=E_{V}\left|\Psi_{T}\right\rangle,
+\end{equation}
+then the local energy $E_L$ is constant and equal to $E_V$
+\begin{equation}
+	E_{L}(x)=\Psi_{T}(x)^{-1} \hat{H} \Psi_{T}(x)=\Psi_{T}(x)^{-1} E_{V} \Psi_{T}(x)=E_{V},
+\end{equation}
+irrespective of the sampled configuration $x$ and hence has zero variance. The zero-variance property has important consequences for numerical stability of optimisation, it means that energy variance minima are robust to finite sampling. Minimizing the variance of energy drives the trial wave function towards eigenstates of the Hamiltonian. Moreover, the statistical error of any expectation value $\langle \hat{O} \rangle$ is proportional to the variance of $\hat{O}$, making low variance doubly desirable. There are several approaches to updating the parameters each iteration, gradient descent, stochastic reconfiguration~\cite{sorella1998green}, and the linear method~\cite{nightingale2001optimization} are just a few examples. It is crucial that the methods are robust to statistical noise and converge quickly as the MC step can be expensive to perform. Moreover they are only as good as the estimates of the energy (variance) gradients w.r.t the parameters.
+
+The first application of VMC was to the ground state ${}^4$He~\cite{mcmillan1965ground} and it was later extended for studying many-body fermionic systems~\cite{ceperley1977monte}. Time-dependant variants of this method exist~\cite{becca2017quantum} and VMC has been used to study non-equilibrium properties of bosonic~\cite{carleo2012localization, carleo2014light}, and fermionic~\cite{ido2015time} systems.
 
 %% Green function QMC and Diffusion QMC
-Projector quantum Monte Carlo (PMC) is a class of QMC methods which are in essence nothing more than stochastic implementations of the power method to obtain the dominant eigenvector of a matrix or a kernel function~\cite{gubernatis_kawashima_werner_2016}. Their distinct advantage over VMC is that they are not constrained by our parametrisation of the trial wave function, as they can describe arbitrary probability distributions. The projector $\hat P$ has to be chosen in such a way, that the ground state of the system becomes the dominant eigenvector, i.e. $| \Psi_{0}\rangle = \lim_{n\rightarrow \infty} \hat{P}^n |\Psi_{T}\rangle$. Different ways of achieving this give rise to different flavours of PMC methods, e.g choice of space (real or orbital space) in which the walk is done and choosing either first or second quantisation. Using an exponential projector $\hat{P} = e^{\tau (E_T \mathbb{1} - \hat{H})}$ can be interpreted as propagation in imaginary time $\tau \rightarrow it$ in turn transforming the Schr\"odinger equation into a diffusion equation, which is a continuous limit of the random walk and lends itself to stochastic integration~\cite{reynolds1990diffusion}. Directly sampling from the exact Green function is known as Projector Green Function Monte Carlo (GFMC) method~\cite{kalos1962monte, kalos1966stochastic}. A convenient approximation to GFMC is its short-time approximation which leads to one of the most popular QMC methods, diffusion Monte Carlo (DMC)~\cite{foulkes2001quantum, reynolds1990diffusion}. In this regime one can exploit analytical solutions to diffusion and rate problems to write an explicit form of the Green's function. Additionally, by using the Trotter-Suzuki formula the time-step bias can be expressed and accounted for~\cite{austin2012quantum}. DMC is statistically implemented by using a population of walkers which either branch or die, over which the average is calculated. Reptation quantum Monte Carlo~\cite{reynolds1990diffusion} (RMC) is an alternative formulation which only uses a single walker, and instead of branching and dying the MC moves mutate the path of that single walker. The use of a guiding wave function for importance sampling greatly improves the statistical efficiency of PMC methods. The guiding wave function is usually obtained by means of VMC or some mean field calculation. 
+\subsubsection{Projector QMC (PMC) techniques}
+PMC is a class of QMC methods which are in essence nothing more than stochastic implementations of the power method to obtain the dominant eigenvector of a matrix or a kernel function~\cite{gubernatis_kawashima_werner_2016}. Their distinct advantage over VMC is that they are not constrained by our parametrisation of the trial wave function, as they can describe arbitrary probability distributions. PMC methods are based on the imaginary Schr\" odinger equation
+\begin{equation}
+	\label{eq:imgsch}
+	\partial_{t}\left|\Psi_{t}\right\rangle=-\hat{H}\left|\Psi_{t}\right\rangle.
+\end{equation}
+Its formal solution, the time propagation of an initial wave function $|\Psi_0\rangle$ at $t=0$, is written as
+\begin{equation}
+\left| \Psi_{t} \right\rangle = e^{-\hat{H} t}\left|\Psi_{0}\right\rangle. 
+\end{equation}
+From the spectral decomposition of the operator $e^{-\hat{H} t}$ in terms of eigenstates $|\Phi_n\rangle$ and eigen-energies $E_n$ of the Hamiltonian $\hat{H}$
+\begin{equation}
+e^{-\hat{H} t}=\sum_{n} e^{-E_{n} t}|\Phi_n\rangle\langle\Phi_n|, 
+\end{equation}
+it follows that the term corresponding to the ground state of the system $|\Phi_0\rangle$ decays the slowest. Thus starting in some initial state and propagating for a long imaginary time $it$ leads into the ground state with the decay rate giving the ground state energy $E_0$ as
+\begin{equation}
+\label{eq:long_time_limit_isch}
+\lim_{t \rightarrow \infty} | \Psi_t \rangle \propto e^{-E_0 t} | \Phi_0 \rangle,
+\end{equation} 
+where $|\Phi_0\rangle$ is the corresponding state of $E_0$. This of course holds if the eigenstates of $\hat{H}$ are all positive, which can be achieved by shifting the potential by a constant energy $E_c$, which doesn't change the ground state wave function. The basic step of a PMC simulation is the projection step, where an existing ensemble of configurations is projected into a new one, this projection $\hat{P}$ is done in such a way that eq.~\eqref{eq:long_time_limit_isch} is satisfied
+\begin{equation}
+	| \Phi_{0}\rangle = \lim_{n\rightarrow \infty} \hat{P}^n |\Psi_{0}\rangle.
+\end{equation}
+Flavours of PMC differ in the choice of $\hat{P}$, the most popular Diffusion Monte Carlo (DMC)~\cite{foulkes2001quantum, reynolds1990diffusion} works with the time-dependent Green's function $G(x^\prime, t^\prime; x, t)$ of eq.~\eqref{eq:imgsch}
+\begin{equation}
+	\Psi(x, t)=\int G\left(x, t; x^\prime, t^\prime\right) \Psi \left(x^{\prime}, t^\prime \right) \mathrm{d} x^{\prime},
+\end{equation}
+while Green's function MC (GFMC)~\cite{kalos1962monte, kalos1966stochastic} uses the time integrated version of the Green's function
+\begin{equation}
+	\Psi^{(n+1)}(x)=E \int G\left(x, x^{\prime}\right) \Psi^{(n)}\left(x^{\prime}\right) \mathrm{d}x^\prime. 
+\end{equation}
+Both formulations are exact, but need some additional approximations to be made practical for use, as Green's functions are not known for a general system. In DMC the Green's function
+\begin{equation}
+	G(x^\prime, t^\prime; x, t) = \langle x \mid e^{-(t-t^\prime) [\hat T + \hat V - E_c ] } \mid x^\prime \rangle,
+\end{equation}
+is approximated for short times $\tau = t-t^\prime$ using Trotter-Suzuki formula
+\begin{equation}
+	\label{eq:short_time_dmc}
+	G(x^\prime \rightarrow x; \tau) = \underbrace{(2 \pi \tau)^{-3N / 2} e^{-\frac{\left(x-x^{\prime}\right)^{2}}{2 \tau}}}_{\text{ordinary diffusion}} \cdot \underbrace{e^{-\tau\left[V(\mathbf{R})+V\left(\mathbf{R}^{\prime}\right)-2 E_{c}\right] / 2}}_{\text{reweighting $\equiv$ birth/death}} + \mathcal{O}(\tau^3),
+\end{equation}
+where the kinetic term is recognised to be ordinary diffusion. In practice eq.~\eqref{eq:short_time_dmc} is implemented as a simulation of a diffusion process, but instead of weighting the paths of the walkers, the potential contribution to $G$ is interpreted as a probability of a walker to either branch or die, which is numerically more stable. This stochastic process converges to the ground state for sufficiently long times, see Fig.~\ref{fig:dmc}. Reptation quantum Monte Carlo~\cite{reynolds1990diffusion} (RMC) is an alternative formulation which only uses a single walker, and instead of branching and dying the MC moves mutate the path of that single walker. 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{Chapter2/Figs/Raster/dmc.png}
+	\caption[DMC simulation of harmonic oscillator]{\textbf{Diffusion Monte Carlo simulation of harmonic oscillator}, starting with $N_w=1000$ walkers, $\tau=0.05$, $E_c=0.25$ and uniformly sampling their initial positions from $(-2, 2)$ (\textbf{left}). The number of walkers at each step decreases rapidly before slowly increasing (\textbf{top}) the number of walkers is controlled by adjusting $E_c$. Walker paths, with a few highlighted in black to emphasise death/birth process (\textbf{middle}), diffuse into the approximate ground state of the HO $u_0(x) = \frac{1}{\pi^{\frac{1}{4}}}e^{-\frac{1}{2}x^2}$ (\textbf{right}).}
+	\label{fig:dmc}
+\end{figure}
+Using a trial wave function $\Psi_T$ as a guiding function for importance sampling is an important improvement over vanilla DMC. This introduces a \emph{drift} into the diffusion process, which leads the walkers into regions of large values of $\Psi_T$ and greatly improves the statistical efficiency of the method. The guiding wave function is usually obtained by means of VMC. So far we have conveniently assumed that the wave function is positive everywhere in the domain, this not generally true, e.g. in fermionic systems, and poses a problem for PMC methods.
 
-PMC methods suffer from the \emph{sign problem}, which is present in Markov chain simulation of distributions that are not strictly positive, thus in fermionic and frustrated systems~\cite{gubernatis_kawashima_werner_2016}. The problem refers to an exponential decrease in sampling efficiency with system size. The search for solutions of this problem is still an area of active research~\cite{foulkes2001quantum} but is in practice remedied by the \emph{fixed-node} approximation~\cite{anderson1975random}. It imposes a boundary condition into the projection, such that the projected state shares the same zero crossings (nodal surface) with a trial wave function, which is again usually obtained with VMC. The projected state is now only exact when the nodal surface is exact. Nevertheless this approximation is quite accurate~\cite{foulkes2001quantum}. Fixed node is widely used, one of its first applications being the electron gas~\cite{ceperley1980ground}, which is used in parameterisations of the  exchange correlation functional in LSDA~\cite{vosko1980accurate}.
+\subsubsection{The sign problem}
+Projector Monte Carlo methods can only operate with positive distributions, and as such they fall apart when applied to fermionic or frustrated systems~\cite{gubernatis_kawashima_werner_2016}. A straightforward modification to the sampling scheme allows us to sample from a mixed-sign distribution. We sample from the distribution normally when it is positive, but sample from its absolute value and change the sign of the observable, when it is negative. The issue with this approach is that the population of configurations is split between positive and negative regions, the averages over both are comparable in size and cancel out, leading to a large statistical error compared to the observable. We refer to the accompanying exponential decrease~\cite{gubernatis_kawashima_werner_2016} in sampling efficiency with system size and temperature, \textbf{the sign problem}. Its general solution was shown to be NP-hard~\cite{troyer2005computational}, and as it is believed that P $\neq$ NP, this implies that no \emph{general} polynomial-time solutions exist. However, this does not mean that the problem cannot be avoided in special cases, the search for solutions is still an area of active research~\cite{hutcheon2020stochastic, assaraf2007fermion, alexandru2020complex}. In practice the sign problem is remedied by the \emph{fixed-node}~\cite{anderson1975random} or \emph{constrained-path}~\cite{zhang1997constrained} approximation. Fixed-node imposes a boundary condition into the projection such that the projected state shares the nodal surface with the trial wave function. The projected state is now only exact when the nodal surface is exact.
 
-%% Finite temperature methods
-Quantum Monte Carlo methods have had a lot of success at finite temperatures. Auxiliary-field Monte Carlo, or Path Integral Monte Carlo~\cite{ceperley1995path}, which leads to ring-polymer molecular dynamics, may be used for this purpose. Additionally QMC is not limited to continuum space applications and has been extensively used to study lattice models, notable examples being the cluster/loop algorithm and the worm algorithm~\cite{gubernatis_kawashima_werner_2016, prokof1998exact}.
-
-%% Computational considerations
-Quantum Monte Carlo methods are generally more computationally expensive than DFT approaches, but on the other hand QMC codes are, as a rule of thumb, simpler to implement. Furthermore, since the wave function does not need to be stored directly, QMC has reasonable storage requirements. The high computational cost of the QMC methods is remedied by the fact that they are intrinsically parallelisable, the core calculation involves generating (pseudo)-random numbers, performing a simple calculation and in the end averaging over the results. Therefore, implementations of QMC algorithms that have been applied to practical problems are optimised to run on massively parallel hardware with little overhead~\cite{needs2020variational}. Finally, the repetitive nature of the Monte Carlo calculation lends itself to hardware acceleration using either graphical processing units (GPUs) or field-programmable gate arrays (FPGAs)~\cite{austin2012quantum}.
-
+\subsection{Machine Learning and the quantum many-body problem}

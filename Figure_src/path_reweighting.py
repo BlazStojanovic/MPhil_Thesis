@@ -55,8 +55,8 @@ measure = measure/np.max(measure)
 print(measure)
 
 # Background for second plot
-tt = np.linspace(0, 1, 100)
-xx = np.linspace(-2.5, 2.5, 100)
+tt = np.linspace(0, 1, 2)
+xx = np.linspace(-2.5, 2.5, 1000)
 
 TT, XX = np.meshgrid(tt, xx)
 img = V(XX)
@@ -71,10 +71,10 @@ for i in range(N):
 
 plt.text(0.05, 2, '$V(x) = x$')
 
-plt.pcolormesh(TT, XX, img, cmap='Blues_r', alpha=0.2)
+plt.pcolormesh(TT, XX, img, cmap='Blues_r', alpha=1.0)
 plt.xlabel('$t$')
 plt.ylabel('$X_t$')
 plt.xlim([0,1])
 plt.ylim([-2.5, 2.5])
-plt.savefig("../Chapter2/Figs/Raster/reweight2.png", bbox_inches='tight', dpi=120)
+plt.savefig("../Chapter3/Figs/Raster/reweight2.png", bbox_inches='tight', dpi=120)
 plt.show()

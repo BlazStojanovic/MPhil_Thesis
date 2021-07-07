@@ -245,6 +245,7 @@ Intuitively we understand the discrete-time Markov chain as a system changing it
 \end{figure}
 
 \subsubsection{Continuous-time Markov Chains}
+\label{subsubsect:CTMC}
 Defining a Markov chain in continuous time is slightly trickier as describing the system with a stochastic matrix does no longer suffice because transition probabilities become zero when considering an infinitesimal time. Instead a continuous-time Markov Chain (CTMC) is characterised by a \textbf{rate matrix} or \textbf{infinitesimal generator matrix} $\Gamma$ defined on the set $I$. A rate matrix has the following three properties
 \begin{enumerate}[label=\roman*)]
 	\item $0 \leq \Gamma_{ii} <\infty, \quad \forall i$
@@ -254,7 +255,7 @@ Defining a Markov chain in continuous time is slightly trickier as describing th
 While the CTMC can be interpreted in a number of ways, we shall use the so called \textbf{jump chain} and \textbf{holding times} representation, see also Fig.~\ref{fig:holdingJumping}. 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.7\linewidth]{Diagrams/ctmc/ctmc}
+	\includegraphics[width=0.9\linewidth]{Diagrams/ctmc/ctmc}
 	\caption[Jump chain and Holding times]{\textbf{Jump chain and Holding times.} A discrete space Markov process $\{X_t\}_{t\geq 0}$ in continuous time. The holding times $S_n$ are independent exponential random variables and the transition probabilities at jump times $J_n$ are given with the jump matrix $\Pi$. Inspired by~\cite{norris1998markov}.}
 	\label{fig:holdingJumping}
 \end{figure}
@@ -300,9 +301,12 @@ The chain $\{Y_n\}_{n\geq0}$ along with times
 \end{equation}
 gives the full description of the CTMC. With this formulation in mind we now interpret $\Gamma_{ii}$ as the rate ob \emph{leaving} current state and $\Gamma_{i j}$ as the rate of \emph{going} from $i$ to $j$.
 
+\newpage
 \section{The Feynman-Kac formula}
 \label{subsec:fk-fk}
 The Feynman path integral formulation introduced in chapter~\ref{chapter2} was extensively used by physicists for decades, even in the absence of a formal mathematical formulation which is hard to define because of the difficulties with defining an appropriate measure on the path space. Kac~\cite{kac1949distributions} provided a rigorous formulation of the \textit{real-valued} case of the Feynman path integral, and the resulting \textbf{Feynman-Kac formula} eq.~\eqref{eq:fkac} provides a bridge between \emph{parabolic} partial differential equations and stochastic processes. 
+
+\subsection{Feynman-Kac in continuous state space}
 
 To illustrate the Feynman-Kac formula let us consider a single particle with Hamiltonian
 \begin{equation}
@@ -327,8 +331,23 @@ where only the \textbf{endpoint} at time $t$ of the Brownian process fixed, wher
 		\frac{1}{\sqrt{2 \pi t}} \int  e^{-\left(x-x^{\prime}\right)^{2} / 2 t} \psi_{0}\left(x^{\prime}\right) \mathrm{d} x^{\prime}
 	\end{aligned}
 \end{equation}
-An illustration of the Feynman-Kac approach to the problem with no external potential $V(x)$ in 1D is depicted in Fig.~\ref{fig:fk_1d_example}. The role of the potential in the Feynman-Kac formula is to weight the Brownian paths, in turn defining the Feynman-Kac \emph{path measure} $\mathbb{P}_{\mathrm{FK}}$ it is related to the Brownian measure $\mathbb{P}_{0}$ by the Radon-Nykodym derivative
+An illustration of the Feynman-Kac approach to the problem with no external potential $V(x)$ in 1D is depicted in Fig.~\ref{fig:fk_1d_example}. 
+\begin{figure}[H]
+	\centering
+	\subfloat
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_top.pdf}} \\
+	\subfloat
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_mid1.pdf}} \\
+	\subfloat
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_bottom.pdf}}
+	
+	\caption[Feynman-Kac for a free particle in 1D]{\textbf{Feynman-Kac for a free particle  in 1D.} \textbf{top:} $N=400$ Brownian walks starting from different $x_0$, the color signifies initial position. In order to evaluate $\psi$ between $x-\frac{\delta x}{2}$ and $x+\frac{\delta x}{2}$ at some time $t$ we must first find Brownian paths that end there. \textbf{middle:} The paths that pass through at $x \in (1.5, 1.6)$ (blue) and through $x \in (-0.4,-0.3)$ (red) are colored, others are left in grey. \textbf{bottom:} Time evolution of the initial condition $\psi_{0} = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^{2}}$, by estimating ${\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right]$ from the filtered paths at each timestep.}
+	\label{fig:fk_1d_example}
+\end{figure}
+\noindent
+The role of the potential in the Feynman-Kac formula is to weight the Brownian paths, in turn defining the Feynman-Kac \emph{path measure} $\mathbb{P}_{\mathrm{FK}}$ it is related to the Brownian measure $\mathbb{P}_{0}$ by the Radon-Nykodym derivative
 \begin{equation}
+\label{eq:RNderiv}
 \frac{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}{\mathrm{d} \mathbb{P}_{0}}=\mathcal{N} \exp \left(-\int V\left(X_{t}\right) d t\right),
 \end{equation}
 where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}.
@@ -341,9 +360,7 @@ where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the
 	\label{fig:fkac_measure_reweight}
 \end{figure}
 Moreover, this new stochastic process is Markovian, meaning that a clear connection exists between the imaginary time Schr\" odinger equation and a SDE of form~\eqref{eq:SDE_general} with time-homogeneous $\sigma$ and $v$.
-Indeed, in the continuous case we have discussed so far, the mapping between the Fokker-Planck equation~\eqref{eq:Fokker-Planck-General} and the Schr\" odinger equation exists in the form of a similarity transform. 
-
-Starting from the FP equation of a stochastic process with constant volatility $\sigma = 1$
+Indeed, in the continuous case we have discussed so far, the mapping between the Fokker-Planck equation~\eqref{eq:Fokker-Planck-General} and the Schr\" odinger equation exists in the form of a similarity transform. Starting from the FP equation of a stochastic process with constant volatility $\sigma = 1$
 \begin{equation}
 \mathrm{d} X_{t}=\mathrm{d} W_{t}+v\left(X_{t}\right) \mathrm{d} t,
 \end{equation} 
@@ -361,47 +378,96 @@ with $\rho_{0}$ being the stationary distribution of the FP equation
 \end{equation}
 which satisfies the imaginary time Schr\" odinger equation~\eqref{eq:imag_sch} with the Hamiltonian
 \begin{equation}
-H=-\frac{\partial^{2}}{\partial x^{2}} \overbrace{-\frac{U^{\prime \prime}}{2}+\frac{U^{\prime 2}}{4}}^{\equiv V(x)}.
+\hat H=-\frac{\partial^{2}}{\partial x^{2}} \overbrace{-\frac{U^{\prime \prime}}{2}+\frac{U^{\prime 2}}{4}}^{\equiv V(x)}.
 \end{equation}
 The ground state of this Hamiltonian has zero energy and is 
 \begin{equation}
 \psi_{0}(x)=\sqrt{\rho_{0}(x)}.
 \end{equation}
-\begin{figure}[H]
-	\centering
-	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_top.pdf}} \\
-	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_mid1.pdf}} \\
-	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_bottom.pdf}}
-	
-	\caption[Feynman-Kac for a free particle in 1D]{\textbf{Feynman-Kac for a free particle  in 1D.} \textbf{top:} $N=400$ Brownian walks starting from different $x_0$, the color signifies initial position. In order to evaluate $\psi$ between $x-\frac{\delta x}{2}$ and $x+\frac{\delta x}{2}$ at some time $t$ we must first find Brownian paths that end there. \textbf{middle:} The paths that pass through at $x \in (1.5, 1.6)$ (blue) and through $x \in (-0.4,-0.3)$ (red) are colored, others are left in grey. \textbf{bottom:} Time evolution of the initial condition $\psi_{0} = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^{2}}$, by estimating ${\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right]$ from the filtered paths at each timestep.}
-	\label{fig:fk_1d_example}
-\end{figure}
-\noindent
 In other words, the quantum ground state probability distribution $|\psi_{0}|^2$ is the same as classical stationary distribution $\rho_{0}$ of the stochastic process $X_{t}$ in the literature referred to as the \emph{Nelson's ground state process}~\cite{nelson1967dynamical, albeverio1977energy}. This connection is one that our computational method will exploit, as the ability to efficiently sample from the stochastic process with correct drift $v$ is equivalent to sampling from the ground state of the quantum system. Even though the connection is simple, it comes with a caveat. Starting from the Schr\" odinger equation one needs to find the drift $v(x)$ and while the connection with the potential of the Hamiltonian is clear-cut in this simple example, this is not the case in many-body systems, i.e. the \emph{inverse problem} of finding the stochastic process of a given Hamiltonian is difficult, and is one of the core problems approached in this thesis.
 
-\section{Stoquastic Hamiltonians and Lattice-model representations}
+\subsection{Stoquastic Hamiltonians and Feynman-Kac in discrete state space}
 \label{subsec:fk-latt}
-A similar connection between stochastic processes and the ground state exists in the discrete space, the difference being that instead of FP we have the Master equation
-
-
-For a Markov process over discrete states, we can write the master equation as 
+Before we illustrate the connection between the imaginary time Schr\" odinger equation and CTMC for lattice models we must introduce \textbf{Stoquastic Hamiltonians}~\cite{bravyi2006complexity}, a class of Hamiltonians which does not suffer from the sign problem.
+\begin{definition}[Stoquastic Hamiltonian]
+	A $k$-local Hamiltonian $\hat H=\sum_{i} \hat H_{i}$ is \textbf{stoquastic} if there exists a local basis $\mathcal{B}$ in which off-diagonal matrix elements of terms $\hat{H}_i$ are zero or negative
+	\begin{equation}
+		\langle x|\hat H| y\rangle \leq 0, \quad \forall x, y \in \mathcal{B} \text {\quad with } x \neq y.
+	\end{equation}
+\end{definition}
+If we consider the matrix $e^{-\tau \hat H}$ for a non-positive $\hat H$, we see that every term in the expansion
 \begin{equation}
-	\frac{\partial P_{j}}{\partial t}=\sum_{k \neq j}\left[\Gamma_{k \rightarrow j} P_{k}-\Gamma_{j \rightarrow k} P_{j}\right].
+	e^{-\tau \hat{H}} = 1 -\tau \hat{H} + \frac{1}{2}(\tau \hat{H})^2 + \ldots
 \end{equation}
+is a non-negative matrix, thus so is $e^{-\tau \hat H}$. From eq.~\eqref{eq:spectral_decompH} it follows that in the infinite time limit
+\begin{equation}
+	\lim _{\tau \rightarrow \infty} e^{-\tau \hat H}=|\psi_0\rangle\langle\psi_0|, 
+\end{equation}
+and a global phase exists for which the ground state has non-negative amplitudes. Moreover, if $\hat H$ is irreducible then the ground state is node-less~\cite{discussion_stoquastic2017}
+\begin{equation}
+	\psi_0(x)>0 \text { for all } x \in \mathcal{B}.
+\end{equation}
+We can decompose a stoquastic Hamiltonian into a rate matrix $\Gamma$, as defined in section~\ref{subsubsect:CTMC}, and a diagonal potential matrix $V$
+\begin{equation}
+	H=-\Gamma+V.
+\end{equation}
+The rates $\Gamma$ are analogous to the Brownian motion in the continuum case, or can be interpreted as the kinetic contribution. They represent a CTMC which we will understand as \emph{passive dynamics}. In terms of the Hamiltonian matrix rates become
+\begin{equation}
+\Gamma_{s \rightarrow s^{\prime}}=\left\{\begin{array}{ll}
+-H_{s s^{\prime}} & \text { if } s \neq s \\
+\sum_{s^{\prime} \neq s} H_{s s^{\prime}} & \text { if } s=s^{\prime}
+\end{array}\right.
+\end{equation}
+and the potential is
+\begin{equation}
+V(\boldsymbol{s})=H_{s s}+\sum_{s^{\prime} \neq s} H_{s s^{\prime}}.
+\end{equation}
+From now on we use $\rightarrow$ notation to emphasise the transition between \emph{adjacent} states $s\neq s^\prime$ which satisfy $H_{s s^{\prime}} \neq 0$. This decomposition allows us to define the Feynman-Kac formula in the discrete state space~\cite{rogers2000diffusions} as
+\begin{equation}
+	\psi\left(s_t, t\right)=
+	\underset{\Sigma_{[0, t] \sim \Gamma}}{\mathbb{E}}
+	\left[
+	\exp \left(-\int_{0}^{t} V\left(\boldsymbol{s}_{t^{\prime}}\right) \mathrm{d} t^{\prime}\right) \psi\left(s_0, 0\right)
+	\right].
+\end{equation}
+The expectation is now taken over the process driven by $\Gamma$ and weighted by the potential $V$. We denote the trajectory as $\Sigma_{[0, t]}$, where $\Sigma_{t^\prime}$ is the state of the system at time $t^\prime \in [0, t]$. Analogous as with the Feynman-Kac formula in continuous state space, this defines a new CTMC with measure $\mathbb{P}_{\text{FK}}$, which is related to  passive dynamics with measure $\mathbb{P}_0$ by the RN derivative, eq.~\eqref{eq:RNderiv}.
 
-
-%********************************** % ??? Section  *************************************
-\newpage
+But how exactly is this CTMC connected to the imaginary time Schr\" odinger equation? The connection exists, as in the continuous space, via a similarity transform. The difference being that instead of Fokker-Planck we use the master equation to describe the time evolution of the pdf $P$
+\begin{equation}
+\frac{\partial P(s)}{\partial t}=\sum_{s^\prime \neq s}\left[\Gamma_{s^\prime \rightarrow s} P(s^\prime)-\Gamma_{s \rightarrow s^\prime} P(s)\right].
+\end{equation}
+The stationary state $P_0$ of the master equation satisfies detailed balance
+\begin{equation}
+	\Gamma_{k \rightarrow j}=\exp \left(\frac{V_{s^\prime}-V_{s}}{2}\right),
+\end{equation}
+and is thus
+\begin{equation}
+	P_{0}(s) \propto \exp \left(-V_{s}\right).
+\end{equation}
+The wave function 
+\begin{equation}
+	\psi(s, t)=\frac{P_{s}(t)}{\sqrt{P_{0}(s)}},
+\end{equation}
+then satisfies the imaginary time Schr\" odinger equation with the Hamiltonian
+\begin{equation}
+	\hat H_{s^\prime s}=\left\{\begin{array}{ll}
+	-P_{0}^{-\frac{1}{2}}(s) \Gamma_{s^\prime \rightarrow s} P_{0}^{\frac{1}{2}}(s^\prime)=-1 & s^\prime \neq s \\
+	\sum_{s^\prime \neq s} \Gamma_{s \rightarrow s^\prime} & s^\prime=s.
+	\end{array}\right. 
+\end{equation}
+Again this Hamiltonian has a zero-energy ground state 
+\begin{equation}
+	\psi_{0}(s)=\sqrt{P_{0}(s)} \propto \exp \left(-\frac{V_{s}}{2}\right),
+\end{equation}
+we see that the quantum probability in the ground state $|\psi_0(s)|^2$ coincides with the stationary distribution of the CTMC. The connection in the direction from the Markov process to Hamiltonian is clear, but we are interested in the inverse, starting from the Hamiltonian and finding for the corresponding stochastic process. We now turn our attention towards defining a suitable optimisation objective that, when optimised, will yield the correct Markov process.
+%********************************** % New Section  *************************************
 \section{Quantum Mechanics, Control and loss functions}
 
 \subsection{Continuous space}
 
 \subsection{Discrete space}
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{Diagrams/bp/bp-c5.pdf}
 	\caption[QM, stochastic processes and optimal control]{\textbf{QM, stochastic processes and optimal control}}

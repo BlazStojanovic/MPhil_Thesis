@@ -15,67 +15,61 @@
 %********************************** %First Section  **************************************
 \section{Lattice models}
 \label{sec:lattice-models}
-
-\subsection{Historical introduction}
-\label{subsec:latt-hist}
-\begin{itemize}
-	\item I think starting from the magnetism point of view might be the best way to go, slowly lead into the field of condensed matter theory and lattice models. 
-\end{itemize}
+% bit of history and why they are useful ~ 150 words max
+\hl{TODO}
 
 \subsection{The Schr{\"o}dinger equation and the Feynman path integral}
 \label{subsec:latt-qm}
-The wavefunction
+The dynamics of a quantum mechanical system are described with the Schr\" odinger equation
 \begin{equation}
-	\Psi\left(r_{1}, \ldots, r_{N}\right)
+	\label{eq:sch}
+	i \hslash \frac{\mathrm{d}}{\mathrm{d} t}|\Psi(t)\rangle=\hat{H}|\Psi(t)\rangle,
 \end{equation}
-the Schr\" odinger equation
+a linear partial differential equation. The state of the quantum system $| \Psi \rangle$ is a vector in a separable Hilbert space $\mathcal{H}$, and the square of its absolute value, e.g. $|\Psi(x, t)|^2$, at each point is interpreted as a probability density function (pdf). The Hamiltonian operator is the sum of kinetic and potential energies $\hat H = \hat T + \hat V$ of the system. Throughout this thesis we will be interested only in the ground state of the system, this is the state with lowest energy and it is the state we find the system in at zero-temperature. Instead of using the time-dependent formulation in eq.~\eqref{eq:sch}, we use the \emph{stationary} Schr\" odinger equation
 \begin{equation}
-	i \frac{\partial \psi(\boldsymbol{r}, t)}{\partial t}= \hat{H} \psi(\textbf{r}, t)
+	\hat{\mathrm{H}}|\Psi\rangle=E|\Psi\rangle,
 \end{equation}
-for a single particle in an external potential $\hat{V}(\boldsymbol{r})$ the Hamiltonian is 
+an eigenvalue equation, with the lowest energy $E_0$ corresponding to the ground state $|\Psi_{0}\rangle$. From this point onward, we use Hartree atomic units $m_{e}=e=\hslash=a_{0}=\mathrm{E}_{h}=k_{e}=1$.
+
+Alternatively to the Schr\" odinger equation one can use an integral Green's function representation to express the wavefunction $\Psi$ at some future time $t$ given initial condition $\Psi(x^\prime, t^\prime)$ as
 \begin{equation}
-	\hat H \phi(\boldsymbol{r})=-\frac{1}{2} \nabla^{2} \phi(\boldsymbol{r})+\hat{V}(\boldsymbol{r}) \phi(\boldsymbol{r}).
+	\Psi\left(x, t\right)=\int  \mathcal{K}\left(x, t ; x^\prime, t^\prime\right) \Psi\left(x^\prime, t^\prime\right) \mathrm{d} x^\prime.
 \end{equation}
-Alternatively to the Schr\" odinger equation one can use an integral Green's function representation to express the wavefunction $\psi$ at some future time $t_2$ given initial condition $\psi(\boldsymbol{r}, t_1)$ as
+The \emph{propagator} $\mathcal{K}\left(x, t ; x^\prime, t^\prime\right)$ is the kernel of the Schr\" odinger equation
 \begin{equation}
-	\psi\left(\boldsymbol{r}_{2}, t_{2}\right)=\int  \mathcal{K}\left(\boldsymbol{r}_{2}, t_{2} ; \boldsymbol{r}_{1}, t_{1}\right) \psi\left(\boldsymbol{r}_{1}, t_{1}\right) \mathrm{d} \boldsymbol{r}_{1}.
+	\left(i \frac{\partial}{\partial t}-H_{x}\right) \mathcal{K}\left(x, t ; x^\prime, t^\prime\right)=i \delta\left(x - x^\prime\right) \delta\left(t-t^\prime\right).
 \end{equation}
-The solution to  equation
+It is related to the fundamental solution or Green's function as
 \begin{equation}
-	\left(i \frac{\partial}{\partial t_{2}}-H_{\boldsymbol{r}_{2}}\right) \mathcal{K}\left(\boldsymbol{r}_{2}, t_{2} ; \boldsymbol{r}_{1}, t_{1}\right)=i \delta\left(\boldsymbol{r}_{1}-\boldsymbol{r}_{2}\right) \delta\left(t_{1}-t_{2}\right)
+	\mathcal G\left(x, t ; x^{\prime}, t^{\prime}\right)=\frac{1}{i} \Theta\left(t-t^{\prime}\right) \mathcal K\left(x, t ; x^{\prime}, t^{\prime}\right),
 \end{equation}
-and the \textit{propagator} $\mathcal{K}\left(\boldsymbol{r}_{2}, t_{2} ; \boldsymbol{r}_{1}, t_{1}\right)$ is expressed using the Feynman path integral
+where $\Theta$ is the Heaviside function and $\delta$ is the Dirac delta. The same propagator can also be expressed using the Feynman path integral
 \begin{equation}
 	\label{eq:FPI}
-	\mathcal{K}\left(\boldsymbol{r}_{2}, t_{2} ; \boldsymbol{r}_{1}, t_{1}\right)=\int_{\substack{\boldsymbol{r}\left(t_{1}\right)=r_{1} \\ \boldsymbol{r}\left(t_{2}\right)=r_{2}}}  \mathcal{D} \boldsymbol{r}(t) \exp \left(i \int_{t_{1}}^{t_{2}} \mathcal{L}(\boldsymbol{r}, \dot{\boldsymbol{r}}) d t\right),
+	\mathcal{K}\left(x, t ; x^\prime, t^\prime\right)=\int_{\substack{q(t)=x \\ q(t^\prime)=x^\prime}} \exp \left(i \int_{t^\prime}^{t} \mathcal{L}(q, \dot{q}, t) d t\right)\mathcal{D}[q(t)],
 \end{equation}
-where $\mathcal{L}$ is the classical Lagrangian function of the system
-\begin{equation}
-	L(\boldsymbol{r}, \dot{\boldsymbol{r}})=\frac{1}{2} \dot{\boldsymbol{r}}^{2}-\hat V(\boldsymbol{r}),
-\end{equation}
-and the integral is over all paths that satisfy the endpoint conditions.
+where $\mathcal{L}$ is the classical Lagrangian function of the system, and the path integral is over all paths that satisfy the endpoint conditions $q(t)=x, q(t^\prime)=x^\prime$. This formulation of QM is closely related to the approaches we will develop in the later chapters. 
 
 \subsection{Examples of lattice models}
 \label{subsec:latt-examples}
-
+\hl{TODO, mention curse of dimensionality}
 \begin{equation}
 	\hat{\sigma}^x_{i}=\left(\begin{array}{cc}0 & 1 \\ 1 & 0\end{array}\right)_{i} \quad \hat{\sigma}^y_{i}=\left(\begin{array}{cc}0 & -i \\ i & 0\end{array}\right)_{i} \quad \hat{\sigma}^z_{i}=\left(\begin{array}{cc}1 & 0 \\ 0 & -1\end{array}\right)_{i}
 \end{equation}
-
-
 \subsubsection{Transverse-field Field Ising model}
+\hl{TODO}
 \begin{equation}
 	\hat H_{\mathrm{Ising}}=-J \sum_{\langle i, j\rangle} \hat{\sigma}^z_{i} \hat{\sigma}^z_{j}-h \sum_{i} \sigma^x_{i}
 \end{equation}
-
 \subsubsection{Heisenberg model}
+\hl{TODO}
 \begin{equation}
 	\hat{H}_{\mathrm{Heisenberg}}=-\frac{1}{2} \sum_{j=1}^{N}
 	\left[J_{x} \hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+J_{y} \hat{\sigma}_{j}^{y} \sigma_{j+1}^{y}+J_{z} \hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z}+h \hat{\sigma}_{j}^{z}
 	\right]
 \end{equation}
-
 \subsubsection{Bose-Hubbard model}
+\hl{TODO}
 \begin{equation}
 	\hat{H}_{\mathrm{BH}}= -t \sum_{\langle i, j\rangle} \hat{b}_{i}^{\dagger} \hat{b}_{j}+\frac{U}{2} \sum_{i} \hat{n}_{i}\left(\hat{n}_{i}-1\right)-\mu \sum_{i} \hat{n}_{i}
 \end{equation}
@@ -88,9 +82,9 @@ The quantum many-body problem, which amounts to solving the $3N$-dimensional Sch
 %\begin{figure}[h]
 %	\centering
 %	\subfloat{\includegraphics[width=0.3\linewidth]{Chapter2/Figs/Vector/hookium_diagram.pdf}}
-%	\qquad\qquad\qquad
-%	\subfloat{\includegraphics[width=0.3\linewidth]{Chapter2/Figs/Vector/hookium_diagram.pdf}}
-%	\caption[Hookium and Spherium]{\textbf{Hookium and Spherium.}}
+%%	\qquad\qquad\qquad
+%%	\subfloat{\includegraphics[width=0.3\linewidth]{Chapter2/Figs/Vector/hookium_diagram.pdf}}
+%	\caption[Hookium, a rare many-body problem with analytical solution.]{\textbf{Hookium.}}
 %	\label{fig:qmbp-hookium_and_spherium}
 %\end{figure}
 
@@ -181,22 +175,22 @@ where $|\Phi_0\rangle$ is the corresponding state of $E_0$. This of course holds
 \end{equation}
 Flavours of PMC differ in the choice of $\hat{P}$, the most popular Diffusion Monte Carlo (DMC)~\cite{foulkes2001quantum, reynolds1990diffusion} works with the time-dependent Green's function $G(x^\prime, t^\prime; x, t)$ of eq.~\eqref{eq:imgsch}
 \begin{equation}
-	\Psi(x, t)=\int G\left(x, t; x^\prime, t^\prime\right) \Psi \left(x^{\prime}, t^\prime \right) \mathrm{d} x^{\prime},
+	\Psi(x, t)=\int \mathcal G\left(x, t; x^\prime, t^\prime\right) \Psi \left(x^{\prime}, t^\prime \right) \mathrm{d} x^{\prime},
 \end{equation}
 while Green's function MC (GFMC)~\cite{kalos1962monte, kalos1966stochastic} uses the time integrated version of the Green's function
 \begin{equation}
-	\Psi^{(n+1)}(x)=E \int G\left(x, x^{\prime}\right) \Psi^{(n)}\left(x^{\prime}\right) \mathrm{d}x^\prime. 
+	\Psi^{(n+1)}(x)=E \int \mathcal G\left(x, x^{\prime}\right) \Psi^{(n)}\left(x^{\prime}\right) \mathrm{d}x^\prime. 
 \end{equation}
 Both formulations are exact, but need some additional approximations to be made practical for use, as Green's functions are not known for a general system. In DMC the Green's function
 \begin{equation}
-	G(x^\prime, t^\prime; x, t) = \langle x \mid e^{-(t-t^\prime) [\hat T + \hat V - E_c ] } \mid x^\prime \rangle,
+	\mathcal G(x^\prime, t^\prime; x, t) = \langle x \mid e^{-(t-t^\prime) [\hat T + \hat V - E_c ] } \mid x^\prime \rangle,
 \end{equation}
 is approximated for short times $\tau = t-t^\prime$ using Trotter-Suzuki formula
 \begin{equation}
 	\label{eq:short_time_dmc}
-	G(x^\prime \rightarrow x; \tau) = \underbrace{(2 \pi \tau)^{-3N / 2} e^{-\frac{\left(x-x^{\prime}\right)^{2}}{2 \tau}}}_{\text{ordinary diffusion}} \cdot \underbrace{e^{-\tau\left[V(\mathbf{R})+V\left(\mathbf{R}^{\prime}\right)-2 E_{c}\right] / 2}}_{\text{reweighting $\equiv$ birth/death}} + \mathcal{O}(\tau^3),
+	\mathcal G(x^\prime \rightarrow x; \tau) = \underbrace{(2 \pi \tau)^{-3N / 2} e^{-\frac{\left(x-x^{\prime}\right)^{2}}{2 \tau}}}_{\text{ordinary diffusion}} \cdot \underbrace{e^{-\tau\left[V(\mathbf{R})+V\left(\mathbf{R}^{\prime}\right)-2 E_{c}\right] / 2}}_{\text{reweighting $\equiv$ birth/death}} + \mathcal{O}(\tau^3),
 \end{equation}
-where the kinetic term is recognised to be ordinary diffusion. In practice eq.~\eqref{eq:short_time_dmc} is implemented as a simulation of a diffusion process, but instead of weighting the paths of the walkers, the potential contribution to $G$ is interpreted as a probability of a walker to either branch or die, which is numerically more stable. This stochastic process converges to the ground state for sufficiently long times, see Fig.~\ref{fig:dmc}. Reptation quantum Monte Carlo~\cite{reynolds1990diffusion} (RMC) is an alternative formulation which only uses a single walker, and instead of branching and dying the MC moves mutate the path of that single walker. 
+where the kinetic term is recognised to be ordinary diffusion. In practice eq.~\eqref{eq:short_time_dmc} is implemented as a simulation of a diffusion process, but instead of weighting the paths of the walkers, the potential contribution to $\mathcal G$ is interpreted as a probability of a walker to either branch or die, which is numerically more stable. This stochastic process converges to the ground state for sufficiently long times, see Fig.~\ref{fig:dmc}. Reptation quantum Monte Carlo~\cite{reynolds1990diffusion} (RMC) is an alternative formulation which only uses a single walker, and instead of branching and dying the MC moves mutate the path of that single walker. 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{Chapter2/Figs/Raster/dmc.png}

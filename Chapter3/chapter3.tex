@@ -151,6 +151,7 @@ where $p(\mathbb{x}, t)$ is the PDF of the solution to the SDE and $\mathbf{D}=\
 \begin{lemma}[It\^ o's lemma]
 	Given an It\^ o process $X_t$ as given by ~\eqref{eq:ito-process} and a twice differentiable scalar function $f(X_t, t)$, then the It\^ o process for $f$ is
 	\begin{equation}
+		\label{eq:ito_lemma}
 		\mathrm{d} f = \frac{\partial f}{\partial t}\mathrm{d}t + \sum_i \frac{\partial f}{\partial x_i} \mathrm{d}x_i + \frac{1}{2}\sum_{ij} \frac{\partial^{2}}{\partial x_{i} \partial x_{j}} f \mathrm{d}x_i \mathrm{d}x_j,
 	\end{equation}
 \end{lemma}
@@ -460,12 +461,38 @@ Again this Hamiltonian has a zero-energy ground state
 	\psi_{0}(s)=\sqrt{P_{0}(s)} \propto \exp \left(-\frac{V_{s}}{2}\right),
 \end{equation}
 we see that the quantum probability in the ground state $|\psi_0(s)|^2$ coincides with the stationary distribution of the CTMC. The connection in the direction from the Markov process to Hamiltonian is clear, but we are interested in the inverse, starting from the Hamiltonian and finding for the corresponding stochastic process. We now turn our attention towards defining a suitable optimisation objective that, when optimised, will yield the correct Markov process.
+
 %********************************** % New Section  *************************************
-\section{Quantum Mechanics, Control and loss functions}
+\section{Control theoretic approach to QM and loss functions}
 
-\subsection{Continuous space}
+\subsection{Holland Cost in continuous space}
+The optimal control problem for the ground state in continuous state space
 
-\subsection{Discrete space}
+Holland~\cite{holland1977cost} arrives by means of exponential transform of the wave function $\psi = \exp(-U(x))$
+\begin{equation}
+	\label{eq:holland_cost}
+	C[v]=\lim _{T \rightarrow \infty} \frac{1}{T} \mathbb{E}\left[\int d t\left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\right]
+\end{equation}
+The control problem is solved for drift 
+\begin{equation}
+	v = \frac{\nabla \psi}{\psi} = -\nabla U
+\end{equation}
+
+\begin{equation}
+C[v]=\int d x\left[\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right] \pi(x \mid v) .
+\end{equation}
+\begin{equation}
+\frac{1}{2} \nabla^{2} \pi-\nabla \cdot(v \pi)=0
+\end{equation}
+\begin{equation}
+C[v]=\int d x\left[\frac{1}{2}(\nabla \psi)^{2}+V\left(X_{t}\right) \psi^{2}\right]
+\end{equation}
+
+\subsection{Loss for continuous state space}
+
+\subsection{Todorov Cost in discrete state space}
+
+\subsection{Loss for discrete state space}
 
 \begin{figure}[h]
 	\centering
@@ -473,8 +500,6 @@ we see that the quantum probability in the ground state $|\psi_0(s)|^2$ coincide
 	\caption[QM, stochastic processes and optimal control]{\textbf{QM, stochastic processes and optimal control}}
 	\label{fig:bp-c5}
 \end{figure}
-
-
 
 %********************************** % Ch3 Nomenclature *************************************
 \nomenclature[Z-sde]{SDE}{Stochastic Differential Equations}

@@ -1,4 +1,72 @@
 %!TEX root = ../thesis.tex
 % ******************************* Thesis Appendix A ****************************
 
-\chapter{Hyperparameters}
+\chapter{Additional Derivations}
+
+\section{Holland cost}
+\label{app:holland-cost}
+Following Holland's~\cite{holland1977cost} derivation of a stochastic control problem for the Schr\" odinger equation. We start by introducing the exponential transform
+\begin{equation}
+	\psi(x)=\exp [-U(x)],
+\end{equation}
+into the Schro\" odinger equation for $x \in \mathbb{R}^{n}$
+\begin{equation}
+	H \psi=\left[-\frac{1}{2} \nabla^{2}+V(x)\right] \psi=\lambda \psi,
+\end{equation}
+to obtain
+\begin{equation}
+	\label{eq:a-hc1}
+	\frac{1}{2} \nabla^{2} U-\frac{1}{2}(\nabla U)^{2}+V(x)=\lambda.
+\end{equation}
+We can reinterpret the second term in eq.~\eqref{eq:a-hc1} as a minimum over all vectors $v$ for every $x \in \mathbb{R}^{n}$
+\begin{equation}
+	\label{eq:a-hc2}
+	\frac{1}{2} \nabla^{2} U+\min_{v}\left[v \cdot \nabla U+\frac{1}{2}|v|^{2}+V(x)\right]=\lambda.
+\end{equation}
+We define $v$ to be a Lipshitz continuous function, i.e. the drift $v(x)$. Each drift now generates an It\^ o process
+\begin{equation}
+	\label{eq:a-hc3}
+	\mathrm{d}X_{t}=\mathrm{d}W_{t}+v\left(X_{t}\right) \mathrm{d}t; \quad \text{ and } \quad X_0 = x,
+\end{equation}
+and we can define the cost function $C[v]$ for each $v$ as
+\begin{equation}
+	\label{eq:a-hc4}
+	C[v]=\lim _{T \rightarrow \infty} \frac{1}{T} \mathbb{E}\left[\int d t\left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\right].
+\end{equation}
+Holland~\cite{holland1977cost} proves the following theorem.
+\begin{theorem}[Holland cost function]
+	The minimum $\lambda = \min_{v} C[v]$, where the minimum is taken over drift functions $v: \Omega \rightarrow \mathbb{R}^n$, $\Omega \subset \mathbb{R}^n$ with Neumann boundary conditions $\frac{\partial \psi}{\partial n}=0 \text{ on } \partial \Omega$, is obtained only for $v=\frac{\nabla \psi}{\psi}=-\nabla U$.
+\end{theorem}
+\begin{proof}
+	From eq.~\eqref{eq:a-hc2} follows the inequality
+	\begin{equation}
+		\label{eq:a-hc5}
+		\frac{1}{2} \nabla^{2} U+v \cdot \nabla U+\frac{1}{2}|v(x)|^{2}+V(x) \geq \lambda,
+	\end{equation}
+	we notice that the first two terms are an infinitesimal generator $[\mathcal{L}_G U](x)$ of the process in eq.~\eqref{eq:a-hc3}, which is defined as
+	\begin{equation}
+		\left[\mathcal{L}_{\mathrm{G}} \psi\right](x) \equiv \lim _{t \rightarrow 0} \frac{\mathbb{E}_{x}\left[\psi\left(X_{t}\right)\right]-\psi(x)}{t},
+	\end{equation} 
+	where $\mathbb{E}_x$ is over processes with initial condition $X_0 = x$.
+	With this in mind, we evaluate eq.~\eqref{eq:a-hc5} on the process $X_t$ and integrate over time to obtain
+	\begin{equation}
+		\frac{\mathbb{E}\left[U\left(X_{T}\right)-U(x)\right]}{T}+\mathbb{E}\left[\frac{1}{T}\int_{0}^{T} d t\left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\right] \geq \lambda.
+	\end{equation}
+	In the $T \rightarrow \infty$ limit, the first terms disappears, so long as $U$ is bounded, and we are left with $C[v]$, meaning that we have proven the bound 
+	\begin{equation}
+		C[v] \geq \lambda.
+	\end{equation}
+	We see that the minimum $\lambda$ is achieved for control function
+	\begin{equation}
+		v = \frac{\nabla \psi}{\psi} = -\nabla U,
+	\end{equation}
+	in eq.~\eqref{eq:a-hc2}, the uniqueness of this optimal $v$ is due to the fact that if $v \neq \frac{\nabla \psi}{\psi}$ there cannot be a full equality in eq.~\eqref{eq:a-hc5}.
+\end{proof}
+
+
+\section{Probabilistic interpretation of the Holland cost function}
+\label{app:holland-prob}
+
+\section{Todorov cost}
+
+\section{Probabilistic interpretation of the Todorov cost function}

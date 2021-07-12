@@ -31,7 +31,7 @@ We define $v$ to be a Lipshitz continuous function, i.e. the drift $v(x)$. Each 
 and we can define the cost function $C[v]$ for each $v$ as
 \begin{equation}
 	\label{eq:a-hc4}
-	C[v]=\lim _{T \rightarrow \infty} \frac{1}{T} \mathbb{E}\left[\int d t\left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\right].
+	C[v]=\lim _{T \rightarrow \infty} \frac{1}{T} \mathbb{E}\left[\int \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d}x \right].
 \end{equation}
 Holland~\cite{holland1977cost} proves the following theorem.
 \begin{theorem}[Holland cost function]
@@ -50,7 +50,7 @@ Holland~\cite{holland1977cost} proves the following theorem.
 	where $\mathbb{E}_x$ is over processes with initial condition $X_0 = x$.
 	With this in mind, we evaluate eq.~\eqref{eq:a-hc5} on the process $X_t$ and integrate over time to obtain
 	\begin{equation}
-		\frac{\mathbb{E}\left[U\left(X_{T}\right)-U(x)\right]}{T}+\mathbb{E}\left[\frac{1}{T}\int_{0}^{T} d t\left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\right] \geq \lambda.
+		\frac{\mathbb{E}\left[U\left(X_{T}\right)-U(x)\right]}{T}+\mathbb{E}\left[\frac{1}{T}\int_{0}^{T} \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm dt\right] \geq \lambda.
 	\end{equation}
 	In the $T \rightarrow \infty$ limit, the first terms disappears, so long as $U$ is bounded, and we are left with $C[v]$, meaning that we have proven the bound 
 	\begin{equation}
@@ -66,7 +66,48 @@ Holland~\cite{holland1977cost} proves the following theorem.
 
 \section{Probabilistic interpretation of the Holland cost function}
 \label{app:holland-prob}
+This section follows Barr et al.~\cite{barr2020quantum} which is closely related to previous work~\cite{dai1990markov}. To express the RN derivative we use the Girsanov theorem for both $\mathbb{P}_v$
+\begin{equation}
+	\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{d} \mathbb{P}_{0}}=\exp \left(\int v\left(X_{t}\right) \mathrm{d} X_{t}-\frac{1}{2} \int\left|v\left(X_{t}\right)\right|^{2} \mathrm{d} t\right),
+\end{equation}
+and $\mathbb{P}_{\mathrm{FK}}$
+\begin{equation}
+	\label{eq:a-hp2}
+	\frac{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}{\mathrm{d} \mathbb{P}_{0}}=\mathcal{N} \exp \left(-\int V\left(X_{t}\right) \mathrm{d} t\right).
+\end{equation}
+We combine both, and we have up to exponential accuracy $\mathcal{N} \sim e^{\lambda T}$
+\begin{equation}
+	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}\right)=\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{d} \mathbb{P}_{0}} \frac{\mathrm{d} \mathbb{P}_{0}}{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}\right) = \int v\left(X_{t}\right) \mathrm{d} X_{t}+\int \left(-\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d} t - \lambda T,
+\end{equation}
+finally we substitute $\mathrm{d} X_t = \mathrm{d}W_t + v(X_t)\mathrm{d}t$ to get
+\begin{equation}
+	\begin{aligned}
+	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}\right) 
+	& =  \int v\left(X_{t}\right) \mathrm{d} W_{t} + \int |v(X_t)|^2 \mathrm{d}t + \int \left(-\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d} t\\
+	& =  \int v\left(X_{t}\right) d W_{t}+\int \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right) \mathrm{d}t.
+	\end{aligned}
+\end{equation}
+The $D_{KL}$ and its long-time limit follow from the logarithm Radon-Nikodym derivative
+\begin{equation}
+	D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right) 
+	\underset{T \rightarrow \infty}{\longrightarrow} \underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\int  \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d}t \right]-\lambda T.
+\end{equation}
+A closer look at the normalisation constant $\mathcal{N}$ in eq.~\eqref{eq:a-hp2} gives rise to the boundary term. The normalisation is given by
+\begin{equation}
+	\mathcal N = \frac{\tilde{\psi}\left(\boldsymbol{r}_{T}, T\right)}{\bar{\psi}\left(\boldsymbol{r}_{0}, 0\right)},
+\end{equation}
+where $\tilde{\psi}\left(r_{t}, t\right)$ is the solution to the backwards imaginary time Schr\" odinger equation~\cite{barr2020quantum}, and is related to the distribution of the stochastic process in eq.~\eqref{eq:a-hc3} as
+\begin{equation}
+	\pi(r, t) = \tilde{\psi}\left(r, t\right) \psi\left(r, t\right).
+\end{equation}
+If we now take both distributions at initial time $\pi(r, 0)$ and terminal time $\pi(r, T)$ to be the ground state the normalisation constant becomes
+\begin{equation}
+	\frac{\tilde{\psi}\left(\boldsymbol{r}_{T}, T\right)}{\bar{\psi}\left(\boldsymbol{r}_{0}, 0\right)} = e^{E_{0} T} \frac{\varphi_{0}\left(\boldsymbol{r}_{T}\right)}{\varphi_{0}\left(\boldsymbol{r}_{0}\right)},
+\end{equation}
+and accounts for the boundary term and $E_0 T$ term in the Kullback-Leibler divergence.
 
+
+\newpage 
 \section{Todorov cost}
 
 \section{Probabilistic interpretation of the Todorov cost function}

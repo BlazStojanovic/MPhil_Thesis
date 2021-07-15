@@ -64,7 +64,7 @@ Holland~\cite{holland1977cost} proves the following theorem.
 \end{proof}
 
 
-\section{Probabilistic interpretation of the Holland cost function}
+\section{Probabilistic interpretation of Holland's cost function}
 \label{app:holland-prob}
 This section follows Barr et al.~\cite{barr2020quantum} which is closely related to previous work~\cite{dai1990markov}. To express the RN derivative we use the Girsanov theorem for both $\mathbb{P}_v$
 \begin{equation}
@@ -106,8 +106,141 @@ If we now take both distributions at initial time $\pi(r, 0)$ and terminal time 
 \end{equation}
 and accounts for the boundary term and $E_0 T$ term in the Kullback-Leibler divergence.
 
-
-\newpage 
 \section{Todorov cost}
+\label{app:todorov-cost}
+Optimal decision processes are formalised using Markov Decision processes, here we follow work of Todorov~\cite{todorov2007linearly, todorov2009efficient} to fit the imaginary Schr\" odinger equation in this mould, we illustrate the concepts on the Ising model. An MDP is a $4$-tuple $\left(S, A, P_{a}, R_{a}\right)$:
+\begin{itemize}
+	\item $S$: Is the \emph{state space}, i.e. all possible configurations of the system $s_k$
+	\item $U$: Is the \emph{control space}, i.e. all possible single-spin flips in each configuration
+	\item $P_u$: Is the probability  $p(s^{(t+1)} = s^\prime | s^{(t)} = s, u^{(t)} = u)$ of control $u$ in state $s$ leading to state $s^\prime$ in the next time step
+	\item $g$: Is the cost received when moving from state $s$ to $s^\prime$ due to $u$
+\end{itemize}
+The optimal decision/control problem is then given by the Bellman equation for the optimal cost-to-go function $v(s)$
+\begin{equation}
+	\nu(s)=\min _{u}\left\{
+	\underbrace{\ell(s, u)}_{\text{immediate cost}}
+	+
+	\underbrace{\mathbb{E}_{s^{\prime} \sim p(\cdot \mid s, u)}\left[\nu\left(x^{\prime}\right)\right]}_{\text{expected cost of next state}}
+	\right\}.
+\end{equation}
+Todorov introduces a formalism where the agent does not perform specific symbolic actions (e.g. flips a certain spin) but is instead allowed to specify transition probabilities $u(s^\prime|s)$. Formally this means 
+\begin{equation}
+	p\left(s^{\prime} \mid s, u\right)=u\left(s^{\prime} \mid s\right),
+\end{equation}
+the agent reshapes the dynamics of the system as it wishes, but for this it pays a price depending on how much it changes the dynamics. In absence of controls $u$ the system follows \emph{passive dynamics} $p(s^\prime | s)$ which correspond to the first term in eq.~\eqref{eq:hamilton_split} of the stoquastic Hamiltonian. The cost is thus
+\begin{equation}
+	\ell(s, u)=\underbrace{q(s)}_{\text{state cost}}+\underbrace{D_\mathrm{KL}((\cdot \mid s) \| p(\cdot \mid s))}_{\text{control cost}}.
+\end{equation}
+Optimal control problem in this form can be linearised in terms of the \emph{desirability} function $z(s, t)=\exp (-\nu(s, t))$, yielding optimal dynamics $\nu^\prime$
+\begin{equation}
+	\nu^{\prime}(s_j \mid s_k)=\frac{p(s_j \mid s_k) z(s_j)}{\sum_{s_l} p(s_l \mid s_k) z(s_l)},
+\end{equation}
+with
+\begin{equation}
+	\label{eq:lintod}
+	z(s_k, t)=e^{-q(s_k)} \sum_{s_j} p(s_j \mid s_k) z(s_j, t+1)
+\end{equation}
+and it is this linear equation, what we can connect to the imaginary time Schr\" odinger equation. We start by transforming the MDP into continuous time (transition probabilities to rates $p, u \rightarrow \Gamma, \Gamma^{(v)}$) as
+\begin{equation}
+	p(s_j \mid s_k)=\left\{\begin{array}{ll}
+	1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l} & s_j=s_k \\
+	\Delta t \Gamma_{s_k \rightarrow s_j} & s_j \neq s_k
+	\end{array}\right.
+	, \quad \text{and} \quad 
+	u(s_j \mid s_k)=\left\{\begin{array}{ll}
+	1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l}^{(v)} & s_j=s_k \\
+	\Delta t \Gamma_{s_k \rightarrow s_j}^{(v)} & s_j \neq s_k
+	\end{array}\right.
+\end{equation}
+and setting $q(s_j) = \Delta t V(s_j)$ eq.~\eqref{eq:lintod} becomes
+\begin{equation}
+	\begin{aligned}
+	z(s_k, t) &= e^{-\Delta t V(s_k)} \left[
+				\underbrace{z(s_k, t + \Delta t) - \Delta t \sum_{s_l \neq s_k}\Gamma_{s_{k} \rightarrow s_{l}} z(s_k, t + \Delta t)}_{\text{from } s_j = s_k}
+				+
+				 \underbrace{\Delta t \sum_{s_j \neq s_k} \Gamma_{s_k \rightarrow s_j} z(s_j, t + \Delta t)}_{\text{from } s_j \neq s_k}
+				\right] \\
+			  &= \left[1 - \Delta t V(s_k) + \ldots\right]\cdot
+			     \left[z(s_k, t + \Delta t) 
+			     - \sum_{s_j \neq s_k} \Gamma_{s_k \rightarrow s_j} 
+			     	\left[
+			     	z(s_j, t + \Delta t) - z(s_k, t + \Delta t)\right]
+		     	\right]
+	\end{aligned}
+\end{equation}
+keeping only the first order in $\Delta t$ and dropping the unnecessary $\neq$ in the sum
+\begin{equation}
+	\frac{z(s_k, t) - z(s_k, t + \Delta t)}{\Delta t} = V(s_k) z(s_k, t + \Delta t) - \sum_{s_j} \Gamma_{s_k \rightarrow s_j} 
+	\left[
+	z(s_j, t + \Delta t) - z(s_k, t + \Delta t)\right]
+\end{equation}
+taking limit $\Delta t \rightarrow 0$ finally gives
+\begin{equation}
+	-\frac{\mathrm{d} z(s_k, t)}{\mathrm{d} t} =  V(s_k) z(s_k, t) - \sum_{s_j} \Gamma_{s_k \rightarrow s_j} 
+	\left[
+	z(s_j, t) - z(s_k, t)\right],
+\end{equation}
+it is the imaginary time Schr\" odinger equation~\eqref{eq:sch_split}.
 
-\section{Probabilistic interpretation of the Todorov cost function}
+\noindent
+The $D_{\mathrm{KL}}$ in the loss $\ell (s, v)$ is expressed in the same manner
+\begin{equation}
+	\begin{aligned}
+		D_{\mathrm{KL}}(v(\cdot \mid s_k) \| p(\cdot \mid s_k))
+		&=\left[1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l}^{(v)}\right] \log \left[\frac{1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l}^{(v)}}{1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l}}\right]+\Delta t \sum_{s_j \neq s_k} \Gamma_{s_k \rightarrow s_j}^{(v)} \log \left[\frac{\Gamma_{s_k \rightarrow s_j}^{(v)}}{\Gamma_{s_k \rightarrow s_j}}\right]\\
+		&= \Delta t \sum_{s_j \neq s_k} \Gamma_{s_k \rightarrow s_j}^{(v)}\underbrace{\left(\log \left[\frac{\Gamma_{s_k \rightarrow s_j}^{(v)}}{\Gamma_{s_k \rightarrow s_j}}\right]+\frac{\Gamma_{s_k \rightarrow s_j}}{\Gamma_{s_k \rightarrow s_j}^{(v)}}-1\right)}_{\mathrm{Itakura-Saito~divergence~} D_{\mathrm{IS}}(\Gamma_{s_k \rightarrow s_j}^{(v)}, \Gamma_{s_k \rightarrow s_j})},
+	\end{aligned}
+\end{equation}
+If we consider an ensemble of systems in state $s_k$ there is $\Delta t \Gamma_{s_k \rightarrow s_j}^{(v)}$ probability of transitioning $s_k \rightarrow s_j$ in the next time increment, meaning that the ensemble contribution to the $D_{\mathrm{KL}}$ each time increment is $\sum_{s_j} \Delta t \Gamma_{s_k \rightarrow s_j}^{(v)} D_{\mathrm{IS}}\left(\Gamma_{s_k \rightarrow s_j}^{(v)}, \Gamma_{s_k \rightarrow s_j}\right)$, thus we can express the Kullback-Liebler divergence as
+\begin{equation}
+	D_{\mathrm{KL}}=\underset{\Sigma_{[0, t]}=k_{t} \sim \Gamma^{(v)}}{\mathbb{E}}\left[\sum_{n} D_{\mathrm{IS}}\left(\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}, \Gamma_{k^{(n)} \rightarrow k^{(n+1)}}\right)\right].
+\end{equation}
+\section{Probabilistic interpretation of Todorov's cost function}
+\label{app:todorov-prob}
+To find the Radon-Nikodym derivative between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{FK}}$ we proceed in the same way as in the continuous case, by first finding the respective RN derivatives with the passive process. From the discrete space Feynman-Kac formula~\eqref{eq:fkac_disc} follows
+\begin{equation}
+	\log \left(\frac{\mathrm{d} \mathbb{P}_{0}}{\mathrm{d} \mathbb{P}_{F K}}(k(t))\right)=\int V(k(t)) d t-E_{0} T-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right),
+\end{equation}
+and by using the Girsanov theorem equivalent for discrete space\footnote{see proposition 2.6 in Appendix 1 of~\cite{kipnis1998scaling}} we obtain
+\begin{equation}
+	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{d} \mathbb{P}_{0}}(k(t))\right)
+	=
+	\int \sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right) d t+\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right).
+\end{equation}
+We combine both
+\begin{equation}
+	\begin{aligned}
+	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{~d} \mathbb{P}_{\mathrm{FK}}}\right)
+	=
+	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{~d} \mathbb{P}_{0}} \frac{\mathrm{d} \mathbb{P}_{0}}{\mathrm{~d} \mathbb{P}_{\mathrm{FK}}}\right)
+	= \tilde \ell
+	+\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)-E_{0} T-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right),
+	\end{aligned}
+\end{equation}
+with
+\begin{equation}
+	\tilde \ell = \int \left[V(k(t))+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right)\right] \mathrm{d}t.
+\end{equation}
+To see that zero $D_{K L}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{F K}}\right)$ coincides with rates that minimize Todorov's cost, we need
+\begin{equation}
+	\underset{\mathbb{P}_v}{\mathbb{E}}
+	\left[
+	\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)
+	\right]
+	= 
+	\underset{\mathbb{P}_v}{\mathbb{E}} 
+	\left[
+	\int 
+	\sum_{l \neq k(t)}
+	\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) \mathrm{d} t
+	\right],
+\end{equation}
+which holds because the expectation of a contribution of a single step of the trajectory $k^{(n)} \rightarrow k^{(n+1)}$ is equivalent to an ensemble average starting from the same state weighted by the probability of jump $\Gamma_{k(t) \rightarrow l}^{(v)} \Delta t$, this holds separately for each step in the trajectory and by writing $\sum_{t_i} \cdots~\Delta t_i \rightarrow \int \cdots~\mathrm{d}t$ we obtain above equality. The KL divergence then becomes
+\begin{equation}
+	\begin{aligned}
+		D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right) &= 
+		\underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\int V(k(t))+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right) \mathrm{d} t+\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)\right]-E_{0} T \\
+		&= \underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\int V(k(t))+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right)+\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) \mathrm{d} t\right]-E_{0} T,
+	\end{aligned}
+\end{equation}
+which agrees with Todorov.

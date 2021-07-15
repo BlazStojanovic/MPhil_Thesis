@@ -84,6 +84,7 @@ A process that is \emph{non-anticipating}, i.e. depends only on the past and pre
 		\item $W_t - W_s \sim \mathcal{N} (0, t-s)$ for $0 \leq s \leq t$
 	\end{enumerate}
 \end{definition}
+\noindent
 A realisation of Brownian motion can be found in Fig.~\ref{fig:sp-brown}.
 \begin{figure}[h]
 	\centering
@@ -186,10 +187,12 @@ Finally, we state the \textbf{Girsanov theorem} that is often used for transform
 		-\frac{1}{2} \int_{0}^{t}\left|v(X_s, s)\right|^{2} \mathrm{d} s+\int_{0}^{t} v(X_s, s)^{\top} \mathrm{d} W_s\right)
 	\end{equation}
 \end{theorem}
+
+\noindent
 This \emph{change in dynamics} as we will call it later is true in the sense, that expectations for an arbitrary functional $h(\cdot)$ of the path from $0$ to $t$ are
 \begin{equation}
 	\label{eq:girsanov_consequence}
-	\underset{\mathbb{P}_0}{\mathbb{E}}\left[h(X_t)\right] = \underset{\mathbb{P}_0}{\mathbb{E}}\left[\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{P}_0} h(Y_t)\right]. 
+	\underset{\mathbb{P}}{\mathbb{E}}\left[h(X_t)\right] = \underset{\mathbb{P}_0}{\mathbb{E}}\left[\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{P}_0} h(Y_t)\right]. 
 \end{equation}
 For a more general case and proof see~\cite{sarkka2019applied}.
 
@@ -412,6 +415,7 @@ and a global phase exists for which the ground state has non-negative amplitudes
 \end{equation}
 We can decompose a stoquastic Hamiltonian into a rate matrix $\Gamma$, as defined in section~\ref{subsubsect:CTMC}, and a diagonal potential matrix $V$
 \begin{equation}
+	\label{eq:hamilton_split}
 	H=-\Gamma+V.
 \end{equation}
 The rates $\Gamma$ are analogous to the Brownian motion in the continuum case, or can be interpreted as the kinetic contribution. They represent a CTMC which we will understand as \emph{passive dynamics}. In terms of the Hamiltonian matrix rates become
@@ -427,6 +431,7 @@ V(\boldsymbol{s})=H_{s s}+\sum_{s^{\prime} \neq s} H_{s s^{\prime}}.
 \end{equation}
 From now on we use $\rightarrow$ notation to emphasise the transition between \emph{adjacent} states $s\neq s^\prime$ which satisfy $H_{s s^{\prime}} \neq 0$. This decomposition allows us to define the Feynman-Kac formula in the discrete state space~\cite{rogers2000diffusions} as
 \begin{equation}
+	\label{eq:fkac_disc}
 	\psi\left(s_t, t\right)=
 	\underset{\Sigma_{[0, t] \sim \Gamma}}{\mathbb{E}}
 	\left[
@@ -466,8 +471,6 @@ we see that the quantum probability in the ground state $|\psi_0(s)|^2$ coincide
 
 %********************************** % New Section  *************************************
 \section{Control theoretic approach to QM and loss functions}
-\hl{TODO introduction to control theoretic approaches in QM}
-
 \subsection{Holland Cost in continuous space}
 In section~\ref{subsec:FK_in_continuous_space} we explored a connection between the ground state of some quantum system and It\^ o processes. We have seen that the ground state probability $|\psi_0|^2$ is also the stationary distribution $\pi$ of some stochastic process
 \begin{equation}
@@ -526,13 +529,76 @@ and the boundary term depends the ground state $\varphi_0$ at initial $r_0$ and 
 	\label{eq:ltilde-cont}
 	D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right)=\underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\ell^\prime-E_{0} T+\log \left(\frac{\varphi_{0}\left(r_{0}\right)}{\varphi_{0}\left(r_{T}\right)}\right)\right],
 \end{equation}
-and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be used to find the optimal rates. Sampling the trajectories becomes a matter of integrating a SDE and can be done with some standard approach, e.g. Euler-Mayurama method. The rates $v_{\theta}$ are parameterised and gradients of $D_{\mathrm{KL}}$ w.r.t $\theta$ can be obtained using stochastic backpropagation where the reparameterisation trick is used for each increment in the discretised SDE. Missing steps of the derivation can be found in Appendix~\ref{app:holland-prob}, more details in~\cite{barr2020quantum}. 
+and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be used to find the optimal rates. Sampling the trajectories becomes a matter of integrating a SDE and can be done with some standard approach, e.g. Euler-Mayurama method. The rates $v_{\theta}$ are parameterised and gradients of $D_{\mathrm{KL}}$ w.r.t $\theta$ can be obtained using stochastic backpropagation where the reparameterisation trick is used for each increment in the discretised SDE and the wavefunction $\varphi_0$ is approximated from the rates $v_\theta$. Missing steps of the derivation can be found in Appendix~\ref{app:holland-prob}, more details in~\cite{barr2020quantum}. 
 
 \subsection{Todorov Cost in discrete state space}
-
+We now turn our attention towards finding a variational approach in discrete state space and continuous time. We rely on foundational work done on linearly solvable Markov Decision Processes\footnote{For a general discussion of MDP's see~\cite{sutton2018reinforcement}} (MDP) by Todorov~\cite{todorov2007linearly, todorov2009efficient} and its applications to lattice problems~\cite{gispen2020ground}. The main idea is to reinterpret the dynamics of the imaginary time Schr\" odinger equation in the Todorov MDP framework by treating control as a modification of the passive dynamics of the system. The imaginary time Schr\" odinger equation can be written as
+\begin{equation}
+	\label{eq:sch_split}
+	\frac{\partial \psi(s_j, t)}{\partial t}=-\underbrace{\sum_{s_k \neq s_j} \Gamma_{s_j \rightarrow s_k}\left[\psi(s_k, t)-\psi(s_j, t)\right]}_{\text{passive dynamics}}
+	-V_{s_j} \psi(s_j, t)
+\end{equation}
+to emphasise the decomposition of the Hamiltonian eq.~\eqref{eq:hamilton_split} into passive dynamics and the potential. Akin to the transformation in discrete space, we use $\psi(s_j, t)=\exp[-u(s_j, t)]$, to arrive at an alternative form
+\begin{equation}
+	\label{eq:bellman_sch}
+	-\frac{\partial u(s_j, t)}{\partial t}=\min _{\Gamma^{(v)}}\left[\ell(s_j, v)+\sum_{s_k} \Gamma_{s_j \rightarrow s_k}^{(v)}(u(s_k, t)-u(s_j, t))\right],
+\end{equation}
+where $\Gamma^{(v)}$ are the rates of the modified CTMC, and $\ell(s_j, v)$ is the cost per time associated with state $s_j$ and parameters $v$.
+This is a form of Bellman equation, a very general concept in control theory and reinforcement learning, related to the Hamilton-Jacobi equation in physics, it is used to find the optimal actions i.e. how we should choose $v$ at each moment w.r.t the cost associated with each state and parameters $\ell(s_j, v)$. The function $u(s_j, t)$ is the cost-to-go function, it is the cumulative cost obtained starting from state $s_j$ at time $t$ and acting optimally afterwards. The optimal parameters $v(t)$ are computed greedily with each step and guarantee minimum $u(s_j, t)$, most easily illustrated by looking $\Delta t$ into the past, where the cost-to-go is given by the cost of remaining in the same state $\ell(s_j, t) \Delta t$ and the changes in costs-to-go when transitioning to other states weighted by the probability of making the transition $\Gamma^{(v)}_{s_j \rightarrow s_k}$
+\begin{equation}
+	u_{j}(t-\Delta t)=u_{j}(t)+\Delta t \min _{\Gamma^{(v)}}\left[\ell(j, v)+\sum_{k} \Gamma_{j \rightarrow k}^{(v)}(u(k, t)-u(j, t))\right].
+\end{equation}
+The cost $\ell(s_j, v)$ introduced by Todorov is of the form
+\begin{equation}
+	\ell(j, v)=q(j)+D_{\mathrm{KL}}(v(\cdot \mid j) \| p(\cdot \mid j)),
+\end{equation}
+where the first term encodes how undesirable different states are, and the second measures how costly the deviation from passive dynamics is, the agent (controlled rates) pay a price for reshaping the environment (passive rates), for more rigour see Appendix~\ref{app:todorov-cost}. In the case of the imaginary time Schr\" odinger equation, these terms are
+\begin{equation}
+	q(s_j)=V(s_j) \Delta t,
+\end{equation}
+and
+\begin{equation}
+	D_{\mathrm{KL}}=\underset{\Sigma_{[0, t]} = k_t \sim \Gamma^{(v)}}{\mathbb{E}}\left[\sum_{n} D_{\mathrm{IS}}\left(\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}, \Gamma_{k^{(n)} \rightarrow k^{(n+1)}}\right)\right],
+\end{equation}
+where $\Sigma_{[0, t]}$ is the trajectory of states sampled from controlled dynamics $\Gamma^{(v)}$  which visits states $k^{(n)}$ for $t_{n-1} < t < t_{n}$ and $D_{\mathrm{IS}}$ is the Itakura-Saito divergence, see Appendix~\ref{app:todorov-cost}.
 
 \subsection{Loss for discrete state space}
 \label{subsec:discrete_loss}
+As we have done in the continuous space, we will compare the cost to the Kullback-Liebler divergence of the two path measures $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{FK}}$ to see that the optimal rates $\Gamma^{(v)}$ coincide with sampling from the Feynman-Kac measure, full derivations in~\ref{app:todorov-prob}. The logarithm Radon-Nikodym between the controlled rates and Feynman-Kac measure is
+\begin{equation}
+	\label{eq:logrn-discrete}
+	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{d} \mathbb{P}_{F K}}(k(t))\right)
+	= \tilde \ell
+	+\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)-E_{0} T-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right),
+\end{equation}
+where we have defined $\tilde \ell$ as
+\begin{equation}
+\tilde \ell = \int \left[V(k(t))+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right)\right] \mathrm{d}t.
+\end{equation}
+The KL divergence can be written as
+\begin{equation}
+	D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right) = \underset{P_{v}}{\mathbb{E}}\left[\int V(k(t))+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right)+\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) d t\right]-E_{0} T,
+\end{equation}
+which is the Todorov's cost and vanishes for optimal rates, meaning that finding the these rates is equivalent to finding the Feynman-Kac measured process. One might be tempted to use $D_{\mathrm{KL}}$ as an optimisation objective, but this is not possible because its gradient is biased due to the boundary term
+$\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)$. We now propose two alternatives.
+
+\subsubsection{Loss no. 1: Variance of $\tilde \ell$}
+The variance of quantity $\tilde{\ell}$
+\begin{equation}
+	\tilde{\ell}=
+	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{~d} \mathbb{P}_{F K}}(k(t))\right)
+	-\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)
+	+E_{0} T
+	+\log \left(\frac{\varphi\left(k^{(N)}\right)}{\varphi\left(k^{(0)}\right)}\right)
+\end{equation}
+ can be used as a loss function. \hl{Kolmogorov's criterion} tells us that
+ \begin{equation}
+ 	\log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)=\log \left(\frac{\varphi(k^{(n+1)})}{\varphi(k^{(n)})}\right),
+ \end{equation}
+ combined with the fact that the Radon-Nikodym derivative is $0$ for correct transition rates $\Gamma^{(v)} = \Gamma^\prime$ means that $\operatorname{Var}[\tilde{\ell}]$ vanishes in that case, moreover it is bounded below by zero making it a suitable objective function. For optimal rates $\tilde \ell$ is equal to $E_0 T$ and is an estimator of the ground state energy. 
+ 
+\subsubsection{Loss no. 2: Variance of log Radon-Nikodym derivative with fixed endpoints}
+While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right)$ are biased, we can still make use of the logarithm RN derivative~\eqref{eq:logrn-discrete}. It vanishes for optimal rates and while we can treat $E_0 T$ as constant, we have no easy way to approximate the wave function $\varphi$ in the boundary term which in general does not have zero variance. We can exploit the fact that log RN must be constant on all trajectories and consider a batch of trajectories with fixed endpoints, in this case the variance of the boundary term vanishes. How to obtain such a batch poses a technical challenge which is to be solved on a system by system basis, usually by generating a single trajectory and perturbing it in such a way that one obtains many paths with fixed endpoints.
 
 
 %********************************** % Ch3 Nomenclature *************************************
@@ -543,7 +609,8 @@ and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be us
 \nomenclature[z-cdf]{cdf}{Cumulative density function}
 \nomenclature[z-stochprocs]{s.p.}{Stochastic process}
 \nomenclature[z-dtmc]{DTMC}{Discrete time Markov Chain}
-\nomenclature[z-ctmc]{DTMC}{Discrete time Markov Chain}
+\nomenclature[z-ctmc]{XTMC}{Continuous time Markov Chain}
+\nomenclature[z-mdp]{mdp}{Markov Decision Process}
 
 \nomenclature[x-ratematrix]{$\Gamma$}{Transition rate matrix}
 \nomenclature[x-kldiv]{$D_{\mathrm{KL}}$}{Kullback-Liebler divergence}

@@ -394,18 +394,19 @@ In other words, the quantum ground state probability distribution $|\psi_{0}|^2$
 
 \subsection{Stoquastic Hamiltonians and Feynman-Kac in discrete state space}
 \label{subsec:fk-latt}
-Before we illustrate the connection between the imaginary time Schr\" odinger equation and CTMC for lattice models we must introduce \textbf{Stoquastic Hamiltonians}~\cite{bravyi2006complexity}, a class of Hamiltonians which does not suffer from the sign problem.
+Before we illustrate the connection between the imaginary time Schr\" odinger equation and CTMCs we must introduce \textbf{Stoquastic Hamiltonians}~\cite{bravyi2006complexity}, a class of Hamiltonians which do not suffer from the sign problem.
 \begin{definition}[Stoquastic Hamiltonian]
 	A $k$-local Hamiltonian $\hat H=\sum_{i} \hat H_{i}$ is \textbf{stoquastic} if there exists a local basis $\mathcal{B}$ in which off-diagonal matrix elements of terms $\hat{H}_i$ are zero or negative
 	\begin{equation}
 		\langle x|\hat H| y\rangle \leq 0, \quad \forall x, y \in \mathcal{B} \text {\quad with } x \neq y.
 	\end{equation}
 \end{definition}
+\noindent
 If we consider the matrix $e^{-\tau \hat H}$ for a non-positive $\hat H$, we see that every term in the expansion
 \begin{equation}
 	e^{-\tau \hat{H}} = 1 -\tau \hat{H} + \frac{1}{2}(\tau \hat{H})^2 + \ldots
 \end{equation}
-is a non-negative matrix, thus so is $e^{-\tau \hat H}$. From eq.~\eqref{eq:spectral_decompH} it follows that in the infinite time limit
+is a non-negative matrix, thus so is $e^{-\tau \hat H}$. In the infinite time limit, the ground state is projected out
 \begin{equation}
 	\lim _{\tau \rightarrow \infty} e^{-\tau \hat H}=|\psi_0\rangle\langle\psi_0|, 
 \end{equation}
@@ -418,7 +419,7 @@ We can decompose a stoquastic Hamiltonian into a rate matrix $\Gamma$, as define
 	\label{eq:hamilton_split}
 	H=-\Gamma+V.
 \end{equation}
-The rates $\Gamma$ are analogous to the Brownian motion in the continuum case, or can be interpreted as the kinetic contribution. They represent a CTMC which we will understand as \emph{passive dynamics}. In terms of the Hamiltonian matrix rates become
+The rates $\Gamma$ are analogous to the Brownian motion in the continuum case, or can be interpreted as the kinetic contribution. They represent a CTMC which we will understand as \emph{passive dynamics}. In terms of the Hamiltonian matrix,
 \begin{equation}
 \Gamma_{s \rightarrow s^{\prime}}=\left\{\begin{array}{ll}
 -H_{s s^{\prime}} & \text { if } s \neq s \\
@@ -440,7 +441,7 @@ From now on we use $\rightarrow$ notation to emphasise the transition between \e
 \end{equation}
 The expectation is now taken over the process driven by $\Gamma$ and weighted by the potential $V$. We denote the trajectory as $\Sigma_{[0, t]}$, where $\Sigma_{t^\prime}$ is the state of the system at time $t^\prime \in [0, t]$. Analogous as with the Feynman-Kac formula in continuous state space, this defines a new CTMC with measure $\mathbb{P}_{\text{FK}}$, which is related to  passive dynamics with measure $\mathbb{P}_0$ by the RN derivative, eq.~\eqref{eq:RNderiv}.
 
-But how exactly is this CTMC connected to the imaginary time Schr\" odinger equation? The connection exists, as in the continuous space, via a similarity transform. The difference being that instead of Fokker-Planck we use the master equation to describe the time evolution of the pdf $P$
+How exactly is this CTMC connected to the imaginary time Schr\" odinger equation? The connection exists, as in the continuous space, via a similarity transform. The difference being that instead of Fokker-Planck we use the master equation to describe the time evolution of the pdf $P$
 \begin{equation}
 \frac{\partial P(s)}{\partial t}=\sum_{s^\prime \neq s}\left[\Gamma_{s^\prime \rightarrow s} P(s^\prime)-\Gamma_{s \rightarrow s^\prime} P(s)\right].
 \end{equation}
@@ -502,34 +503,26 @@ To see that the path measures $\mathbb{P}_v$ of the process in eq.~\eqref{eq:not
 \begin{equation}
 	D_{\mathrm{KL}}(p \| q)=\underset{p}{\mathbb{E}}\left[\log \left(\frac{p}{q}\right)\right],
 \end{equation}
-the quantity is a divergence because of the asymmetry $D_{\mathrm{KL}}(p \| q) \neq D_{\mathrm{KL}}(q \| p)$. It is a strictly positive quantity $D_{\mathrm{KL}}(p \| q) \geq 0$ except for $p = q$ when $D_{\mathrm{KL}}(p \| q) = 0$. In order to obtain the KL divergence between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{KL}}$ we first express the RN derivative of each path measure w.r.t. Brownian motion using Girsanov theorem~\eqref{eq:Girsanov_theorem}. Both RN derivatives can then be combined to express the KL divergence as 
+the quantity is a divergence because of the asymmetry $D_{\mathrm{KL}}(p \| q) \neq D_{\mathrm{KL}}(q \| p)$. It is a strictly positive quantity $D_{\mathrm{KL}}(p \| q) \geq 0$ except for $p = q$ when $D_{\mathrm{KL}}(p \| q) = 0$. In order to obtain the KL divergence between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{KL}}$ we first express the RN derivative of each path measure w.r.t. Brownian motion using Girsanov theorem~\eqref{eq:Girsanov_theorem}. Both RN derivatives can then be combined to express the logarithm Radon-Nikodym derivative or the \emph{log-likelihood} ratio as
 \begin{equation}
-\label{eq:dkl-cont_no_lim}
-D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right) 
-=
-\underset{\mathbb{P}_{v}}{\mathbb{E}}\left[
-\int v\left(X_{t}\right) d W_{t} + \int \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d}t \right]-\lambda T.
-\end{equation}
-Because the expectation of the first term is zero, in the long time limit $T \rightarrow \infty$ the Kullback-Leibler divergence becomes the Holland cost and vanishes for optimal drift. This means that finding the correct path measure is equivalent to finding the optimal drift. If we instead consider trajectories up to a final time $T$ an additional boundary term including the wave function appears and the logarithm Radon-Nikodym derivative or the \emph{log-likelihood} ratio becomes
-\begin{equation}
-	\log \left(\frac{d \mathbb{P}_{v}}{d \mathbb{P}_{\mathrm{FK}}}\right)=
-	\tilde{\ell}-
-	E_{0} T+
-	\log 
-	\left(
-	\frac{\varphi_{0}\left(r_{0}\right)}{\varphi_{0}\left(r_{T}\right)}
-	\right),
+\log \left(\frac{d \mathbb{P}_{v}}{d \mathbb{P}_{\mathrm{FK}}}\right)=
+\tilde{\ell}-
+E_{0} T+
+\log 
+\left(
+\frac{\varphi_{0}\left(r_{0}\right)}{\varphi_{0}\left(r_{T}\right)}
+\right),
 \end{equation}
 where we have defined $\tilde{\ell}$ as
 \begin{equation}
-	\tilde{\ell} \equiv \int v\left(r_{t}\right) \cdot \mathrm{d} W_{t}+\int \left(\frac{1}{2}\left|v\left(r_{t}\right)\right|^{2}+V\left(r_{t}\right)\right)\mathrm{d} t,
+\tilde{\ell} \equiv \int v\left(r_{t}\right) \mathrm{d} W_{t}+\int \left(\frac{1}{2}\left|v\left(r_{t}\right)\right|^{2}+V\left(r_{t}\right)\right)\mathrm{d} t.
 \end{equation}
-and the boundary term depends the ground state $\varphi_0$ at initial $r_0$ and final $r_T$ points in the trajectory. In this case the KL divergence is 
+The boundary term depends the ground state $\varphi_0$ at initial $r_0$ and final $r_T$ points in the trajectory, and originates from the normalisation constant $\mathcal{N}$ in the Radon-Nikodym derivative. The KL divergence is 
 \begin{equation}
-	\label{eq:ltilde-cont}
-	D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right)=\underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\ell^\prime-E_{0} T+\log \left(\frac{\varphi_{0}\left(r_{0}\right)}{\varphi_{0}\left(r_{T}\right)}\right)\right],
+\label{eq:ltilde-cont}
+D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right)=\underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\ell^\prime-E_{0} T+\log \left(\frac{\varphi_{0}\left(r_{0}\right)}{\varphi_{0}\left(r_{T}\right)}\right)\right].
 \end{equation}
-and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be used to find the optimal rates. Sampling the trajectories becomes a matter of integrating a SDE and can be done with some standard approach, e.g. Euler-Mayurama method. The rates $v_{\theta}$ are parameterised and gradients of $D_{\mathrm{KL}}$ w.r.t $\theta$ can be obtained using stochastic backpropagation where the reparameterisation trick is used for each increment in the discretised SDE and the wavefunction $\varphi_0$ is approximated from the rates $v_\theta$. Missing steps of the derivation can be found in Appendix~\ref{app:holland-prob}, more details in~\cite{barr2020quantum}. 
+If we consider the above Kullback-Leibler divergence in the long time limit $T \rightarrow \infty$, we see that the expectation of the first term of $\tilde{\ell}$ is zero. Moreover, if the marginal distributions $\psi_{0}(r_0)$ and $\psi_{0}(r_T)$ coincide, the boundary term vanishes as well and the KL divergence is equivalent to the Holland cost, thus vanishes for optimal drift. This means that finding the correct path measure is equivalent to finding the optimal drift, and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be used to find the optimal rates. Sampling the trajectories becomes a matter of integrating a SDE and can be done with some standard approach, e.g. Euler-Mayurama method. The rates $v_{\theta}$ are parameterised and gradients of $D_{\mathrm{KL}}$ w.r.t $\theta$ can be obtained using stochastic backpropagation where the reparameterisation trick is used for each increment in the discretised SDE. The gradient of the boundary term is non-zero, but it can be estimated by expressing $\psi_0$ in terms of $v_{\theta}$. Missing steps of the derivation can be found in Appendix~\ref{app:holland-prob}, more details in~\cite{barr2020quantum}. 
 
 \subsection{Todorov Cost in discrete state space}
 We now turn our attention towards finding a variational approach in discrete state space and continuous time. We rely on foundational work done on linearly solvable Markov Decision Processes\footnote{For a general discussion of MDP's see~\cite{sutton2018reinforcement}} (MDP) by Todorov~\cite{todorov2007linearly, todorov2009efficient} and its applications to lattice problems~\cite{gispen2020ground}. The main idea is to reinterpret the dynamics of the imaginary time Schr\" odinger equation in the Todorov MDP framework by treating control as a modification of the passive dynamics of the system. The imaginary time Schr\" odinger equation can be written as
@@ -577,7 +570,10 @@ where we have defined $\tilde \ell$ as
 \end{equation}
 The KL divergence can be written as
 \begin{equation}
-	D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right) = \underset{P_{v}}{\mathbb{E}}\left[\int V(k(t))+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right)+\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) d t\right]-E_{0} T,
+	\begin{aligned}
+		D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right) = \underset{P_{v}}{\mathbb{E}}\Bigg[\int V(k(t))&+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right)\\
+		&+\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) d t-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)\Bigg]-E_{0} T,
+	\end{aligned}
 \end{equation}
 which is the Todorov's cost and vanishes for optimal rates, meaning that finding the these rates is equivalent to finding the Feynman-Kac measured process. One might be tempted to use $D_{\mathrm{KL}}$ as an optimisation objective, but this is not possible because its gradient is biased due to the boundary term
 $\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)$. We now propose two alternatives.
@@ -591,7 +587,7 @@ The variance of quantity $\tilde{\ell}$
 	+E_{0} T
 	+\log \left(\frac{\varphi\left(k^{(N)}\right)}{\varphi\left(k^{(0)}\right)}\right)
 \end{equation}
- can be used as a loss function. \hl{Kolmogorov's criterion} tells us that
+ can be used as a loss function. Kolmogorov's criterion tells us that
  \begin{equation}
  	\log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)=\log \left(\frac{\varphi(k^{(n+1)})}{\varphi(k^{(n)})}\right),
  \end{equation}

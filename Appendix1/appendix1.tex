@@ -84,17 +84,12 @@ finally we substitute $\mathrm{d} X_t = \mathrm{d}W_t + v(X_t)\mathrm{d}t$ to ge
 	\begin{aligned}
 	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}\right) 
 	& =  \int v\left(X_{t}\right) \mathrm{d} W_{t} + \int |v(X_t)|^2 \mathrm{d}t + \int \left(-\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d} t\\
-	& =  \int v\left(X_{t}\right) d W_{t}+\int \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right) \mathrm{d}t.
+	& =  \int v\left(X_{t}\right) d W_{t}+\int \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right) \mathrm{d}t  - \lambda T.
 	\end{aligned}
-\end{equation}
-The $D_{KL}$ and its long-time limit follow from the logarithm Radon-Nikodym derivative
-\begin{equation}
-	D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right) 
-	\underset{T \rightarrow \infty}{\longrightarrow} \underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\int  \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d}t \right]-\lambda T.
 \end{equation}
 A closer look at the normalisation constant $\mathcal{N}$ in eq.~\eqref{eq:a-hp2} gives rise to the boundary term. The normalisation is given by
 \begin{equation}
-	\mathcal N = \frac{\tilde{\psi}\left(\boldsymbol{r}_{T}, T\right)}{\bar{\psi}\left(\boldsymbol{r}_{0}, 0\right)},
+	\mathcal N = \frac{\tilde{\psi}\left(r_{T}, T\right)}{\bar{\psi}\left(r_{0}, 0\right)},
 \end{equation}
 where $\tilde{\psi}\left(r_{t}, t\right)$ is the solution to the backwards imaginary time Schr\" odinger equation~\cite{barr2020quantum}, and is related to the distribution of the stochastic process in eq.~\eqref{eq:a-hc3} as
 \begin{equation}
@@ -102,7 +97,7 @@ where $\tilde{\psi}\left(r_{t}, t\right)$ is the solution to the backwards imagi
 \end{equation}
 If we now take both distributions at initial time $\pi(r, 0)$ and terminal time $\pi(r, T)$ to be the ground state the normalisation constant becomes
 \begin{equation}
-	\frac{\tilde{\psi}\left(\boldsymbol{r}_{T}, T\right)}{\bar{\psi}\left(\boldsymbol{r}_{0}, 0\right)} = e^{E_{0} T} \frac{\varphi_{0}\left(\boldsymbol{r}_{T}\right)}{\varphi_{0}\left(\boldsymbol{r}_{0}\right)},
+	\frac{\tilde{\psi}\left(r_{T}, T\right)}{\bar{\psi}\left(r_{0}, 0\right)} = e^{E_{0} T} \frac{\varphi_{0}\left(r_{T}\right)}{\varphi_{0}\left(r_{0}\right)},
 \end{equation}
 and accounts for the boundary term and $E_0 T$ term in the Kullback-Leibler divergence.
 
@@ -238,9 +233,15 @@ To see that zero $D_{K L}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{F K}}\right
 which holds because the expectation of a contribution of a single step of the trajectory $k^{(n)} \rightarrow k^{(n+1)}$ is equivalent to an ensemble average starting from the same state weighted by the probability of jump $\Gamma_{k(t) \rightarrow l}^{(v)} \Delta t$, this holds separately for each step in the trajectory and by writing $\sum_{t_i} \cdots~\Delta t_i \rightarrow \int \cdots~\mathrm{d}t$ we obtain above equality. The KL divergence then becomes
 \begin{equation}
 	\begin{aligned}
-		D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right) &= 
-		\underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\int V(k(t))+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right) \mathrm{d} t+\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)\right]-E_{0} T \\
-		&= \underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\int V(k(t))+\sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right)+\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) \mathrm{d} t\right]-E_{0} T,
+		D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right) = 
+		\underset{\mathbb{P}_{v}}{\mathbb{E}}\Bigg[\int V(k(t))+\sum_{l \neq k(t)}\Big(\Gamma_{k(t) \rightarrow l}&-\Gamma_{k(t) \rightarrow l}^{(v)}\Big) \mathrm{d} t +\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right) \\
+		&-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)\Bigg]-E_{0} T 
 	\end{aligned}
+\end{equation}
+\begin{equation}
+\begin{aligned}
+D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right) = \underset{\mathbb{P}_{v}}{\mathbb{E}}\Bigg[\int V(k(t))+\sum_{l \neq k(t)}\big(\Gamma_{k(t) \rightarrow l}&-\Gamma_{k(t) \rightarrow l}^{(v)}\big)+\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) \mathrm{d} t\\
+&-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)\Bigg]-E_{0} T,
+\end{aligned}
 \end{equation}
 which agrees with Todorov.

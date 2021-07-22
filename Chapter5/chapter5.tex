@@ -1,17 +1,18 @@
 %!TEX root = ../thesis.tex
-%*******************************************************************************
-%****************************** Fourth Chapter *********************************
-%*******************************************************************************
-
-\chapter{Methodology}
-\label{chapter5}
-
 % **************************** Define Graphics Path **************************
 \ifpdf
 \graphicspath{{Chapter5/Figs/Raster/}{Chapter5/Figs/PDF/}{Chapter5/Figs/}}
 \else
 \graphicspath{{Chapter5/Figs/Vector/}{Chapter5/Figs/}}
 \fi
+
+%*******************************************************************************
+%****************************** Fifth Chapter *********************************
+%*******************************************************************************
+
+\chapter{Methodology}
+\label{chapter5}
+This chapter presents the computational method developed in this thesis. We start by introducing each component of the method separately before presenting how they fit together into a single procedure. We discuss importance sampling, automatic differentiation, gradient estimation, as well as, gradient-based optimisation. Finally, we present the actual implementation in \emph{JAX}, and discuss computational considerations and intricacies of thereof.
 
 \section{Monte Carlo Importance Sampling}
 \label{sec:Impl-MCIP}
@@ -132,3 +133,4 @@ Which exploits the properties of signed-measures, is beyond the scope of this re
 \label{subsec:gbopt-autograd}
 
 \section[\emph{Qptimal sampling}]{\emph{Qptimal sampling}: optimal sampling in lattice models}
+\subsection{Connection between to Score-Based models}

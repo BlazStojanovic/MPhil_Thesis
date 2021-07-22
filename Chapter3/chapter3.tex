@@ -1,4 +1,12 @@
 %!TEX root = ../thesis.tex
+
+% **************************** Define Graphics Path **************************
+\ifpdf
+\graphicspath{{Chapter3/Figs/Raster/}{Chapter3/Figs/PDF/}{Chapter3/Figs/}}
+\else
+\graphicspath{{Chapter3/Figs/Vector/}{Chapter3/Figs/}}
+\fi
+
 %*******************************************************************************
 %****************************** Third Chapter **********************************
 %*******************************************************************************
@@ -10,14 +18,7 @@
 
 \chapter{Feynman-Kac: connecting Quantum Mechanics and Stochastic Processes}
 \label{chapter3}
-
-% **************************** Define Graphics Path **************************
-\ifpdf
-    \graphicspath{{Chapter3/Figs/Raster/}{Chapter3/Figs/PDF/}{Chapter3/Figs/}}
-\else
-    \graphicspath{{Chapter3/Figs/Vector/}{Chapter3/Figs/}}
-\fi
-In this chapter we will provide a bridge between the quantum many-body problem discussed in the previous chapter and stochastic processes. This will entail introducing the Feynman-Kac formula and relating it to the Fokker-Planck equation and optimal control approaches to QM. Moreover, a probabilistic view of the cost function will lead us to proposals for loss functions that can be used to learn optimal transition rates and consequently sample the ground state.
+In this chapter we will provide a bridge between the quantum many-body problem discussed in the previous chapter and stochastic processes. This will entail introducing the Feynman-Kac formula and relating it to the Fokker-Planck equation and optimal control formulations of QM. Moreover, a probabilistic view of the cost function will lead us to proposals for loss functions that can be used to learn optimal transition rates and consequently sample the ground state.
 
 The field of stochastic processes is a vast body of work, approached from different angles by mathematicians, physicists and engineers. A necessary consequence of this is that the literature ranges from extremely thorough and rigorous~\cite{rogers1994diffusions, rogers2000diffusions} to more applied and intuitive~\cite{sarkka2019applied}. For this reason, the mentioned discussion will be preceded by an overview of the mathematical notation, lemmas and results from stochastic processes and measure theory that underpin some core ideas of this thesis. To avoid including a whole textbook of material on measure and stochastic processes some concepts will not be rigorously defined, the text will point to relevant literature where this is the case.
 
@@ -583,7 +584,7 @@ The variance of quantity $\tilde{\ell}$
 \begin{equation}
 	\tilde{\ell}=
 	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{~d} \mathbb{P}_{F K}}(k(t))\right)
-	-\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)
+	-\sum_{n} \log \left(\frac{\Gamma^{(v)}_{k^{(n)} \rightarrow k^{(n+1)}}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)
 	+E_{0} T
 	+\log \left(\frac{\varphi\left(k^{(N)}\right)}{\varphi\left(k^{(0)}\right)}\right)
 \end{equation}
@@ -591,10 +592,10 @@ The variance of quantity $\tilde{\ell}$
  \begin{equation}
  	\log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)=\log \left(\frac{\varphi(k^{(n+1)})}{\varphi(k^{(n)})}\right),
  \end{equation}
- combined with the fact that the Radon-Nikodym derivative is $0$ for correct transition rates $\Gamma^{(v)} = \Gamma^\prime$ means that $\operatorname{Var}[\tilde{\ell}]$ vanishes in that case, moreover it is bounded below by zero making it a suitable objective function. For optimal rates $\tilde \ell$ is equal to $E_0 T$ and is an estimator of the ground state energy. 
+ combined with the fact that the Radon-Nikodym derivative is $0$ for correct transition rates $\Gamma^{(v)} = \Gamma^\prime$ means that $\operatorname{Var}[\tilde{\ell}]$ vanishes in that case, moreover it is bounded below by zero making it a suitable objective function. \hl{TODO: fix, For optimal rates $\tilde \ell$ is equal to $E_0 T$ and is an estimator of the ground state energy.}
  
 \subsubsection{Loss no. 2: Variance of log Radon-Nikodym derivative with fixed endpoints}
-While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right)$ are biased, we can still make use of the logarithm RN derivative~\eqref{eq:logrn-discrete}. It vanishes for optimal rates and while we can treat $E_0 T$ as constant, we have no easy way to approximate the wave function $\varphi$ in the boundary term which in general does not have zero variance. We can exploit the fact that log RN must be constant on all trajectories and consider a batch of trajectories with fixed endpoints, in this case the variance of the boundary term vanishes. How to obtain such a batch poses a technical challenge which is to be solved on a system by system basis, usually by generating a single trajectory and perturbing it in such a way that one obtains many paths with fixed endpoints.
+While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right)$ are \hl{change this sentance} biased, we can still make use of the logarithm RN derivative~\eqref{eq:logrn-discrete}. It vanishes for optimal rates and while we can treat $E_0 T$ as constant, we have no easy way to approximate the wave function $\varphi$ in the boundary term which in general does not have zero variance. We can exploit the fact that log RN must be constant on all trajectories and consider a batch of trajectories with fixed endpoints, in this case the variance of the boundary term vanishes. How to obtain such a batch poses a technical challenge which is to be solved on a system by system basis, usually by generating a single trajectory and perturbing it in such a way that one obtains many paths with fixed endpoints.
 
 
 %********************************** % Ch3 Nomenclature *************************************

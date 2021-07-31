@@ -307,7 +307,6 @@ The chain $\{Y_n\}_{n\geq0}$ along with times
 \end{equation}
 gives the full description of the CTMC. With this formulation in mind we now interpret $\Gamma_{ii}$ as the rate ob \emph{leaving} current state and $\Gamma_{i j}$ as the rate of \emph{going} from $i$ to $j$.
 
-\newpage
 \section{The Feynman-Kac formula}
 \label{subsec:fk-fk}
 The Feynman path integral formulation introduced in chapter~\ref{chapter2} was extensively used by physicists for decades, even in the absence of a formal mathematical formulation which is hard to define because of the difficulties with defining an appropriate measure on the path space. Kac~\cite{kac1949distributions} provided a rigorous formulation of the \textit{real-valued} case of the Feynman path integral, and the resulting \textbf{Feynman-Kac formula} eq.~\eqref{eq:fkac} provides a bridge between \emph{parabolic} partial differential equations and stochastic processes. 
@@ -337,7 +336,12 @@ where only the \textbf{endpoint} at time $t$ of the Brownian process fixed, wher
 		\frac{1}{\sqrt{2 \pi t}} \int  e^{-\left(x-x^{\prime}\right)^{2} / 2 t} \psi_{0}\left(x^{\prime}\right) \mathrm{d} x^{\prime}
 	\end{aligned}
 \end{equation}
-An illustration of the Feynman-Kac approach to the problem with no external potential $V(x)$ in 1D is depicted in Fig.~\ref{fig:fk_1d_example}. 
+An illustration of the Feynman-Kac approach to the problem with no external potential $V(x)$ in 1D is depicted in Fig.~\ref{fig:fk_1d_example}. The role of the potential in the Feynman-Kac formula is to weight the Brownian paths, in turn defining the Feynman-Kac \emph{path measure} $\mathbb{P}_{\mathrm{FK}}$ it is related to the Brownian measure $\mathbb{P}_{0}$ by the Radon-Nykodym derivative
+\begin{equation}
+\label{eq:RNderiv}
+\frac{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}{\mathrm{d} \mathbb{P}_{0}}=\mathcal{N} \exp \left(-\int V\left(X_{t}\right) d t\right),
+\end{equation}
+where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}.
 \begin{figure}[H]
 	\centering
 	\subfloat
@@ -350,14 +354,7 @@ An illustration of the Feynman-Kac approach to the problem with no external pote
 	\caption[Feynman-Kac for a free particle in 1D]{\textbf{Feynman-Kac for a free particle  in 1D.} \textbf{top:} $N=400$ Brownian walks starting from different $x_0$, the color signifies initial position. In order to evaluate $\psi$ between $x-\frac{\delta x}{2}$ and $x+\frac{\delta x}{2}$ at some time $t$ we must first find Brownian paths that end there. \textbf{middle:} The paths that pass through at $x \in (1.5, 1.6)$ (blue) and through $x \in (-0.4,-0.3)$ (red) are colored, others are left in grey. \textbf{bottom:} Time evolution of the initial condition $\psi_{0} = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^{2}}$, by estimating ${\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right]$ from the filtered paths at each timestep.}
 	\label{fig:fk_1d_example}
 \end{figure}
-\noindent
-The role of the potential in the Feynman-Kac formula is to weight the Brownian paths, in turn defining the Feynman-Kac \emph{path measure} $\mathbb{P}_{\mathrm{FK}}$ it is related to the Brownian measure $\mathbb{P}_{0}$ by the Radon-Nykodym derivative
-\begin{equation}
-\label{eq:RNderiv}
-\frac{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}{\mathrm{d} \mathbb{P}_{0}}=\mathcal{N} \exp \left(-\int V\left(X_{t}\right) d t\right),
-\end{equation}
-where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}.
-\begin{figure}[h]
+\begin{figure}[t]
 	\centering
 	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight1.pdf}}
 	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight2.png}}
@@ -365,6 +362,7 @@ where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the
 		\textbf{left:} $N=30$ Brownian paths. \textbf{right:} The paths colored ($P(\text{black})=1$, $P(\text{white})=0$) by their likelihood under the Feynman-Kac measure with $V(x)=x$.}
 	\label{fig:fkac_measure_reweight}
 \end{figure}
+\noindent
 Moreover, this new stochastic process is Markovian, meaning that a clear connection exists between the imaginary time Schr\" odinger equation and a SDE of form~\eqref{eq:SDE_general} with time-homogeneous $\sigma$ and $v$.
 Indeed, in the continuous case we have discussed so far, the mapping between the Fokker-Planck equation~\eqref{eq:Fokker-Planck-General} and the Schr\" odinger equation exists in the form of a similarity transform. Starting from the FP equation of a stochastic process with constant volatility $\sigma = 1$
 \begin{equation}
@@ -592,10 +590,16 @@ The variance of quantity $\tilde{\ell}$
  \begin{equation}
  	\log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)=\log \left(\frac{\varphi(k^{(n+1)})}{\varphi(k^{(n)})}\right),
  \end{equation}
- combined with the fact that the Radon-Nikodym derivative is $0$ for correct transition rates $\Gamma^{(v)} = \Gamma^\prime$ means that $\operatorname{Var}[\tilde{\ell}]$ vanishes in that case, moreover it is bounded below by zero making it a suitable objective function. \hl{TODO: fix, For optimal rates $\tilde \ell$ is equal to $E_0 T$ and is an estimator of the ground state energy.}
+ combined with the fact that the log Radon-Nikodym derivative is $0$ for correct transition rates $\Gamma^{(v)} = \Gamma^\prime$ means that $\operatorname{Var}[\tilde{\ell}]$ vanishes in that case, moreover it is bounded below by zero making it a suitable objective function. 
  
 \subsubsection{Loss no. 2: Variance of log Radon-Nikodym derivative with fixed endpoints}
-While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right)$ are \hl{change this sentance} biased, we can still make use of the logarithm RN derivative~\eqref{eq:logrn-discrete}. It vanishes for optimal rates and while we can treat $E_0 T$ as constant, we have no easy way to approximate the wave function $\varphi$ in the boundary term which in general does not have zero variance. We can exploit the fact that log RN must be constant on all trajectories and consider a batch of trajectories with fixed endpoints, in this case the variance of the boundary term vanishes. How to obtain such a batch poses a technical challenge which is to be solved on a system by system basis, usually by generating a single trajectory and perturbing it in such a way that one obtains many paths with fixed endpoints.
+While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right)$ are not accessible, we can still make use of the logarithm RN derivative in eq.~\eqref{eq:logrn-discrete}. It vanishes for optimal rates and while we can treat $E_0 T$ as constant, we have no easy way to approximate the wave function $\varphi$ in the boundary term which in general does not have zero variance. We can exploit the fact that log RN must be constant on all trajectories and consider a batch of trajectories with fixed endpoints, in this case the variance of the boundary term vanishes
+\begin{equation}
+\underset{\substack{\Sigma_{[0, t]} \sim r, \\ \text{with fixed } k^{(0)} \text{ and } k^{(N)}}}{\operatorname{Var}}\left[\tilde \ell
++\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)-E_{0} T-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)
+\right] \underset{\Gamma^{(v)} = \Gamma^\prime}{\rightarrow} 0.
+\end{equation}
+The trajectories can be sampled using arbitrary rates $r$, but for convenience $\Gamma^{(v)}$ can be used. How to obtain a batch poses a technical challenge which is to be solved on a system by system basis, usually by generating a single trajectory and perturbing it in such a way that one obtains many paths with fixed endpoints.
 
 
 %********************************** % Ch3 Nomenclature *************************************

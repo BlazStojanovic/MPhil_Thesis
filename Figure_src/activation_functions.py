@@ -25,7 +25,7 @@ plt.plot(x, y1, label='ReLu', color='blue', linewidth=2)
 plt.plot(x, y2, label='Softplus', color='red', linewidth=2)
 
 plt.xlabel("$x$")
-plt.ylabel(r"$\sigma (x)$")
+plt.ylabel(r"$g(x)$")
 plt.legend()
 plt.savefig("../Chapter4/Figs/Vector/activations.pdf", bbox_inches='tight')
 # plt.show()

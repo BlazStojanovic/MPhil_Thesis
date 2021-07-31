@@ -11,38 +11,200 @@
 %****************************** Fourth Chapter *********************************
 %*******************************************************************************
 
-
-\chapter{Machine Learning}
+\chapter{Methodology}
 \label{chapter4}
-The field of Machine learning has been going through a renaissance in the past decade, mainly due to the spark ignited by an increase in computational power and the advent of deep learning~\cite{goodfellow2016deep}. In this chapter we present only the bare necessities needed to understand the methodology presented in the following chapter. We introduce basic concepts, the multilayer perceptron, convolutional layers, and discuss the role symmetry plays in designing neural networks for a task and why it is important in applications to lattice models.  
+This chapter presents the computational method developed in this thesis. We start by introducing each component of the method separately before presenting how they fit together into a single procedure. We discuss neural networks, automatic differentiation, gradient estimation, gradient-based optimisation, as well as importance sampling. Finally, we present the actual implementation in \emph{JAX}, and discuss computational considerations and intricacies of thereof.
 
-\section{Fundamentals}
+\section{Neural Networks} % ~150 words
+The field of Machine learning has been going through a renaissance in the past decade, mainly due to the spark ignited by an increase in computational power and the advent of deep learning~\cite{goodfellow2016deep}. In this section we give only the bare necessities needed to understand the the method developed in this thesis. We introduce basic concepts, the multilayer perceptron, convolutional layers, and discuss the role symmetry plays in designing neural networks for a task and why it is important in applications to lattice models.  
+\hl{todo, model + learning algorithm = learning etc.}
 
-\section{Neural Networks}
+\newpage
+\subsection{The Multilayer Perceptron} % saturday morning
+The \textbf{multilayer perceptron} (MLP), also referred to as a \textbf{deep feedforward network} or simply a \textbf{deep neural network} (DNN), is the paradigmatic model of deep learning and serves as a foundation of more advanced models. In essence it is nothing more than a mapping of inputs to outputs
+\begin{equation}
+	f(\mathbf{x}; ~\theta): \mathbb{R}^\text{in} \rightarrow \mathbb{R}^{\text{out}},
+\end{equation}
+which is structured in a certain way and depends on parameters $\theta$. The mapping is a composition of vector-valued functions $f$ which are called \emph{layers} of the network, and with each layer we associate variational parameters $\mathbf{w}$, or simply the weights. The MLP can be described with a directed acyclic graph which details the compositions of the layers. The simplest and most common is a chain of compositions, Fig~\ref{fig:mlp}b, 
+\begin{equation}
+f_{\text{MLP}} = \left(f^{(n)} \circ f^{(n-1)} \circ \cdots \circ f^{(2)} \circ f^{(1)} \right)(\mathbf{x}),
+\end{equation}
+where the input $\textbf{x}$ passes through \emph{hidden layers} before the \emph{output layer} outputs the result. The length of this chain is the \emph{depth} of the network, and the dimensionality of hidden layers is the \emph{width} of the network. We can interpret each transformation $f^{(i)}$ as consisting of a unit/node/neuron for each input dimension, which is vector-to-scalar transformation, Fig~\ref{fig:mlp}a.
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.7\linewidth]{Chapter4/Figs/Vector/mlp.pdf}
-	\caption[Multilayer Perceptron]{\textbf{Multilayer Perceptron.}}
+	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/mlp.pdf}
+	\caption[Multilayer Perceptron]{\textbf{Multilayer Perceptron.} \textbf{top: }A node outputs the activation function $\sigma$ evaluated at the weighted average over outputs from the previous layer and bias. \textbf{bottom: } A MLP with two hidden layers ($f^{(1)}: \mathbb{R}^3 \rightarrow \mathbb{R}^4$, $f^{(2)}: \mathbb{R}^4 \rightarrow \mathbb{R}^4$, $f^{(3)}: \mathbb{R}^4 \rightarrow \mathbb{R}$).}
 	\label{fig:mlp}
-\end{figure}
-
-\begin{figure}[h]
+\end{figure} 
+The simplest layer would be a linear one, composed of
+\begin{equation}
+f(\mathbf{x}; \mathbf{w}, b) = \mathbf{x}^\intercal \mathbf{w} + b.
+\end{equation}
+However, a linear neural network famously cannot learn the XOR function~\cite{minsky2017perceptrons}, and in practice a nonlinearity or \emph{activation} function $g$ is used in each node to bolster the network's representational power
+\begin{equation}
+f(\mathbf{x}; \mathbf{w}, b) = g\left(\mathbf{x}^\intercal \mathbf{w} + b\right).
+\end{equation}
+A variety of activations has been used, namely $\tanh(\cdot)$ and the logistic sigmoid $\sigma(\cdot)$, but have since been displaced by the use of the \textbf{rectified linear unit} or $\operatorname{ReLu}(\cdot)$, which is advantageous for training, for the output layer we will use the \emph{softplus}, which fulfils the requirement of being positive everywhere, Fig.~\ref{fig:activations}. A multilayer perceptron is a \textbf{universal function approximator}, meaning that with at least one hidden layer it can approximate any Borel measurable function mapping from a finite-dimensional space to another with desired accuracy, given enough hidden units~\cite{leshno1993multilayer}. 
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=0.7\linewidth]{Chapter4/Figs/Vector/activations}
-	\caption[Activation functions]{\textbf{Activation functions.}}
+	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/activations}
+	\caption[Activation functions]{\textbf{Activation functions.} $\operatorname{ReLu}$ and Softmax activation functions.}
 	\label{fig:activations}
 \end{figure}
 
-\subsection{Convolutional Neural Networks}
+\newpage
+\subsection{Convolutional Neural Networks} % saturday morning
 \label{subsec:nn-cnn}
+convolutional layer, pool layer, etc. 
 
-\begin{figure}
+\subsubsection{Periodic CNN}
+periodic padding
+
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{../diagrams/pcnn/pcnn}
 	\caption[Periodic CNN]{\textbf{Periodic CNN}}
 	\label{fig:pcnn}
 \end{figure}
 
+\subsubsection{Encoder-Decoder CNN} % saturday morning
+skip connections, literature where it is used
 
-\subsection{Graph Neural Networks}
-\label{subsec:nn-gnn}
+\subsubsection{Group Equivariant CNN} % saturday eveninig
+intro of about 400 words, following group equivariant CNN paper, and 
+
+\newpage
+\section{Monte Carlo Importance Sampling}
+\label{sec:Impl-MCIP}
+The most common application of Monte Carlo methods is evaluation of integrals in high dimensional space. There MC has a distinct advantage over quadrature methods, as the statistical error decreases with the square root of samples irregardless of the dimensionality of the problem. Integrals of a function $g(\mathbf{R})$
+\begin{equation}
+I=\int g(\mathbf{R}) \mathrm{d} \mathbf{R},
+\end{equation}
+where $\mathbf{R}$ is the \emph{configuration} of the system or simply a \emph{walker}, can be integrated by use of an \emph{importance function} $\mathrm{P}(\mathbf{R})$, where $\int d \mathbf{R} \text{P}(\mathbf{R})=1$ and $\mathrm{P} (\mathbf{R}) \geq 0$. The integral can be rewritten in the form
+\begin{equation}
+\int g(\mathbf{R}) \mathrm{d} \mathbf{R} = \int \frac{g(\mathbf{R})}{\mathrm{P}(\mathbf{R})} \mathrm{P}(\mathbf{R}) \mathrm{d} \mathbf{R} = \int f(\mathbf{R})\mathrm{P}(\mathbf{R}) \mathrm{d} \mathbf{R},
+\end{equation}
+where $f(\mathbf{R}) = g(\mathbf{R}) / \mathrm{P}(\mathbf{R})$.
+The importance function $\mathrm{P}(\mathbf{R})$ can be interpreted as a probability density. If we generate an infinite number of random uncorrelated configurations $\mathbf{R}_m$ from the distribution $\mathrm{P}(\mathbf{R})$, the sample average is a good estimator of the integral $I$
+\begin{equation}
+I=\lim _{M \rightarrow \infty}\left\{\frac{1}{M} \sum_{m=1}^{M} f\left(\mathbf{R}_{m}\right)\right\},
+\end{equation}
+and for an approximation with a finite number of samples
+\begin{equation}
+I \approx \frac{1}{M} \sum_{m=1}^{M} f\left(\mathbf{R}_{m}\right).
+\end{equation}
+Under conditions where the central limit theorem holds~\cite{foulkes2001quantum}, the estimator is normally distributed with variance $\sigma_{f}^{2}/M$, which can also be estimated from the samples as
+\begin{equation}
+\frac{\sigma_{f}^{2}}{M} \approx \frac{1}{M(M-1)} \sum_{m=1}^{M}\left[f\left(\mathbf{R}_{m}\right)-\frac{1}{M} \sum_{n=1}^{M} f\left(\mathbf{R}_{n}\right)\right]^{2}.
+\end{equation}
+
+
+\section{Metropolis-Hastings Algorithm}
+\label{sec:Impl-MCMC}
+The integration technique from the previous section relies on our ability to obtain samples from a probability distribution $\mathrm{P}(\mathbf{R})$. In the case of QMC these distributions are high-dimensional and cannot be directly sampled from. Moreover their normalisations are usually not known. 
+The Metropolis-Hastings algorithm~\cite{hastings1970monte}, see Algorithm~1, avoids direct sampling from the distribution $\mathrm{P}(\mathbf{R})$ and is insensitive to its normalisation. It uses a Markov process whose stationary distribution $\pi(\mathbf{R})$ is the same as $\mathrm{P}(\mathbf{R})$	
+to generate a sequence of configurations $\left\{\mathbf{R}_n\right\}_\mathrm{P}$ 
+that are drawn from $\mathrm{P}(\mathbf{R})$. A Markov process is completely defined with its transition probability $\mathrm{P}(\mathbf{R} \rightarrow \mathbf{R}^\prime)$, which is the probability of transitioning from state $\mathbf{R}$ to state $\mathbf{R}^\prime$. For the process to have a unique stationary distribution two conditions must be met, the process must be \emph{ergodic} and it must obey \emph{detailed balance}
+\begin{equation}
+\mathrm{P}(\mathbf{R}) \mathrm P(\mathbf{R} \rightarrow \mathbf{R}^\prime) = \mathrm{P}(\mathbf{R}^\prime) \mathrm P(\mathbf{R}^\prime \rightarrow \mathbf{R}),
+\end{equation}
+rewritten as
+\begin{equation}
+\label{eq:detailed_balance}
+\frac{\mathrm P ({\mathbf{R}})}{\mathrm P ({\mathbf{R}^\prime})} = \frac{\mathrm P(\mathbf{R}^\prime \rightarrow \mathbf{R})}{\mathrm P(\mathbf{R} \rightarrow \mathbf{R}^\prime)}.
+\end{equation}
+The right transition probability $\mathrm P(\mathbf{R} \rightarrow \mathbf{R}^\prime)$ is not known, but we can express it with a trial move transition probability $\mathrm{T}(\mathbf{R} \rightarrow \mathbf{R}^\prime)$ which we sample and acceptance probability $\mathrm{A}(\mathbf{R} \rightarrow \mathbf{R}^\prime)$ as
+\begin{equation}
+\mathrm P(\mathbf{R} \rightarrow \mathbf{R}^\prime) = \mathrm T(\mathbf{R} \rightarrow \mathbf{R}^\prime) \mathrm A(\mathbf{R} \rightarrow \mathbf{R}^\prime).
+\end{equation}
+For equation~\eqref{eq:detailed_balance} to hold, the acceptance probability must be 
+\begin{equation}
+A\left(\mathbf{R} \rightarrow \mathbf{R}^{\prime}\right)=\min \left(1, \frac{\mathrm{T}\left(\mathbf{R}^{\prime} \rightarrow \mathbf{R}\right) \mathrm{P}\left(\mathbf{R}^{\prime}\right)}{\mathrm{T}\left(\mathbf{R} \rightarrow \mathbf{R}^{\prime}\right) \mathrm{P}(\mathbf{R})}\right).
+\end{equation}
+Thus to sample from any probability distribution we need only have the ability to calculate probabilities $\mathrm P(\mathbf{R})$ and to sample from a trial transition probability $\mathrm T(\mathbf{R} \rightarrow \mathbf{R}^{\prime})$. The efficiency of the algorithm depends on the amount of trial moves that we reject. All trial moves would be accepted if $\mathrm{T}(\mathbf{R} \rightarrow \mathbf{R}^{\prime})= \mathrm{P}(\mathbf{R}^\prime)$, which would just mean sampling from $\mathrm P$ directly and is the very problem we are trying to solve with Metropolis-Hastings. 	
+\begin{algorithm}
+	\label{alg:MCMC}
+	\SetAlgoLined
+	\KwResult{A set of configurations $\left\{ \mathbf{R}_n \right\}_{\mathrm{P}}$ sampled from $\mathrm P$}
+	Initialize walker at random configuration $\mathbf{R}$\;
+	\While{no. samples less than $N$}{
+		Generate new configuration $\mathbf{R}^\prime$ with transition probability $\mathrm{T}(\mathbf{R}\rightarrow\mathbf{R}^\prime)$\;
+		
+		Accept the move ($\mathbf{R} \rightarrow \mathbf{R}^\prime$) with probability $A\left(\mathbf{R} \rightarrow \mathbf{R}^{\prime}\right)=\min \left(1, \frac{\mathrm{T}\left(\mathbf{R}^{\prime} \rightarrow \mathbf{R}\right) \mathrm{P}\left(\mathbf{R}^{\prime}\right)}{\mathrm{T}\left(\mathbf{R} \rightarrow \mathbf{R}^{\prime}\right) \mathrm{P}(\mathbf{R})}\right)$\;
+		
+		Append $\mathbf{R}$ to the set of configuration;
+	}
+	\caption{Metropolis-Hastings}
+\end{algorithm}
+
+\section{Gradient based optimisation}
+\label{sec:gbopt}
+
+\subsection{Gradient estimation}
+\label{subsec:gbopt-gest}
+
+\begin{itemize}
+	\item \textbf{TODO:} Rewrite with a more general tone, do not only talk about the ELBO. Still use Mohammeds review! It is very good.
+\end{itemize}
+
+In order to perform gradient descent on the ELBO objective, we need to be able to evaluate its gradients with respect to parameters $\boldsymbol{\theta}$ and $\boldsymbol{\phi}$. Taking the gradient w.r.t generative parameters $\boldsymbol{\theta}$ is straightforward, because we can change the order of the expectation operator and the gradient, leaving us with
+\begin{equation}
+\begin{aligned} 
+\nabla_{\boldsymbol{\theta}} \mathcal{L}_{\boldsymbol{\theta}, \boldsymbol{\phi}}(\mathbf{x}) &=\nabla_{\boldsymbol{\theta}} 	\mathbb{E}_{q_{\boldsymbol{\phi}}(\mathbf{z} \mid \mathbf{x})}\left[\log p_{\boldsymbol{\theta}}(\mathbf{x}, \mathbf{z})-\log q_{\boldsymbol{\phi}}(\mathbf{z} | \mathbf{x})\right] \\  & \simeq \nabla_{\boldsymbol{\theta}}\left(\log p_{\boldsymbol{\theta}}(\mathbf{x}, \mathbf{z})-\log q_{\boldsymbol{\phi}}(\mathbf{z} | \mathbf{x})\right) \\ &=\nabla_{\boldsymbol{\theta}}\left(\log p_{\boldsymbol{\theta}}(\mathbf{x}, \mathbf{z})\right) ,
+\end{aligned}
+\end{equation}
+where $\simeq$ denotes an unbiased estimator. This reversing of the order of operations is not possible when taking gradients w.r.t variational parameters $\boldsymbol{\phi}$ because the expectation $\mathbb{E}_{q_{\boldsymbol{\phi}}(\mathbf{z} | \mathbf{x})}$ is performed w.r.t the approximate posterior $q_{\boldsymbol{\phi}}(\mathbf{z} | \mathbf{x})$. The gradient could be estimated with a vanilla Monte Carlo estimator, but it has very high variance and is not practical~\cite{kingma2013auto}. 
+
+The problem of stochastic gradient estimation of an expectation of a function is a well studied problem that transcends machine learning and has a variety of applications~\cite{chriss1997black, schrittwieser2020mastering}. Different estimators differ in from and their properties, variance being one of the most important. In their review~\cite{mohamed2020monte} Mohamed et al. categorise MC gradient estimators into three categories
+
+\subsubsection{Score-function estimator}
+\emph{Score-function estimator}: The score function is a logarithm of a probability distribution w.r.t to distributional parameters. It can be used as a gradient estimator
+\begin{equation}
+\begin{aligned}
+\nabla_{\boldsymbol{\theta}} \mathbb{E}_{p_{\boldsymbol{\theta}}(\mathbf{x})}[f(\mathbf{x})] &=  \nabla_{\boldsymbol{\theta}} \int p_{\boldsymbol{\theta}}(\mathbf{x}) f(\mathbf{x}) d \mathbf{x} \\
+&= \mathbb{E}_{p_{\boldsymbol{\theta}}(\mathbf{x})}\left[f(\mathbf{x}) \nabla_{\boldsymbol{\theta}} \log p_{\boldsymbol{\theta}}(\mathbf{x})\right].
+\end{aligned}
+\end{equation}
+The score-function estimator is compatible with any cost function, it requires that the measure $p_{\boldsymbol{\theta}}(\mathbf{x})$ is differentiable and easy to sample. Very importantly it is applicable to both discrete and continuous distribution, but has a drawback of having high variance.
+
+\subsubsection{Pathwise estimator}
+Continuous distributions can be sampled either directly by generating samples from the distribution $p_{\boldsymbol{\theta}}(\mathbf{x})$ or indirectly, by sampling from a simpler base distribution $p(\boldsymbol{\epsilon})$ and transforming the variate through a deterministic path $g_{\boldsymbol{\theta}}(\boldsymbol{\epsilon})$. Using this, it is possible to move the source of randomness in such a way that the objective is differentiable. In essence this approach pushes the parameters of the measure into the cost function which is then differentiated. The estimator is
+\begin{equation}
+\begin{aligned}
+\nabla_{\boldsymbol{\theta}} \mathbb{E}_{p_{\boldsymbol{\theta}}(\mathbf{x})}[f(\mathbf{x})] 
+&=\nabla_{\boldsymbol{\theta}} \int p_{\boldsymbol{\theta}}(\mathbf{x}) f(\mathbf{x}) d \mathbf{x} \\
+&= \nabla_{\boldsymbol{\theta}} \int p(\boldsymbol{\epsilon}) f(g_{\boldsymbol{\theta}}(\boldsymbol{\epsilon})) d \boldsymbol{\epsilon} \\
+&= \mathbb{E}_{p(\boldsymbol{\epsilon})}\left[\nabla_{\boldsymbol{\theta}} f(g_{\boldsymbol{\theta}}(\boldsymbol{\epsilon}))\right].
+\end{aligned}
+\end{equation}
+\begin{figure}
+	\centering
+	\subfloat[Original]{\includegraphics[height=7cm]{Appendix2/Figs/Vector/reparam_diagram.pdf}}
+	\subfloat[Reparametrized]{\includegraphics[height=7cm]{Appendix2/Figs/Vector/reparam_diagram2.pdf}}
+	\caption[The reparametrization trick]{The reparametrization trick, adapted from~\cite{kingma2017variational}. The stochasticity of the $\mathbf{z}$ node is pushed out into a separate input to the same node, resulting in deterministic gradients w.r.t $\boldsymbol{\phi}$ through the node.}
+	\label{fig:reparam}
+\end{figure}
+This was the gradient estimator originally used in the VAE implementation~\cite{kingma2013auto} there named as the \emph{reparametrization trick}, see also Figure~\ref{fig:reparam}. In many cases the transformation paths are so simple they can be implemented in one line of code, referred to as \emph{one-liners}. The pathwise-estimator can only be used on differentiable cost functions, but is easy to implement and crucially has lower variance than the score-function estimator.
+
+\subsubsection{Measure-valued gradient estimator}
+Which exploits the properties of signed-measures, is beyond the scope of this report.	
+
+\section{Automatic differentiation}
+\label{subsec:gbopt-autograd}
+
+\section[\emph{Qptimal sampling}]{\emph{Qptimal sampling}: optimal sampling in lattice models}
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl1}
+\end{figure}
+\begin{figure}[t]
+	\ContinuedFloat
+	\centering
+	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl2}
+	\caption[Implementation details]{\textbf{Implementation details}}
+	\label{fig:qsampl}
+\end{figure}
+
+
+
+\subsection{Similarities to Score-Based models}

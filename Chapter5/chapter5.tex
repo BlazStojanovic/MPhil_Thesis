@@ -54,34 +54,16 @@ The XY model.
 %\label{sec:res-bhm}
 
 \section{Learning the rates} 
+\begin{figure}
+	\centering
+	\includegraphics[width=\linewidth]{Chapter5/Figs/Vector/init_test_learning}
+	\caption[Initial rate training experiments]{\textbf{Initial rate training experiments}}
+	\label{fig:inittestlearning}
+\end{figure}
+
 \subsubsection{How does simulation time $T$ and batch size $N_b$ affect the learning of the rates?}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/bvl_single}
-	\caption[Effect of batch size $N_b$ on training with the endpoint loss.]{\textbf{Effect of batch size $N_b$ on training with the endpoint loss.}}
-	\label{fig:bvlsingle}
-\end{figure}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/tvl_single}
-	\caption[Effect of simulation time $T$ on training with the endpoint loss.]{\textbf{Effect of simulation time $T$ on training with the endpoint loss.}}
-	\label{fig:tvlsingle}
-\end{figure}
 
 \subsubsection{How do architectural choices of the pCNN limit learning the rates?}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/wvl_single}
-	\caption[Effect of pCNN width $k$ on training with the endpoint loss.]{\textbf{Effect of pCNN width $k$ on training with the endpoint loss.}}
-	\label{fig:wvlsingle}
-\end{figure}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/lvl_single}
-	\caption[Effect of pCNN depth $l$ on training with the endpoint loss.]{\textbf{Effect of pCNN depth $l$ on training with the endpoint loss.}}
-	\label{fig:lvlsingle}
-\end{figure}
-
 
 \subsubsection{How does the size of lattice play a role?}
 
@@ -95,3 +77,28 @@ Also mention reshuffling.
 \subsection{Ising model}
 
 \subsection{XY model}
+
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/bvl_single}
+%	\caption[Effect of batch size $N_b$ on training with the endpoint loss.]{\textbf{Effect of batch size $N_b$ on training with the endpoint loss.}}
+%	\label{fig:bvlsingle}
+%\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/tvl_single}
+%	\caption[Effect of simulation time $T$ on training with the endpoint loss.]{\textbf{Effect of simulation time $T$ on training with the endpoint loss.}}
+%	\label{fig:tvlsingle}
+%\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/wvl_single}
+%	\caption[Effect of pCNN width $k$ on training with the endpoint loss.]{\textbf{Effect of pCNN width $k$ on training with the endpoint loss.}}
+%	\label{fig:wvlsingle}
+%\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/lvl_single}
+%	\caption[Effect of pCNN depth $l$ on training with the endpoint loss.]{\textbf{Effect of pCNN depth $l$ on training with the endpoint loss.}}
+%	\label{fig:lvlsingle}
+%\end{figure}

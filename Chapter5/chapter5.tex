@@ -12,46 +12,11 @@
 
 \chapter{Experiments and Results}
 \label{chapter5}
-
-\section{Stoquastic lattice models}
-
-\subsection{Transverse-field Ising model}
-\label{sec:res-im}
-If we transform the transverse-field Ising model Hamiltonian in eq.\eqref{eq:ising_hamiltonian} into the $z$-spin basis, where $s = $
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{Chapter6/Figs/Vector/ising_passive}
-	\caption[Ising passive process]{\textbf{Ising passive process}}	
-	\label{fig:isingpassive}
-\end{figure}
-\subsection{Heisenberg model}
-\label{sec:res-hm}
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.7\linewidth]{Chapter6/Figs/Vector/xy_passive}
-	\caption[XY passive process]{\textbf{XY passive process}}
-	\label{fig:xypassive}
-\end{figure}
-
-Heisenberg ferromagnet
-\begin{equation}
-\hat H_{\mathrm{F}}=-\frac{1}{2} \sum_{j}\left[\hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+\hat{\sigma}_{j}^{y} \hat{\sigma}_{j+1}^{y}+\hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z}\right]
-\end{equation}
-
-The XY model.
-\begin{equation}
-\begin{aligned} 
-\hat H_{X Y}=-\sum_{j}\left[\hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+\hat{\sigma}_{j}^{y} \hat{\sigma}_{j+1}^{y}\right] &=H_{\mathrm{F}}+\frac{1}{2} \sum_{j} \hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z} \\ 						&=-\mathcal{W}+\sum_{j}\left[n_{j}\left(1-n_{j+1}\right)+n_{j+1}\left(1-n_{j}\right)\right] 
-\end{aligned}
-\end{equation}
-
-\begin{equation}
-\psi_{s_{1: N}}(t)=\underset{\Sigma_{[0, t]} \sim \operatorname{SEP} \text{ with } \Sigma_{t}=s_{1: N}}{\mathbb{E}}
-\left[\exp \left(-\int_{0}^{t} d t^{\prime} \sum_{j}\left[n_{j}\left(1-n_{j+1}\right)+n_{j+1}\left(1-n_{j}\right)\right]\right) \psi_{\Sigma_{0}}(0)\right]
-\end{equation}
-
-%\subsection{Bose-Hubbard model}
-%\label{sec:res-bhm}
+\hl{todo}
+\begin{enumerate}
+	\item training experiments
+	\item sampling experiments
+\end{enumerate}
 
 \section{Learning the rates} 
 \begin{figure}
@@ -61,22 +26,46 @@ The XY model.
 	\label{fig:inittestlearning}
 \end{figure}
 
-\subsubsection{How does simulation time $T$ and batch size $N_b$ affect the learning of the rates?}
+\begin{figure}
+	\centering
+	\includegraphics[width=\linewidth]{Chapter5/Figs/Raster/avg_var_loss}
+	\caption[Performance of the pCNN for different setups]{\textbf{Performance of the pCNN for different setups.}}
+	\label{fig:avgvarloss}
+\end{figure}
 
-\subsubsection{How do architectural choices of the pCNN limit learning the rates?}
+\begin{figure}
+	\centering
+	\includegraphics[width=\linewidth]{Chapter5/Figs/Raster/initial_time_space}
+	\caption[Time and space complexity of the pCNN]{\textbf{Time and space complexity of the pCNN}}
+	\label{fig:initialtimespace}
+\end{figure}
 
-\subsubsection{How does the size of lattice play a role?}
-
-\subsubsection{Can we improve learning by scaling the output of the pCNN?}
-Also mention reshuffling.
-
-\subsubsection{What role does symmetry play in all of this?}
+%\subsubsection{How does simulation time $T$ and batch size $N_b$ affect the learning of the rates?}
+%
+%\subsubsection{How do architectural choices of the pCNN limit learning the rates?}
+%
+%\subsubsection{How does the size of lattice play a role?}
+%
+%\subsubsection{Can we improve learning by scaling the output of the pCNN?}
+%Also mention reshuffling.
+%
+%\subsubsection{What role does symmetry play in all of this?}
 
 \section{Importance sampling}
-
+\section{Results}
 \subsection{Ising model}
+\subsubsection{One dimension}
+\begin{figure}[H]
+	\centering
+	\subfloat[$E_0/N$]{\includegraphics[width=0.345\linewidth]{Chapter5/Figs/Vector/tfim1d_en_finite_scaling.pdf}}
+	\subfloat[$\sigma_z$]{\includegraphics[width=0.33\linewidth]{Chapter5/Figs/Vector/tfim1d_mz_finite_scaling.pdf}}
+	\subfloat[$\sigma_x$]{\includegraphics[width=0.33\linewidth]{Chapter5/Figs/Vector/tfim1d_mx_finite_scaling.pdf}}
+	\caption[TFIM-1d energy and magnetisation]{\textbf{TFIM-1d energy and magnetisation}}
+	\label{fig:tfim1d_finite_scaling_properties}
+\end{figure}
 
 \subsection{XY model}
+
 
 %\begin{figure}[H]
 %	\centering

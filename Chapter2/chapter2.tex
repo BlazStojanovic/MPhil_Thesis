@@ -5,7 +5,7 @@
 
 \chapter{On the quantum many-body problem}
 \label{chapter2}
-This chapter discusses the quantum many-body problem and numerical approaches to its solution. We begin by introducing lattice models and their significance, before briefly overviewing the Schr\" odinger equation and Feynman path integral formulations of the problem. We then turn our attention towards solution procedures, providing a primer on popular methods with an emphasis on stochastic, Monte Carlo, approaches. Finally, we highlight recent usage of machine learning methods in this field.
+This chapter discusses the quantum many-body problem and numerical approaches to its solution. We begin by introducing the Schr\" odinger equation and Feynman path integral formulations of quantum mechanics, before briefly discussing lattice models and their significance. We then turn our attention towards solution procedures, providing a primer on popular methods with an emphasis on stochastic, Monte Carlo, approaches. Finally, we highlight recent usage of machine learning methods in this field.
 
 \ifpdf
     \graphicspath{{Chapter2/Figs/Raster/}{Chapter2/Figs/PDF/}{Chapter2/Figs/}}
@@ -14,84 +14,101 @@ This chapter discusses the quantum many-body problem and numerical approaches to
 \fi
 
 %********************************** %First Section  **************************************
-\section{Lattice models}
-\label{sec:lattice-models}
-% bit of history and why they are useful ~ 150 words max
-\hl{TODO}
-\hl{Add basic boson fermion distinction somewhere}
-
-\subsection{The Schr{\"o}dinger equation and the Feynman path integral}
+\section{The Schr{\"o}dinger equation and the Feynman path integral}
 \label{subsec:latt-qm}
 The dynamics of a quantum mechanical system are described with the Schr\" odinger equation
 \begin{equation}
-	\label{eq:sch}
-	i \hslash \frac{\mathrm{d}}{\mathrm{d} t}|\Psi(t)\rangle=\hat{H}|\Psi(t)\rangle,
+\label{eq:sch}
+i \hslash \frac{\mathrm{d}}{\mathrm{d} t}|\Psi(t)\rangle=\hat{H}|\Psi(t)\rangle,
 \end{equation}
 a linear partial differential equation. The state of the quantum system $| \Psi \rangle$ is a vector in a separable Hilbert space $\mathcal{H}$, and the square of its absolute value, e.g. $|\Psi(x, t)|^2$, at each point is interpreted as a probability density function (pdf). The Hamiltonian operator is the sum of kinetic and potential energies $\hat H = \hat T + \hat V$ of the system. Throughout this thesis we will be interested only in the ground state of the system, this is the state with lowest energy and it is the state we find the system in at zero-temperature. Instead of using the time-dependent formulation in eq.~\eqref{eq:sch}, we use the \emph{stationary} Schr\" odinger equation
 \begin{equation}
-	\hat{\mathrm{H}}|\Psi\rangle=E|\Psi\rangle,
+\hat{\mathrm{H}}|\Psi\rangle=E|\Psi\rangle,
 \end{equation}
 an eigenvalue equation, with the lowest energy $E_0$ corresponding to the ground state $|\Psi_{0}\rangle$. From this point onward, we use Hartree atomic units $m_{e}=e=\hslash=a_{0}=\mathrm{E}_{h}=k_{e}=1$.
 
 Alternatively to the Schr\" odinger equation one can use an integral Green's function representation to express the wavefunction $\Psi$ at some future time $t$ given initial condition $\Psi(x^\prime, t^\prime)$ as
 \begin{equation}
-	\Psi\left(x, t\right)=\int  \mathcal{K}\left(x, t ; x^\prime, t^\prime\right) \Psi\left(x^\prime, t^\prime\right) \mathrm{d} x^\prime.
+\Psi\left(x, t\right)=\int  \mathcal{K}\left(x, t ; x^\prime, t^\prime\right) \Psi\left(x^\prime, t^\prime\right) \mathrm{d} x^\prime.
 \end{equation}
 The \emph{propagator} $\mathcal{K}\left(x, t ; x^\prime, t^\prime\right)$ is the kernel of the Schr\" odinger equation
 \begin{equation}
-	\left(i \frac{\partial}{\partial t}-H_{x}\right) \mathcal{K}\left(x, t ; x^\prime, t^\prime\right)=i \delta\left(x - x^\prime\right) \delta\left(t-t^\prime\right).
+\left(i \frac{\partial}{\partial t}-H_{x}\right) \mathcal{K}\left(x, t ; x^\prime, t^\prime\right)=i \delta\left(x - x^\prime\right) \delta\left(t-t^\prime\right).
 \end{equation}
 It is related to the fundamental solution or Green's function as
 \begin{equation}
-	\mathcal G\left(x, t ; x^{\prime}, t^{\prime}\right)=\frac{1}{i} \Theta\left(t-t^{\prime}\right) \mathcal K\left(x, t ; x^{\prime}, t^{\prime}\right),
+\mathcal G\left(x, t ; x^{\prime}, t^{\prime}\right)=\frac{1}{i} \Theta\left(t-t^{\prime}\right) \mathcal K\left(x, t ; x^{\prime}, t^{\prime}\right),
 \end{equation}
 where $\Theta$ is the Heaviside function and $\delta$ is the Dirac delta. The same propagator can also be expressed using the Feynman path integral
 \begin{equation}
-	\label{eq:FPI}
-	\mathcal{K}\left(x, t ; x^\prime, t^\prime\right)=\int_{\substack{q(t)=x \\ q(t^\prime)=x^\prime}} \exp \left(i \int_{t^\prime}^{t} \mathcal{L}(q, \dot{q}, t) d t\right)\mathcal{D}[q(t)],
+\label{eq:FPI}
+\mathcal{K}\left(x, t ; x^\prime, t^\prime\right)=\int_{\substack{q(t)=x \\ q(t^\prime)=x^\prime}} \exp \left(i \int_{t^\prime}^{t} \mathcal{L}(q, \dot{q}, t) d t\right)\mathcal{D}[q(t)],
 \end{equation}
 where $\mathcal{L}$ is the classical Lagrangian function of the system, and the path integral is over all paths that satisfy the endpoint conditions $q(t)=x, q(t^\prime)=x^\prime$. This formulation of QM is closely related to the approaches we will develop in the later chapters. 
 
+\section{Lattice models}
+\label{sec:lattice-models}
+Lattice quantum spin systems, or lattice models for short, play a very important role in the modern condensed matter physics landscape. They are idealisations of real world systems that are conceptually simple, but still exhibit very rich physics. Take the physics of cuprate superconductors as an example, cuprates are composed of layers of copper oxides alternating with layers of other metal oxides and by neglecting intra-layer coupling the physics of the magnetic excitations can be considered mostly two dimensional. The study of lattice systems in one and two dimensions has been especially productive, 
+as many exact solutions containing non-trivial physics have been found. Concretely, spin systems that exhibit phase transitions provide insight into thermal and quantum fluctuations driving the such transitions~\cite{parkinson2010introduction}.
+
 \subsection{Examples of lattice models}
 \label{subsec:latt-examples}
-\hl{TODO, mention curse of dimensionality}
+Lattice models have long been used to study magnetism, and perhaps the most famous model is the Heisenberg model~\cite{heisenberg1985theorie},
 \begin{equation}
-	\hat{\sigma}^x_{i}=\left(\begin{array}{cc}0 & 1 \\ 1 & 0\end{array}\right)_{i} \quad \hat{\sigma}^y_{i}=\left(\begin{array}{cc}0 & -i \\ i & 0\end{array}\right)_{i} \quad \hat{\sigma}^z_{i}=\left(\begin{array}{cc}1 & 0 \\ 0 & -1\end{array}\right)_{i}
+\label{eq:general_heisenberg}
+\hat H = -\sum_{ij} \sum_{\alpha\beta} J^{\alpha \beta}_{ij} S^{\alpha}_{i} S^{\beta}_{j} + \sum \vec{B}\cdot \vec{S}_i,
 \end{equation}
-\subsubsection{Transverse-field Field Ising model}
-\hl{TODO}
+where $\vec{B}$ is the external magnetic field, $i, j$ are lattice sites, and the spin-spin interaction between spin-vector components $\alpha, \beta \in \{x, y, z\}$ at sites $i, j$ is given by $J^{\alpha \beta}_{ij}$. The general problem in eq.~\eqref{eq:general_heisenberg} cannot be solved, but some special cases in low dimensions have analytical solutions. One such case is the \textbf{transverse field Ising model} (TFIM)~\cite{de1963collective}, which is obtained by setting
 \begin{equation}
-	\label{eq:ising_hamiltonian}
-	\hat H_{\mathrm{Ising}}=-J \sum_{\langle i, j\rangle} \hat{\sigma}^z_{i} \hat{\sigma}^z_{j}-h \sum_{i} \sigma^x_{i}
+	J^{\alpha \beta}_{ij} = J \delta_{\langle i, j \rangle} \delta_{\alpha, \beta} \delta_{\alpha, z}, \quad \vec{B} = -B \vec{e}_x, \quad \text{ and } \quad S = \frac{1}{2},
 \end{equation}
-\subsubsection{Heisenberg model}
-\hl{TODO}
+thus
 \begin{equation}
-	\label{eq:heisenberg_hamiltonian}
-	\hat{H}_{\mathrm{Heisenberg}}=-\frac{1}{2} \sum_{j=1}^{N}
-	\left[J_{x} \hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+J_{y} \hat{\sigma}_{j}^{y} \sigma_{j+1}^{y}+J_{z} \hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z}+h \hat{\sigma}_{j}^{z}
-	\right]
+	\label{eq:h-ising}
+	\hat H_{\mathrm{Ising}}=-J \sum_{\langle i, j\rangle} \hat{\sigma}^z_{i} \hat{\sigma}^z_{j}-h \sum_{i} \sigma^x_{i},
 \end{equation}
-\subsubsection{Bose-Hubbard model}
-\hl{TODO}
+where $\langle i, j\rangle$ denotes a sum over nearest neighbours. A spin-$\frac{1}{2}$ system is represented in terms of Pauli matrices $\hat \sigma_i^{\alpha}$ acting on spin at site $i$
 \begin{equation}
-	\label{eq:bh_hamiltonian}
-	\hat{H}_{\mathrm{BH}}= -t \sum_{\langle i, j\rangle} \hat{b}_{i}^{\dagger} \hat{b}_{j}+\frac{U}{2} \sum_{i} \hat{n}_{i}\left(\hat{n}_{i}-1\right)-\mu \sum_{i} \hat{n}_{i}
+\hat{\sigma}^x_{i}=\left(\begin{array}{cc}0 & 1 \\ 1 & 0\end{array}\right)_{i} \quad \hat{\sigma}^y_{i}=\left(\begin{array}{cc}0 & -i \\ i & 0\end{array}\right)_{i} \quad \hat{\sigma}^z_{i}=\left(\begin{array}{cc}1 & 0 \\ 0 & -1\end{array}\right)_{i}.
 \end{equation}
+The Hilbert space of a single spin is two-dimensional, we construct its basis in terms of $\hat \sigma^z$ eigenvalues $\{|\uparrow\rangle,|\downarrow\rangle\}$, where $\hat{\sigma}^{z}|\uparrow\rangle=|\uparrow\rangle \text { and } \hat{\sigma}^{z}|\downarrow\rangle=-|\downarrow\rangle$. Pauli matrices at different sites commute
+\begin{equation}
+	\left[\hat{\sigma}_{i}^{\alpha}, \hat{\sigma}_{i^{\prime}}^{\alpha^{\prime}}\right]=0 \quad \text { for } \quad i^{\prime} \neq i, 
+\end{equation}
+and follow 
+\begin{equation}
+	\left[\hat \sigma^\alpha_{i}, \hat \sigma^\alpha_{k}\right]=2 i \varepsilon_{j k \ell} \hat \sigma^\alpha_{\ell}
+\end{equation}
+on the same site $i$. We define raising and lowering operators $\hat{\sigma}_{i}^{\pm}$ as
+\begin{equation}
+\hat{\sigma}_{i}^{\pm} = \left(\hat{\sigma}_{i}^{x} \pm i \hat{\sigma}_{i}^{y}\right) / 2, \quad \text{where} \quad \hat{\sigma}^{+}|\downarrow\rangle=|\uparrow\rangle \text { and } \hat{\sigma}^{-}|\uparrow\rangle=|\downarrow\rangle.
+\end{equation}
+The whole Hamiltonian then acts on the tensor product space $\left(\mathbb{C}^{2}\right)^{\otimes N}$ with dimension $2^N$. The TFIM has been exhaustively studied~\cite{stinchcombe1973isingI, stinchcombe1973isingII}, one-dimensional case was solved by Pfeuty~\cite{pfeuty1970one}, the solution uses Jordan-Wigner transformation of spin operators to spinless fermions~\cite{lieb1961two, niemeijer1967some}. The one dimensional case has two distinct states, the ordered phase for $|h| < J$ is either ferromagnetically $J > 0$ or anti-ferromagnetically $J < 0$ ordered. Since this state breaks spin-flip symmetry it is doubly degenerate, for $h=0$ and $J>0$ we have either $|\uparrow \uparrow \cdots \uparrow \rangle$ or $|\downarrow \downarrow \cdots \downarrow \rangle$. The system undergoes a quantum state transition at $|h| = J$ into a disordered phase for $|h| > J$, for $h \rightarrow \infty$ we have either $|\rightarrow \rightarrow \cdots \rightarrow \rangle$. 
 
-%********************************** % ??? Section  *************************************
-\newpage
+
+The \textbf{XY model}~\cite{lieb1961two} is another spin model that can be solved using the Jordan-Wigner transformation, its Hamiltonian is
+\begin{equation}
+	\label{eq:h-xy}
+\hat H_{\text{XY}}=-\frac{1}{2} \sum_{\langle i, j\rangle} \hat\sigma_{i}^{x} \hat\sigma_{j}^{x}+\hat\sigma_{i}^{y} \hat\sigma_{j}^{y}.
+\end{equation}
+More generally, we can write a Hamiltonian for a chain of spins by setting $J_{i j}^{\alpha \beta} = J_\alpha \delta_{\alpha \beta} \delta_{i, j+1}$ and $\vec{B} = -h \vec{e}_z$
+\begin{equation}
+	\label{eq:h-xyz}
+	\hat H_{\text{XYZ}}= -\frac{1}{2}\left[ \sum_{j=1}^{N}J_{x} \hat \sigma_{j}^{x} \hat \sigma_{j+1}^{x}+J_{y} \hat \sigma_{j}^{y} \hat \sigma_{j+1}^{y}+J_{z} \hat \sigma_{j}^{z} \hat \sigma_{j+1}^{z} + h \sigma_{j}^{z}
+	\right],
+\end{equation}
+this is the \textbf{XYZ Heisenberg chain}. It is another well studied model with solutions for various settings of the coupling constants $J_\alpha$. The isotropic ferromagnetic XXX chain ($J_x = J_y = J_z = J < 0$) was solved by Bethe with his famous ansatz~\cite{bethe1931theorie}. The ground state~\cite{hulthen1938austauschproblem} and excitations~\cite{des1962spin} of the isotropic antiferromagnetic XXX chain ($J_x = J_y = J_z = J < 0$) are known, and so are the solutions to the XXZ chain ($J_x = J_y = J \neq J_z$)~\cite{yang1966three, yang1966one, yang1966two} and the fully anisotropic XYZ chain ($J_x \neq J_y \neq J_z$)~\cite{baxter1972one}. 
+
+Models discussed so far only include nearest-neighbour interactions, a model which includes next nearest-neighbour interactions is the $\mathbf{J1}$\textbf{-}$\mathbf{J2}$ \textbf{model}
+\begin{equation}
+	\label{eq:h-j1j2}
+	\hat H_{J_1\text{-}J_2} = J_1 \sum_{\langle i, j \rangle} \mathbf{\hat \sigma}_i \mathbf{\hat \sigma}_j + J_2 \sum_{\langle\langle i, j \rangle\rangle} \mathbf{\hat \sigma}_i \mathbf{\hat \sigma}_j.
+\end{equation}
+We now turn our attention to general approaches to the quantum many body problem, we will return to models again when discussing stoquastic Hamiltonians in sections~\ref{subsec:fk-latt} and~\ref{sec:stoq_latt_forms}.
+
 \section{Approaches to the quantum many-body problem}
 \label{sec:QMBP}
-The quantum many-body problem, which amounts to solving the $3N$-dimensional Schr\"odinger equation, underpins a large part of quantum chemistry, condensed matter physics and materials science. The problem is notoriously hard to solve and very few systems with analytical solutions exist, most of them constrained in some artificial way such that they lend themselves to mathematical analysis. Examples include the Hookium atom, an analogue of helium where two electrons interact with the nucleus via a Hookean potential, Spherium, a system of two electrons confined to the surface of a sphere, and the Luttinger liquid of fermions in a one-dimensional conductor. Great efforts have been made in the nearly 100 years since the conception of the Schr\" odinger equation, in developing both analytical and numerical techniques to produce insights into quantum systems. Perhaps the most impactful was the development of various approximate methods that solve the many-body problem with our limited computational resources. While there is ongoing work on quantum simulators and computers that could greatly speed-up solving quantum problems~\cite{feynman2018simulating, childs2010relationship}, we here discuss methods one can use with a classical computer. The commonality of all mentioned methods is that they try to tame the exponential growth of the underlying Hilbert space w.r.t the system size, they differ in how they achieve this. The three most common assumptions/simplifications to the many-body problem employed in condensed matter and quantum chemistry are the Born-Oppenheimer approximation, that electronic motion is instantaneous compared to the nuclear motion, the use of chemical basis sets, which transforms the PDE into an algebraic problem, and usually neglecting relativistic effects.
-%\begin{figure}[h]
-%	\centering
-%	\subfloat{\includegraphics[width=0.3\linewidth]{Chapter2/Figs/Vector/hookium_diagram.pdf}}
-%%	\qquad\qquad\qquad
-%%	\subfloat{\includegraphics[width=0.3\linewidth]{Chapter2/Figs/Vector/hookium_diagram.pdf}}
-%	\caption[Hookium, a rare many-body problem with analytical solution.]{\textbf{Hookium.}}
-%	\label{fig:qmbp-hookium_and_spherium}
-%\end{figure}
+The quantum many-body problem, which amounts to solving the $3N$-dimensional Schr\"odinger equation, underpins a large part of quantum chemistry, condensed matter physics and materials science. The problem is notoriously hard to solve and very few systems with analytical solutions exist, most of them constrained in some artificial way such that they lend themselves to mathematical analysis. Along with spin models mentioned before, examples include the Hookium atom, an analogue of helium where two electrons interact with the nucleus via a Hookean potential, and Spherium, a system of two electrons confined to the surface of a sphere. Great efforts have been made in the nearly 100 years since the conception of the Schr\" odinger equation, in developing both analytical and numerical techniques to produce insights into quantum systems. Perhaps the most impactful was the development of various approximate methods that solve the many-body problem with our limited computational resources. While there is ongoing work on quantum simulators and computers that could greatly speed-up solving quantum problems~\cite{feynman2018simulating, childs2010relationship}, we here discuss methods one can use with a classical computer. The commonality of all mentioned methods is that they try to tame the exponential growth of the underlying Hilbert space w.r.t the system size, they differ in how they achieve this. The three most common assumptions/simplifications to the many-body problem employed in condensed matter and quantum chemistry are the Born-Oppenheimer approximation, that electronic motion is instantaneous compared to the nuclear motion, the use of chemical basis sets, which transforms the PDE into an algebraic problem, and usually neglecting relativistic effects.
 
 \subsubsection{Hartree-Fock}
 One of the most common approaches to the many-body problem is to replace the original interacting many-body problem with a set of independent-particle problems with effective potential. \textbf{Hartree-Fock} (HF) approaches solve an auxiliary system of independent electrons in a self-consistent field and assume that the wave function (for fermions) can be represented as a single Slater determinant. The HF method does not include electron correlation, which makes it a good approximation only in systems where correlation contributions are small. 

@@ -104,18 +104,18 @@ There are three components needed to perform gradient based optimisation. \textb
 \label{subsec:autodiff}
 The demand for automatic evaluation of derivatives is today greater than ever, and automatic differentiation has seen wide adoption within the scientific computing and machine learning communities~\cite{lyu2013automatic, tamayo2018automatic, baydin2018automatic}, with the development of high profile libraries such as \emph{PyTorch}~\cite{paszke2017automatic}, \emph{TensorFlow}~\cite{abadi2016tensorflow}, or \emph{JAX}~\cite{jax2018github}. Not to be confused with numerical or symbolic differentiation, \textbf{automatic differentiation} provides a way to mechanically find derivatives of functions expressed as a computer program, with certain complexity guarantees~\cite{barak2016history}. While modern implementations employ a variety of tricks, AD has two basic \emph{modi operandi} of calculating partial derivatives of $f(x_1, x_2, \ldots, x_n): \mathbb{R}^n \rightarrow \mathbb{R}^m$ at $\mathbf{a}$. We start by representing the computation $y = f(\mathbf{x})$ as an \emph{evaluation trace} of elementary operations, composed of inputs, intermediate values, and outputs:
 \begin{itemize}
-	\item \textbf{Forward accumulation mode}~\cite{wengert1964simple}:  In forward mode, when evaluating the partial derivative w.r.t $x_j$, we associate each intermediate value $v_i$ with the partial derivative $\frac{\partial v_i}{\partial x_j}$. We then apply the chain rule to each operation in the evaluation trace, producing the derivative trace. A single forward pass, in tandem passing both primals $v_i$ and their tangents $\frac{\partial v_i}{\partial x_j}$ through the trace, produces the output of the function, as well as the desired partial derivative. Forward mode AD produces one \emph{column} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \ll m$.
+	\item \textbf{Forward accumulation mode}~\cite{wengert1964simple}:  In forward mode, when evaluating the partial derivative w.r.t input $x_j$, we associate each intermediate value $v_i$ with the partial derivative $\frac{\partial v_i}{\partial x_j}$. We then apply the chain rule to each operation in the evaluation trace, producing the derivative trace. A single forward pass, in tandem passing both primals $v_i$ and their tangents $\frac{\partial v_i}{\partial x_j}$ through the trace, produces the output of the function, as well as the desired partial derivative. Forward mode AD produces one \emph{column} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \ll m$.
 	
-	\item \textbf{Reverse accumulation mode}~\cite{speelpenning1980compiling}:
+	\item \textbf{Reverse accumulation mode}~\cite{speelpenning1980compiling}: In reverse mode we instead associate each intermediate value $v_i$ with adjoint $\bar{v}_i = \frac{\partial y_i}{\partial v_i}$, partial derivative of the output $y_i$. Derivatives w.r.t inputs are then evaluated in a two step process, first a forward pass populates intermediate values $v_i$ and stores their dependencies before the adjoints $\bar{v}_i$ are propagated in reverse, from outputs to inputs. Reverse mode AD produces one \emph{row} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \gg m$, it is a generalisation of the \emph{backpropagation} algorithm.
 \end{itemize}
 AD is most commonly implemented in one of two ways, either by \emph{operator overloading}, abstracting away the derivative part of the calculation, e.g. in \emph{TensorFlow} of \emph{JAX}~\cite{abadi2016tensorflow, jax2018github}. Or alternatively via \emph{source code transformation}, where a new function is constructed by altering the source code, see \emph{Zygote}~\cite{innes2018don}.
 
 \subsection{Gradient estimation}
 \label{subsec:gbopt-gest}
-The problem of stochastic gradient estimation of an expectation of a function is a well studied problem that transcends machine learning and has a variety of applications~\cite{chriss1997black, schrittwieser2020mastering}. Different estimators differ in from and their properties, variance being one of the most important. In their review~\cite{mohamed2020monte} Mohamed et al. categorise MC gradient estimators into three categories
+The problem of stochastic gradient estimation of an expectation of a function is a well studied problem that transcends machine learning and has a variety of applications~\cite{chriss1997black, schrittwieser2020mastering}. Different estimators differ in form and their properties, variance being one of the most important. In their review~\cite{mohamed2020monte} Mohamed et al. categorise MC gradient estimators into three categories
 
 \subsubsection{Score-function estimator}
-\emph{Score-function estimator}: The score function is a logarithm of a probability distribution w.r.t to distributional parameters. It can be used as a gradient estimator
+The \emph{score function} is a logarithm of a probability distribution w.r.t to distributional parameters. It can be used as a gradient estimator
 \begin{equation}
 \begin{aligned}
 \nabla_{\boldsymbol{\theta}} \mathbb{E}_{p_{\boldsymbol{\theta}}(\mathbf{x})}[f(\mathbf{x})] &=  \nabla_{\boldsymbol{\theta}} \int p_{\boldsymbol{\theta}}(\mathbf{x}) f(\mathbf{x}) d \mathbf{x} \\
@@ -142,17 +142,13 @@ Continuous distributions can be sampled either directly by generating samples fr
 	\caption[The reparametrization trick]{\textbf{The reparametrization trick}, adapted from~\cite{kingma2017variational}. Stochasticity of the $\mathbf{z}$ node is pushed out into a separate input to the same node, resulting in deterministic gradients w.r.t $\boldsymbol{\phi}$ through the node.}
 	\label{fig:reparam}
 \end{figure}
-This was the gradient estimator originally used in the VAE implementation~\cite{kingma2013auto} there named as the \emph{reparametrization trick}, see also Figure~\ref{fig:reparam}. In many cases the transformation paths are so simple they can be implemented in one line of code, referred to as \emph{one-liners}. The pathwise-estimator can only be used on differentiable cost functions, but is easy to implement and crucially has lower variance than the score-function estimator.
+This was the gradient estimator originally used in the variational autoencoder implementation~\cite{kingma2013auto}, there named as the \emph{reparametrization trick}, see also Figure~\ref{fig:reparam}. In many cases the transformation paths are so simple they can be implemented in one line of code, referred to as \emph{one-liners}. The pathwise-estimator can only be used on differentiable cost functions, but is easy to implement and crucially has lower variance than the score-function estimator. 
 
 \subsubsection{Measure-valued gradient estimator}
-Which exploits the properties of signed-measures, is beyond the scope of this report.
-
-\begin{enumerate}
-	\item measure-valued
-	\item how does this apply to our objective?
-\end{enumerate}
+The measure-valued gradient estimator is less frequently used in ML. It exploits properties of signed-measures to construct a weak derivative of the probability density w.r.t parameters $\theta$, which can in turn be used to derive an unbiased gradient estimator with favourable variance properties. 
 
 \subsection{Optimisation algorithms}
+Variants of the \emph{stochastic gradient descent} (SGD) are by far the most used optimisation algorithms in ML, instead of calculating the true gradient of the parameters w.r.t loss, it is estimated using an unbiased estimator - taking the average gradient on a minibatch of examples. SGD introduces only a single hyperparameter, the learning rate $\alpha$, which determines the size of correction $\theta \leftarrow \theta - \alpha \nabla_\theta L$ at each iteration. The main advantage of this approach is that the time complexity of an iteration does not depend on the number of examples, this is useful for cases with large, or even infinite in our case, training sets. The first improvement over vanilla SGD is the use of momentum~\cite{polyak1964some}, where an exponentially decaying average of past gradients determines the update direction, and hyperparameter $\beta$ determines how quickly this value decays. Second improvement is using an adaptive learning rate, \emph{ADAM}~\cite{kingma2014adam} is perhaps the most popular such algorithm. 
 
 \section{Monte Carlo Importance Sampling}
 \label{sec:Impl-MCIP}
@@ -177,7 +173,6 @@ Under conditions where the central limit theorem holds~\cite{foulkes2001quantum}
 \begin{equation}
 \frac{\sigma_{f}^{2}}{M} \approx \frac{1}{M(M-1)} \sum_{m=1}^{M}\left[f\left(\mathbf{R}_{m}\right)-\frac{1}{M} \sum_{n=1}^{M} f\left(\mathbf{R}_{n}\right)\right]^{2}.
 \end{equation}
-
 
 \section{Metropolis-Hastings Algorithm}
 \label{sec:Impl-MCMC}
@@ -219,6 +214,7 @@ Thus to sample from any probability distribution we need only have the ability t
 
 
 \section[\emph{Qptimal sampling}]{\emph{Qptimal sampling}: optimal sampling in lattice models}
+\label{sec:qoptsampl}
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl1}

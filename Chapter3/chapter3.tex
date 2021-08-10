@@ -244,8 +244,8 @@ Rewriting the second condition above, it is clear that the Markov chain is witho
 Intuitively we understand the discrete-time Markov chain as a system changing its state at discrete time intervals, each time choosing the next state according to the row of the Transition matrix corresponding to the current state.
 \begin{figure}[h]
 	\centering
-	\subfloat{\includegraphics[width=0.5\linewidth]{Diagrams/mc_I/mc_I.pdf}}
-	\subfloat{\includegraphics[width=0.5\linewidth]{Diagrams/mc_II/mc_II.pdf}}
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Vector/mc_I.pdf}}
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Vector/mc_II.pdf}}
 	\caption[Discrete and continuous time Markov Chains.]{\textbf{Discrete and continuous time Markov Chains.} \textbf{left:} Discrete-time Markov Chain defined by $P$. \textbf{right:} Continuous-time Markov Chain defined by $\Gamma$.}
 	\label{fig:mc-diagrams}
 \end{figure}
@@ -261,7 +261,7 @@ Defining a Markov chain in continuous time is slightly trickier as describing th
 While the CTMC can be interpreted in a number of ways, we shall use the so called \textbf{jump chain} and \textbf{holding times} representation, see also Fig.~\ref{fig:holdingJumping}. 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.9\linewidth]{Diagrams/ctmc/ctmc}
+	\includegraphics[width=0.9\linewidth]{Chapter3/Figs/Vector/ctmc.pdf}
 	\caption[Jump chain and Holding times]{\textbf{Jump chain and Holding times.} A discrete space Markov process $\{X_t\}_{t\geq 0}$ in continuous time. The holding times $S_n$ are independent exponential random variables and the transition probabilities at jump times $J_n$ are given with the jump matrix $\Pi$. Inspired by~\cite{norris1998markov}.}
 	\label{fig:holdingJumping}
 \end{figure}
@@ -391,7 +391,7 @@ The ground state of this Hamiltonian has zero energy and is
 \end{equation}
 In other words, the quantum ground state probability distribution $|\psi_{0}|^2$ is the same as classical stationary distribution $\rho_{0}$ of the stochastic process $X_{t}$ in the literature referred to as the \emph{Nelson's ground state process}~\cite{nelson1967dynamical, albeverio1977energy}. This connection is one that our computational method will exploit, as the ability to efficiently sample from the stochastic process with correct drift $v$ is equivalent to sampling from the ground state of the quantum system. Even though the connection is simple, it comes with a caveat. Starting from the Schr\" odinger equation one needs to find the drift $v(x)$ and while the connection with the potential of the Hamiltonian is clear-cut in this simple example, this is not the case in many-body systems, i.e. the \emph{inverse problem} of finding the stochastic process of a given Hamiltonian is difficult, and is one of the core problems approached in this thesis.
 
-\subsection{Stoquastic Hamiltonians and Feynman-Kac in discrete state space}
+\subsection{Stoquastic Hamiltonians}
 \label{subsec:fk-latt}
 Before we illustrate the connection between the imaginary time Schr\" odinger equation and CTMCs we must introduce \textbf{Stoquastic Hamiltonians}~\cite{bravyi2006complexity}, a class of Hamiltonians which do not suffer from the sign problem.
 \begin{definition}[Stoquastic Hamiltonian]
@@ -416,7 +416,7 @@ and a global phase exists for which the ground state has non-negative amplitudes
 We can decompose a stoquastic Hamiltonian into a rate matrix $\Gamma$, as defined in section~\ref{subsubsect:CTMC}, and a diagonal potential matrix $V$
 \begin{equation}
 	\label{eq:hamilton_split}
-	H=-\Gamma+V.
+	H = -\Gamma + V
 \end{equation}
 The rates $\Gamma$ are analogous to the Brownian motion in the continuum case, or can be interpreted as the kinetic contribution. They represent a CTMC which we will understand as \emph{passive dynamics}. In terms of the Hamiltonian matrix,
 \begin{equation}
@@ -429,7 +429,66 @@ and the potential is
 \begin{equation}
 V(\boldsymbol{s})=H_{s s}+\sum_{s^{\prime} \neq s} H_{s s^{\prime}}.
 \end{equation}
-From now on we use $\rightarrow$ notation to emphasise the transition between \emph{adjacent} states $s\neq s^\prime$ which satisfy $H_{s s^{\prime}} \neq 0$. This decomposition allows us to define the Feynman-Kac formula in the discrete state space~\cite{rogers2000diffusions} as
+From now on we use $\rightarrow$ notation to emphasise the transition between \emph{adjacent} states $s\neq s^\prime$ which satisfy $H_{s s^{\prime}} \neq 0$. 
+
+\subsection{Stoquastic representations of the lattice models}
+\label{subsec:stoq_latt_forms}
+Let us now reinterpret lattice models introduced in section~\ref{sec:lattice-models} in terms of the stoquastic Hamiltonian decomposition eq.~\eqref{eq:hamilton_split}.
+
+\subsubsection{Transverse-field Ising model}
+\label{subsubsec:res-im}
+In the $z$-spin basis a state is defined as $\mathbf{s} = \boldsymbol{\sigma}^z$, where $\boldsymbol{\sigma}^z = (\sigma_1^z, \sigma_2^z, \ldots, \sigma_N^z) \equiv (s_1^z, s_2^z, \ldots, s_N^z)$ and $\sigma_i^N$ represent either spin-up or spin-down states at site $i$. The TFIM Hamiltonian eq.~\eqref{eq:h-ising} in this representation becomes
+\begin{equation}
+	\langle \mathbf{s}^\prime | H_{\text{TFIM}} | \mathbf{s}\rangle = -J \sum_{\langle i, j \rangle} s_i s_j \langle \mathbf{s}^\prime | \mathbf{s}\rangle -h \sum_i \langle \mathbf{s}^\prime | \sigma_{i}^+ + \sigma_{i}^- | \mathbf{s} \rangle.
+\end{equation}
+If we examine the second term for $\mathbf{s}^\prime \neq \mathbf{s}$ we see that states will be adjacent, meaning there will be passive transitions between them, if the two configurations differ by only a single spin flip. In any such case the second term contributes $-h$ and the passive rates 
+\begin{equation}
+	\Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} = h.
+\end{equation}
+Passive process in the TFIM is then just individual spin flips, see Fig.~\ref{fig:isingpassive}. The potential follows from its definition
+\begin{equation}
+	V(\mathbf{s}) = -\sum_{\mathbf{s} \neq \mathbf{s}^\prime} \Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} + H_{ss} = -hN - J\sum_{\langle i, j \rangle} s_i s_j,
+\end{equation}
+where $N$ is the number of lattice sites.
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=4.5cm]{Chapter5/Figs/Vector/ising_passive}
+	\caption[Ising passive process]{\textbf{Ising passive process.} Adjacent states in the TFIM are ones that differ by a single spin flip. The transition rates for all adjacent states are constant $h$ and the passive process flips individual spins according to the rates.}	
+	\label{fig:isingpassive}
+\end{figure}
+\subsubsection{The XY model}
+\label{subsubsec:res-hm}
+In $z$-spin basis the XY Hamiltonian~\eqref{eq:h-xy} becomes
+\begin{equation}
+	\langle \mathbf{s}^\prime | H_{\text{XY}} | \mathbf{s} \rangle = -\sum_{\langle i, j \rangle}\langle \mathbf{s}^\prime | \hat \sigma_i^+ \hat \sigma_j^- + \hat \sigma_i^- \hat \sigma_j^+| \mathbf{s}\rangle.
+\end{equation}
+In this case two states $\mathbf{s} \neq \mathbf{s}^\prime$ are adjacent if there exists two sites $i$, $j$ with $s_i \neq s_j$ in $\mathbf{s}$, such that swapping the values $s_i$ and $s_j$ gives $s^\prime$. The passive rates are then
+\begin{equation}
+	\Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} = 1,
+\end{equation}
+and the corresponding passive process is the \emph{symmetric exclusion process} (SEP) depicted in Fig.~\ref{fig:xypassive}. The potential follows as
+\begin{equation}
+V(\mathbf{s}) = -\sum_{\mathbf{s} \neq \mathbf{s}^\prime} \Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} = -\sum_{\langle i, j \rangle} \left[n_i\left(1-n_j\right) - n_j\left(1-n_i\right)\right]
+\end{equation}
+\begin{figure}[t]
+	\centering
+	\includegraphics[height=4.5cm]{Chapter5/Figs/Vector/xy_passive}
+	\caption[Symmetric exclusion process]{\textbf{Symmetric exclusion process.} Adjacent states of the XY model are ones separated by a switch of two non-equal neighboring spins, the associated passive process is the SEP \textbf{a)}. On subfigure $\mathbf{b)}$ a mask of all sites that can make a transition in the next time step (either up or right) is shown, the mask is necessary for implementing the SEP, see section~\ref{sec:qoptsampl}.}
+	\label{fig:xypassive}
+\end{figure}
+
+\begin{equation}
+\hat H_{\mathrm{F}}=-\frac{1}{2} \sum_{j}\left[\hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+\hat{\sigma}_{j}^{y} \hat{\sigma}_{j+1}^{y}+\hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z}\right],
+\end{equation}
+where $n_i$ is the occupation number of site $i$.
+
+\subsubsection{XXZ model}
+\begin{equation}
+	\hat H_{\text{XXZ}} = \sum_{i, j} \left[\Delta \left(\hat \sigma_i^+ \hat \sigma_j^- + \hat \sigma_i^- \hat \sigma_j^+\right) + \hat{\sigma}^z_{i} \hat{\sigma}^z_{j} \right]
+\end{equation}
+
+\subsection{Feynman-Kac in discrete state space}
+The decomposition $H = -\Gamma + V$ allows us to define the Feynman-Kac formula in the discrete state space~\cite{rogers2000diffusions} as
 \begin{equation}
 	\label{eq:fkac_disc}
 	\psi\left(s_t, t\right)=

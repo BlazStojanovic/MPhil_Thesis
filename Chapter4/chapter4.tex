@@ -150,68 +150,59 @@ The measure-valued gradient estimator is less frequently used in ML. It exploits
 \subsection{Optimisation algorithms}
 Variants of the \emph{stochastic gradient descent} (SGD) are by far the most used optimisation algorithms in ML, instead of calculating the true gradient of the parameters w.r.t loss, it is estimated using an unbiased estimator - taking the average gradient on a minibatch of examples. SGD introduces only a single hyperparameter, the learning rate $\alpha$, which determines the size of correction $\theta \leftarrow \theta - \alpha \nabla_\theta L$ at each iteration. The main advantage of this approach is that the time complexity of an iteration does not depend on the number of examples, this is useful for cases with large, or even infinite in our case, training sets. The first improvement over vanilla SGD is the use of momentum~\cite{polyak1964some}, where an exponentially decaying average of past gradients determines the update direction, and hyperparameter $\beta$ determines how quickly this value decays. Second improvement is using an adaptive learning rate, \emph{ADAM}~\cite{kingma2014adam} is perhaps the most popular such algorithm. 
 
-\section{Monte Carlo Importance Sampling}
+\section{Importance Sampling}
 \label{sec:Impl-MCIP}
-The most common application of Monte Carlo methods is evaluation of integrals in high dimensional space. There MC has a distinct advantage over quadrature methods, as the statistical error decreases with the square root of samples irregardless of the dimensionality of the problem. Integrals of a function $g(\mathbf{R})$
+Ultimately we want to use the optimal learned rates $\Gamma^{(v)}$ to evaluate observables $\hat O$ in our model, be it the ground state energy or something else. Recall from section~\ref{sec:vmc}, that we can express observables as a Monte Carlo average of the local operator $\hat O_L$. But not all operators are made equal and some are more convenient to evaluate than others, in our implementation it will be helpful to make a distinction between \emph{diagonal} and \emph{off-diagonal} observables~\cite{torlai2018neural}. Since the wave functions of stoquastic Hamiltonians are real and positive we denote $\psi(\boldsymbol{s}) = \sqrt{\rho(\boldsymbol{s})/Z}$, where $Z$ is the normalisation constant. If the observable
 \begin{equation}
-I=\int g(\mathbf{R}) \mathrm{d} \mathbf{R},
+	\hat {O}=\sum_{\boldsymbol{s}, \boldsymbol{s}^{\prime}} {O}_{\boldsymbol{s} \boldsymbol{s}^{\prime}}|\boldsymbol{s}\rangle \langle \boldsymbol{s}^{\prime}|,
 \end{equation}
-where $\mathbf{R}$ is the \emph{configuration} of the system or simply a \emph{walker}, can be integrated by use of an \emph{importance function} $\mathrm{P}(\mathbf{R})$, where $\int d \mathbf{R} \text{P}(\mathbf{R})=1$ and $\mathrm{P} (\mathbf{R}) \geq 0$. The integral can be rewritten in the form
+is diagonal $\hat{O}_{\boldsymbol{s} \boldsymbol{s}^{\prime}}^{D}={O}(\boldsymbol{s}) \delta_{\boldsymbol{s} \boldsymbol{s}^{\prime}}$ in our chosen basis $\{\boldsymbol{s}\}$, then its expectation simplifies to 
 \begin{equation}
-\int g(\mathbf{R}) \mathrm{d} \mathbf{R} = \int \frac{g(\mathbf{R})}{\mathrm{P}(\mathbf{R})} \mathrm{P}(\mathbf{R}) \mathrm{d} \mathbf{R} = \int f(\mathbf{R})\mathrm{P}(\mathbf{R}) \mathrm{d} \mathbf{R},
+	\langle\hat{O^D}\rangle=\sum_{\boldsymbol{s}, \boldsymbol{s}^{\prime}} \psi^*(\boldsymbol{s}) \psi(\boldsymbol{s}^{\prime}) {O}_{\boldsymbol{s} \boldsymbol{s}^{\prime}} = \frac{1}{Z} \sum_{\boldsymbol{s}} \rho(\boldsymbol{s}) O({\boldsymbol{s}})  \approx \frac{1}{M} \sum_{k=1}^{M} O(\boldsymbol{s}_{k}),
 \end{equation}
-where $f(\mathbf{R}) = g(\mathbf{R}) / \mathrm{P}(\mathbf{R})$.
-The importance function $\mathrm{P}(\mathbf{R})$ can be interpreted as a probability density. If we generate an infinite number of random uncorrelated configurations $\mathbf{R}_m$ from the distribution $\mathrm{P}(\mathbf{R})$, the sample average is a good estimator of the integral $I$
+which is very easy to evaluate given the MC samples. Alternatively for off-diagonal observables the expectation becomes
 \begin{equation}
-I=\lim _{M \rightarrow \infty}\left\{\frac{1}{M} \sum_{m=1}^{M} f\left(\mathbf{R}_{m}\right)\right\},
+	\left\langle\hat{O}^{OD}\right\rangle=\sum_{\boldsymbol{s}, \boldsymbol{s}^{\prime}} \psi^{*}(\boldsymbol{s}) \psi(\boldsymbol{s}^{\prime}) O_{\boldsymbol{s} \boldsymbol{s}^{\prime}} = \frac{1}{\sum_{\boldsymbol{s}}\left|\psi_{\boldsymbol{\lambda}}(\boldsymbol{s})\right|^{2}} \sum_{\boldsymbol{s} \boldsymbol{s}^{\prime}} \psi_{\boldsymbol{\lambda}}^{*}(\boldsymbol{s}) \psi_{\boldsymbol{\lambda}}(\boldsymbol{s}^{\prime}) O_{\boldsymbol{s} \boldsymbol{s}^{\prime}} \approx \frac{1}{M} \sum_{k=1}^{M} O^L(\boldsymbol{s}_{k}),
 \end{equation}
-and for an approximation with a finite number of samples
+where the local operator has the form
 \begin{equation}
-I \approx \frac{1}{M} \sum_{m=1}^{M} f\left(\mathbf{R}_{m}\right).
+	O_{\boldsymbol{s}_{k}}^{L}=\sum_{\boldsymbol{s}^{\prime}} \frac{\psi(\boldsymbol{s}^{\prime})}{\psi\left(\boldsymbol{s}_{k}\right)} O_{\boldsymbol{s}_{k} \boldsymbol{s}^{\prime}} = \sum_{\boldsymbol{s}^{\prime}} \sqrt{\frac{\rho(\boldsymbol{s}^{\prime})}{\rho\left(\boldsymbol{s}_{k}\right)}} O_{\boldsymbol{s}_{k} \boldsymbol{s}^{\prime}}. 
 \end{equation}
-Under conditions where the central limit theorem holds~\cite{foulkes2001quantum}, the estimator is normally distributed with variance $\sigma_{f}^{2}/M$, which can also be estimated from the samples as
+The local estimate of $\hat{O}$ is efficient to evaluate if the matrix representation $O_{\boldsymbol{s}_{k} \boldsymbol{s}^{\prime}}$ is sparse in the reference basis. When working in the $z$-spin basis, an example of a diagonal observable would be the average longitudinal magnetisation per spin 
 \begin{equation}
-\frac{\sigma_{f}^{2}}{M} \approx \frac{1}{M(M-1)} \sum_{m=1}^{M}\left[f\left(\mathbf{R}_{m}\right)-\frac{1}{M} \sum_{n=1}^{M} f\left(\mathbf{R}_{n}\right)\right]^{2}.
+	\langle \hat \sigma_z \rangle = \sum_i \frac{\langle \hat \sigma^z_{i} \rangle}{N}.
+\end{equation}
+On the other hand, transverse magnetisation $\langle \hat \sigma^x_j \rangle$ for spin $j$ is off-diagonal\footnote{$\boldsymbol{s}_i = (s_1, s_2, \ldots, s_i, \ldots, s_n)$, $s_i$ is either $1$ or $0$.}
+\begin{equation}
+	\left\langle\boldsymbol{s}\left|\hat{\sigma}_{j}^{x}\right| \boldsymbol{s}^{\prime}\right\rangle=\delta_{s_{j}^{\prime}, 1-s_{j}} \prod_{i \neq j} \delta_{s_{i}^{\prime}, s_{j}},
+\end{equation}
+thus the local operator for $\langle \hat \sigma^x_j \rangle$ is sparse with only one term in the sum
+\begin{equation}
+	\left(\sigma_{j}^{x}\right)^{L}=\frac{\psi \left(s_{1}, \ldots, 1-s_{j}, \ldots, s_{N}\right)}{\psi\left(s_{1}, \ldots, s_{j}, \ldots, s_{N}\right)}=\sqrt{\frac{\rho \left(s_{1}, \ldots, 1-s_{j}, \ldots, s_{N}\right)}{\rho\left(s_{1}, \ldots, s_{j}, \ldots, s_{N}\right)}}.
 \end{equation}
 
-\section{Metropolis-Hastings Algorithm}
-\label{sec:Impl-MCMC}
-The integration technique from the previous section relies on our ability to obtain samples from a probability distribution $\mathrm{P}(\mathbf{R})$. In the case of QMC these distributions are high-dimensional and cannot be directly sampled from. Moreover their normalisations are usually not known. 
-The Metropolis-Hastings algorithm~\cite{hastings1970monte}, see Algorithm~1, avoids direct sampling from the distribution $\mathrm{P}(\mathbf{R})$ and is insensitive to its normalisation. It uses a Markov process whose stationary distribution $\pi(\mathbf{R})$ is the same as $\mathrm{P}(\mathbf{R})$	
-to generate a sequence of configurations $\left\{\mathbf{R}_n\right\}_\mathrm{P}$ 
-that are drawn from $\mathrm{P}(\mathbf{R})$. A Markov process is completely defined with its transition probability $\mathrm{P}(\mathbf{R} \rightarrow \mathbf{R}^\prime)$, which is the probability of transitioning from state $\mathbf{R}$ to state $\mathbf{R}^\prime$. For the process to have a unique stationary distribution two conditions must be met, the process must be \emph{ergodic} and it must obey \emph{detailed balance}
+\subsection{MCMC and the Metropolis-Hastings Algorithm}
+\label{subsec:Impl-MCMC}
+The integration technique from the previous section relies on our ability to obtain samples from an un-normalised probability distribution $\rho$. Markov Chain Monte Carlo (MCMC) avoids sampling directly from $\rho$ by constructing a Markov chain whose stationary distribution $\pi$ is the same as $\rho$. Propagating this chain, if it is done for long enough, then produces a sequence of samples from the desired distribution. For the process to have a unique stationary distribution two conditions must be met, the process must be \emph{ergodic} and it must obey \emph{detailed balance}
 \begin{equation}
-\mathrm{P}(\mathbf{R}) \mathrm P(\mathbf{R} \rightarrow \mathbf{R}^\prime) = \mathrm{P}(\mathbf{R}^\prime) \mathrm P(\mathbf{R}^\prime \rightarrow \mathbf{R}),
+	P_{\mathbf{s \rightarrow \mathbf{s}^\prime}}\rho(\mathbf{s}) = P_{\mathbf{s^\prime \rightarrow \mathbf{s}}} \rho(\mathbf{s}^\prime),
 \end{equation}
-rewritten as
+where $P$ are the transition probabilities. The equivalent condition in continuous time uses the rate matrix $\Gamma$
 \begin{equation}
-\label{eq:detailed_balance}
-\frac{\mathrm P ({\mathbf{R}})}{\mathrm P ({\mathbf{R}^\prime})} = \frac{\mathrm P(\mathbf{R}^\prime \rightarrow \mathbf{R})}{\mathrm P(\mathbf{R} \rightarrow \mathbf{R}^\prime)}.
+	\Gamma_{\mathbf{s \rightarrow \mathbf{s}^\prime}}\rho(\mathbf{s}) = \Gamma_{\mathbf{s^\prime \rightarrow \mathbf{s}}} \rho(\mathbf{s}^\prime).
 \end{equation}
-The right transition probability $\mathrm P(\mathbf{R} \rightarrow \mathbf{R}^\prime)$ is not known, but we can express it with a trial move transition probability $\mathrm{T}(\mathbf{R} \rightarrow \mathbf{R}^\prime)$ which we sample and acceptance probability $\mathrm{A}(\mathbf{R} \rightarrow \mathbf{R}^\prime)$ as
+The \emph{correct} transition probabilities $P$ (or rates $\Gamma$) are not known, instead each move is proposed using a trial move probability $T_{\mathbf{s \rightarrow \mathbf{s}^\prime}}$ and accepted using the Metropolis-Hastings acceptance probability $A_{\mathbf{s \rightarrow \mathbf{s}^\prime}}$ which guarantees detailed balance is met
 \begin{equation}
-\mathrm P(\mathbf{R} \rightarrow \mathbf{R}^\prime) = \mathrm T(\mathbf{R} \rightarrow \mathbf{R}^\prime) \mathrm A(\mathbf{R} \rightarrow \mathbf{R}^\prime).
-\end{equation}
-For equation~\eqref{eq:detailed_balance} to hold, the acceptance probability must be 
-\begin{equation}
-A\left(\mathbf{R} \rightarrow \mathbf{R}^{\prime}\right)=\min \left(1, \frac{\mathrm{T}\left(\mathbf{R}^{\prime} \rightarrow \mathbf{R}\right) \mathrm{P}\left(\mathbf{R}^{\prime}\right)}{\mathrm{T}\left(\mathbf{R} \rightarrow \mathbf{R}^{\prime}\right) \mathrm{P}(\mathbf{R})}\right).
-\end{equation}
-Thus to sample from any probability distribution we need only have the ability to calculate probabilities $\mathrm P(\mathbf{R})$ and to sample from a trial transition probability $\mathrm T(\mathbf{R} \rightarrow \mathbf{R}^{\prime})$. The efficiency of the algorithm depends on the amount of trial moves that we reject. All trial moves would be accepted if $\mathrm{T}(\mathbf{R} \rightarrow \mathbf{R}^{\prime})= \mathrm{P}(\mathbf{R}^\prime)$, which would just mean sampling from $\mathrm P$ directly and is the very problem we are trying to solve with Metropolis-Hastings. 	
-\begin{algorithm}
-	\label{alg:MCMC}
-	\SetAlgoLined
-	\KwResult{A set of configurations $\left\{ \mathbf{R}_n \right\}_{\mathrm{P}}$ sampled from $\mathrm P$}
-	Initialize walker at random configuration $\mathbf{R}$\;
-	\While{no. samples less than $N$}{
-		Generate new configuration $\mathbf{R}^\prime$ with transition probability $\mathrm{T}(\mathbf{R}\rightarrow\mathbf{R}^\prime)$\;
-		
-		Accept the move ($\mathbf{R} \rightarrow \mathbf{R}^\prime$) with probability $A\left(\mathbf{R} \rightarrow \mathbf{R}^{\prime}\right)=\min \left(1, \frac{\mathrm{T}\left(\mathbf{R}^{\prime} \rightarrow \mathbf{R}\right) \mathrm{P}\left(\mathbf{R}^{\prime}\right)}{\mathrm{T}\left(\mathbf{R} \rightarrow \mathbf{R}^{\prime}\right) \mathrm{P}(\mathbf{R})}\right)$\;
-		
-		Append $\mathbf{R}$ to the set of configuration;
-	}
-	\caption{Metropolis-Hastings}
-\end{algorithm}
+	A_{\mathbf{s \rightarrow \mathbf{s}^\prime}} = \min \left(1, \frac{T_{\mathbf{s^\prime \rightarrow \mathbf{s}}} \rho(\mathbf{s}^\prime)}{
+		T_{\mathbf{s \rightarrow \mathbf{s}^\prime}}\rho(\mathbf{s})}\right).
+\end{equation} 
+Thus to sample from any probability distribution we only need the ability to calculate ratios $\frac{\rho(\boldsymbol{s}^{\prime})}{\rho(\boldsymbol{s})}$ and to sample from a trial transition probability $\mathrm T_{\mathbf{s \rightarrow \mathbf{s}^\prime}}$. The efficiency of the algorithm depends on the amount of trial moves that we reject and accepting every trial move would mean \textbf{optimal importance sampling}. All moves are accepted only when $T = P$, which would just mean sampling from $\mathrm P$ directly. 
 
+In practice we are interested in sampling from the ground state $\psi_0$, and we can improve upon the standard method of using uniform transition probabilities for all adjacent states, by recalling that sampling from the Feynman-Kac $\mathbb{P}_\text{FK}$ measure is equivalent to sampling from the ground state. Thus it is possible to achieve optimal importance sampling by finding the rates $\Gamma^\prime$ that correspond to the Feynman-Kac measure, which is precisely what we discussed in section~\ref{sec:control_loss}. This is possible in theory, but our variational approximation of the rates $\Gamma^{\theta} \approx \Gamma^\prime$ is not exact in the same way that a trial wave function is not, and we are really sampling from the stationary distribution of $\Gamma^\theta$. The actual sampling of the chain can be done in discrete time, using 
+\begin{equation}
+	T_{s \rightarrow s^{\prime}}=\frac{\Gamma_{s \rightarrow s^{\prime}}^{\theta}}{\sum_{s^{\prime} \neq s} \Gamma_{s \rightarrow s^{\prime}}^{\theta}}
+\end{equation}
+and a Metropolis correction step\footnote{Throwing away holding times $\tau_i$ biases the process.} with $\Gamma_{s \rightarrow s^{\prime}}=\sqrt{\frac{\rho\left(\boldsymbol{s}^{\prime}\right)}{\rho(\boldsymbol{s})}}$. Alternatively it can be done in continuous time, where the stationary distribution $\rho = \left[ \tilde{\rho_1}, \tilde{\rho_2}, \tilde{\rho_3}, \ldots \right]$, where $\tilde \rho_i$ is the fraction of time spent in state $i$. 
 
 \section[\emph{Qptimal sampling}]{\emph{Qptimal sampling}: optimal sampling in lattice models}
 \label{sec:qoptsampl}
@@ -226,5 +217,7 @@ Thus to sample from any probability distribution we need only have the ability t
 	\caption[Implementation details]{\textbf{Implementation details}}
 	\label{fig:qsampl}
 \end{figure}
+
+\subsubsection{Gumbel TOFO trick}
 
 \nomenclature[z-gCNN]{G-CNN}{Group Convolutional Neural Network}

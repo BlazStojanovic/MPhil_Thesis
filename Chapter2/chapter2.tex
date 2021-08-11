@@ -133,6 +133,7 @@ Quantum Monte Carlo is a class of methods that uses statistical sampling to dire
 %% Zero temperature methods
 %% Variational quantum monte carlo
 \subsubsection{Variational quantum Monte Carlo (VMC)}
+\label{sec:vmc}
 The most straightforward QMC approach is based on the variational principle, which provides a clear path towards a solution to the ground state problem. Simply use a \emph{trial wave function} $\Psi_{T}$ to parameterise the ground state and optimise the parameters of $\Psi_{T}$ to reach the lowest-energy state. This lowest variational state should capture the behaviour of the ground state if the ansatz is expressive enough. The flexibility of easily defining the trial wave function for a variety of different problems and the ease of its evaluation is a clear advantage over methods described in the previous section. Moreover, given that the variational wave function should encapsulate the main aspects of the system studied it provides intuition into the system itself. Development of trial functions has played a key role in the applicability of VMC, famous examples of trial wave functions include the Slater-Jastrow and Backflow wave functions. The drawback of VMC is that the variational wave function might contain a bias that cannot be avoided through optimisation of the parameters alone, see Fig.~\ref{fig:qmc_blocking}. 
 \begin{figure}[h]
 	\centering

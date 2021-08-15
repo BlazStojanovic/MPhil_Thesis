@@ -6,7 +6,6 @@
 \graphicspath{{Chapter4/Figs/Vector/}{Chapter4/Figs/}}
 \fi
 
-
 %*******************************************************************************
 %****************************** Fourth Chapter *********************************
 %*******************************************************************************
@@ -198,26 +197,41 @@ The \emph{correct} transition probabilities $P$ (or rates $\Gamma$) are not know
 \end{equation} 
 Thus to sample from any probability distribution we only need the ability to calculate ratios $\frac{\rho(\boldsymbol{s}^{\prime})}{\rho(\boldsymbol{s})}$ and to sample from a trial transition probability $\mathrm T_{\mathbf{s \rightarrow \mathbf{s}^\prime}}$. The efficiency of the algorithm depends on the amount of trial moves that we reject and accepting every trial move would mean \textbf{optimal importance sampling}. All moves are accepted only when $T = P$, which would just mean sampling from $\mathrm P$ directly. 
 
-In practice we are interested in sampling from the ground state $\psi_0$, and we can improve upon the standard method of using uniform transition probabilities for all adjacent states, by recalling that sampling from the Feynman-Kac $\mathbb{P}_\text{FK}$ measure is equivalent to sampling from the ground state. Thus it is possible to achieve optimal importance sampling by finding the rates $\Gamma^\prime$ that correspond to the Feynman-Kac measure, which is precisely what we discussed in section~\ref{sec:control_loss}. This is possible in theory, but our variational approximation of the rates $\Gamma^{\theta} \approx \Gamma^\prime$ is not exact in the same way that a trial wave function is not, and we are really sampling from the stationary distribution of $\Gamma^\theta$. The actual sampling of the chain can be done in discrete time, using 
+In practice we are interested in sampling from the ground state $\psi_0$, and we can improve upon the standard method of using uniform transition probabilities for all adjacent states, by recalling that sampling from the Feynman-Kac $\mathbb{P}_\text{FK}$ measure is equivalent to sampling from the ground state. Thus it is possible to achieve optimal importance sampling by finding the rates $\Gamma^\prime$ that correspond to the Feynman-Kac measure, which is precisely what we discussed in section~\ref{sec:control_loss}. This is possible in theory, but our variational approximation of the rates $\Gamma^{\theta} \approx \Gamma^\prime$ is not exact in the same way that a trial wave function is not, and we are really sampling from the stationary distribution of $\Gamma^\theta$. The actual sampling of the chain can be done in discrete time, using
 \begin{equation}
 	T_{s \rightarrow s^{\prime}}=\frac{\Gamma_{s \rightarrow s^{\prime}}^{\theta}}{\sum_{s^{\prime} \neq s} \Gamma_{s \rightarrow s^{\prime}}^{\theta}}
 \end{equation}
-and a Metropolis correction step\footnote{Throwing away holding times $\tau_i$ biases the process.} with $\Gamma_{s \rightarrow s^{\prime}}=\sqrt{\frac{\rho\left(\boldsymbol{s}^{\prime}\right)}{\rho(\boldsymbol{s})}}$. Alternatively it can be done in continuous time, where the stationary distribution $\rho = \left[ \tilde{\rho_1}, \tilde{\rho_2}, \tilde{\rho_3}, \ldots \right]$, where $\tilde \rho_i$ is the fraction of time spent in state $i$. 
+and a Metropolis correction step\footnote{Throwing away holding times $\tau_i$ biases the chain.} with $\Gamma_{s \rightarrow s^{\prime}}=\sqrt{\frac{\rho\left(\boldsymbol{s}^{\prime}\right)}{\rho(\boldsymbol{s})}}$. Alternatively it can be done in continuous time, where the stationary distribution $\rho = \left[ \tilde{\rho_1}, \tilde{\rho_2}, \tilde{\rho_3}, \ldots \right]$, where $\tilde \rho_i$ is the fraction of time spent in state $i$. 
 
-\section[\emph{Qptimal sampling}]{\emph{Qptimal sampling}: optimal sampling in lattice models}
+\section{Software implementation details}
 \label{sec:qoptsampl}
-\begin{figure}[h]
+The aim of the software implementation is to facilitate experimentation with training the rates, as well as using the rates to perform importance sampling. The main developing principles were flexibility in the choice of variational model, hyperparameters, or stoquastic Hamiltonian itself, and extendability, the ability to add new Hamiltonians and models with relative ease. Additionally, the implementation needs to be computationally efficient with its most demanding parts running on the GPU. This sort dichotomy between flexibility and speed is aided by modern ML frameworks. We worked in \emph{JAX}~\cite{jax2018github} which extends \emph{numpy} with \emph{function transformations}, provides automatic differentiation capabilities, and uses just-in-time\footnote{It uses the \emph{Accelerated Linear Algebra} XLA compiler.} (jit) compilation to improve performance, all while maintaining the expressive nature of Python. 
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl1}
 \end{figure}
-\begin{figure}[t]
+\begin{figure}[t!]
 	\ContinuedFloat
 	\centering
 	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl2}
-	\caption[Implementation details]{\textbf{Implementation details}}
+	\caption[Implementation details]{\textbf{Software implementation details.} The software implementation in JAX is divided into three layers. The input layer (\textbf{a}) specifies the Hamiltonian for which we are learning the rates, the model used to represent the rates and training hyperparameters. The trainer layer (\textbf{b}) specialises the general functions for the system at hand and training details (batch size, time, etc.), before training the rates and outputing a sampler object. The sampler object (\textbf{c}) can then be used to perform importance sampling using the trained rates in either discrete or continuous time, if operators are provided observables can be evaluated while sampling a trajectory.}
 	\label{fig:qsampl}
 \end{figure}
+\noindent
+The design of the implemented software is displayed in Fig.~\ref{fig:qsampl}, since the workflow of the method is split between training and sampling, so is the software. It is split into the training and sampling modules, along with the input layer, that can but need not be used together. 
 
-\subsubsection{Gumbel TOFO trick}
+The \textbf{input layer} includes the implementation of a Stoquastic Hamiltonian, which must include methods for calculating the passive rates, potential, adjacent states, and for transforming one adjacent state into another. The variational module must be a a subclass of \emph{flax.linen.Module} and return $\Gamma$ for the input state, pCNN and group-equivariant CNN are implemented by default. Finally all inputs are taken as an .json file. 
+
+The \textbf{training layer}, takes the input functions and specialises\footnote{partially compiles} them for all of the input parameters before performing training. At each training step, a single trajectory is generated, either sampled from the rates $\Gamma^{(v)}$ or in some other way. A trajectory is stored as holding times $\tau_i$ and actions $a_i$ along with the initial state $S_0$, before a batch of trajectories is created by permuting the actions and times. The loss can be made to work on times and actions if memory is an issue, but the current implementation converts them into states $(S_0, S_1, \ldots, S_{N_t})$ as this makes it easier to optimise the code. The training module outputs a sampler object, along with any metrics measured throughout learning. 
+
+The \textbf{sampling layer} reimplements much of the training layer, essentially it is an interface that provides a friendly way of working with the learned rates. It provides functionality for sampling with rates in parallel, either in discrete or continuous time, as well as evaluation diagonal and off-diagonal observables. 
+
+
+
+
+
+
+
+
 
 \nomenclature[z-gCNN]{G-CNN}{Group Convolutional Neural Network}

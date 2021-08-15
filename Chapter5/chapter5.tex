@@ -16,6 +16,7 @@
 \begin{enumerate}
 	\item training experiments
 	\item sampling experiments
+	\item mention computationally expensive parts!
 \end{enumerate}
 
 \section{Learning the rates} 
@@ -57,37 +58,26 @@
 \subsubsection{One dimension}
 \begin{figure}[H]
 	\centering
-	\subfloat[$E_0/N$]{\includegraphics[width=0.345\linewidth]{Chapter5/Figs/Vector/tfim1d_en_finite_scaling.pdf}}
-	\subfloat[$\sigma_z$]{\includegraphics[width=0.33\linewidth]{Chapter5/Figs/Vector/tfim1d_mz_finite_scaling.pdf}}
-	\subfloat[$\sigma_x$]{\includegraphics[width=0.33\linewidth]{Chapter5/Figs/Vector/tfim1d_mx_finite_scaling.pdf}}
-	\caption[TFIM-1d energy and magnetisation]{\textbf{TFIM-1d energy and magnetisation}}
+	\includegraphics[width=\linewidth]{Chapter5/Figs/Vector/tfim1d_finite_scaling.pdf}
+	\caption[TFIM-1d energy and magnetisations]{\textbf{TFIM-1d energy and magnetisation}}
 	\label{fig:tfim1d_finite_scaling_properties}
 \end{figure}
 
+\begin{figure}[H]
+	\centering
+	\subfloat{\includegraphics[width=\linewidth]{Chapter5/Figs/Raster/tfim1d-sisj-x.png}} \\
+	\subfloat{\includegraphics[width=\linewidth]{Chapter5/Figs/Raster/tfim1d-sisj-z.png}}
+	\caption[]{\textbf{}}
+	\label{fig:tfim1d_sisj}
+\end{figure}
+
+\subsubsection{Two dimensions}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{Chapter5/Figs/Vector/tfim2d_finite_scaling.pdf}
+	\caption[TFIM-2d energy and magnetisations]{\textbf{TFIM-2d energy and magnetisation}}
+	\label{fig:tfim2d_finite_scaling_properties}
+\end{figure}
+
+\newpage
 \subsection{XY model}
-
-
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/bvl_single}
-%	\caption[Effect of batch size $N_b$ on training with the endpoint loss.]{\textbf{Effect of batch size $N_b$ on training with the endpoint loss.}}
-%	\label{fig:bvlsingle}
-%\end{figure}
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/tvl_single}
-%	\caption[Effect of simulation time $T$ on training with the endpoint loss.]{\textbf{Effect of simulation time $T$ on training with the endpoint loss.}}
-%	\label{fig:tvlsingle}
-%\end{figure}
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/wvl_single}
-%	\caption[Effect of pCNN width $k$ on training with the endpoint loss.]{\textbf{Effect of pCNN width $k$ on training with the endpoint loss.}}
-%	\label{fig:wvlsingle}
-%\end{figure}
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[width=\linewidth]{Chapter6/Figs/Vector/lvl_single}
-%	\caption[Effect of pCNN depth $l$ on training with the endpoint loss.]{\textbf{Effect of pCNN depth $l$ on training with the endpoint loss.}}
-%	\label{fig:lvlsingle}
-%\end{figure}

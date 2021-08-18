@@ -18,7 +18,7 @@
 
 \chapter{Feynman-Kac: connecting Quantum Mechanics and Stochastic Processes}
 \label{chapter3}
-In this chapter we will provide a bridge between the quantum many-body problem discussed in the previous chapter and stochastic processes. This will entail introducing the Feynman-Kac formula and relating it to the Fokker-Planck equation and optimal control formulations of QM. Moreover, a probabilistic view of the cost function will lead us to proposals for loss functions that can be used to learn optimal transition rates and consequently sample the ground state.
+In this chapter we will provide a bridge between the quantum many-body problem discussed in the previous chapter and stochastic processes. This will entail introducing the \textbf{Feynman-Kac} (FK) formula and relating it to the \textbf{Fokker-Planck} (FP) equation and optimal control formulations of QM. Moreover, a probabilistic view of the cost function will lead us to proposals for loss functions that can be used to learn optimal transition rates and consequently sample the ground state.
 
 The field of stochastic processes is a vast body of work, approached from different angles by mathematicians, physicists and engineers. A necessary consequence of this is that the literature ranges from extremely thorough and rigorous~\cite{rogers1994diffusions, rogers2000diffusions} to more applied and intuitive~\cite{sarkka2019applied}. For this reason, the mentioned discussion will be preceded by an overview of the mathematical notation, lemmas and results from stochastic processes and measure theory that underpin some core ideas of this thesis. To avoid including a whole textbook of material on measure and stochastic processes some concepts will not be rigorously defined, the text will point to relevant literature where this is the case.
 
@@ -93,12 +93,12 @@ A realisation of Brownian motion can be found in Fig.~\ref{fig:sp-brown}.
 	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/OU-BM-II.png}}
 	\caption[Brownian motion and Ornstein–Uhlenbeck process
 	]{\textbf{Brownian motion and Ornstein–Uhlenbeck process.} 
-		\textbf{left:} A single realisation of the Brownian process. \textbf{right:} Mean, variance and 10 samples of the Ohrnstein-Uhlenbeck process with $\theta=0.6, \sigma=1.1, X_0=1.0, \mu=-1.3$, integrated using Euler-Maruyama method.}
+		A single realisation of the Brownian process (\textbf{left}). Mean, variance and 10 samples of the Ohrnstein-Uhlenbeck process with $\theta=0.6, \sigma=1.1, X_0=1.0, \mu=-1.3$, integrated using Euler-Maruyama method (\textbf{right}).}
 	\label{fig:sp-brown}
 \end{figure}
 
 \subsection{Integrals}
-In order to proceed and define stochastic differential equations (SDE's) and the Radon-Nikodyn derivative, we must spend some time discussing various integrals we will use. In particular, alongside the usual Riemann integral, we will need three more types of integrals, which we will briefly describe without mathematical derivation. The simplest kind of integral we will introduce is the integral of a stochastic process
+In order to proceed and define \textbf{stochastic differential equations} (SDE's) and the \textbf{Radon-Nikodyn} (RN) derivative, we must spend some time discussing various integrals we will use. In particular, alongside the usual Riemann integral, we will need three more types of integrals, which we will briefly describe without mathematical derivation. The simplest kind of integral we will introduce is the integral of a stochastic process
 \begin{equation}
 	I = \int_{0}^{t} X_t \mathrm{d}t.
 \end{equation}
@@ -174,7 +174,7 @@ The function that measures the rate of change of density of one measure w.r.t an
 	for set $A \subseteq \mathcal{F}$.
 \end{theorem}
 The RN derivative will also be useful in defining the KL divergence between two \textbf{path measures}. Properly defining the path measure would bring a lot of notational overhead, it is enough to think of it as a measure on the \textbf{path space}, i.e all possible paths of a SDE, for rigour see~\cite{leonard2014pathmeasure}. 
-Finally, we state the \textbf{Girsanov theorem} that is often used for transforming or removing drift functions of SDE, it is the RN derivative between an It\^ o process and one with $v = 0$ and $\sigma = 1$, i.e. Brownian motion. 
+Finally, we state \textbf{Girsanov theorem} that is often used for transforming or removing drift functions of SDE, it is the RN derivative between an It\^ o process and one with $v = 0$ and $\sigma = 1$, i.e. Brownian motion. 
 \begin{theorem}[Girsanov Theorem]
 	Given It\^ o process
 	\begin{equation}
@@ -198,7 +198,7 @@ This \emph{change in dynamics} as we will call it later is true in the sense, th
 For a more general case and proof see~\cite{sarkka2019applied}.
 
 \subsection{Markov processes}
-We now shift our view to a special kind of s.p's, ones that satisfy the \textbf{Markov property} called \textbf{Markov processes} or \textbf{Markovian}. The property is sometimes referred to as \emph{memorylessness}, as the future of a Markov process depends only on the present state. We can classify the processes based on the system's \textbf{state-space} $S$, which can be either discrete (countable) or continuous, and the \textbf{time indexing} of the system, either discrete-time $\{X_n\}_{n \geq 0}$ or continuous-time $\{X_t\}_{t \geq 0}$. A taxonomy is given in Table~\ref{tab:MP-taxonomy}. We will not specifically discuss Markov processes in continuous state-space, but it is important to note that any It\^ o process with time-homogenous drift $v = v(X_t)$ and volatility $\sigma = \sigma(X_t)$ is Markovian.
+We now shift our view to a special kind of s.p's, ones that satisfy the \textbf{Markov property} called \textbf{Markov processes} or \textbf{Markovian}. The property is sometimes referred to as \emph{memorylessness}, as the future of a Markov process depends only on the present state. We can classify the processes based on the system's \textbf{state-space} $S$, which can be either discrete (countable) or continuous, and \textbf{time indexing} of the system, either discrete-time $\{X_n\}_{n \geq 0}$ or continuous-time $\{X_t\}_{t \geq 0}$. A taxonomy is given in Table~\ref{tab:MP-taxonomy}. We will not specifically discuss Markov processes in continuous state-space, but it is important to note that any It\^ o process with time-homogenous drift $v = v(X_t)$ and volatility $\sigma = \sigma(X_t)$ is Markovian.
 
 From now on we refer to Markov processes in countable state-space as \textbf{Markov chains}. We base our discussion on~\cite{rogers1994diffusions} and~\cite{norris1998markov}. 
 \begin{table}[h]
@@ -246,7 +246,7 @@ Intuitively we understand the discrete-time Markov chain as a system changing it
 	\centering
 	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Vector/mc_I.pdf}}
 	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Vector/mc_II.pdf}}
-	\caption[Discrete and continuous time Markov Chains.]{\textbf{Discrete and continuous time Markov Chains.} \textbf{left:} Discrete-time Markov Chain defined by $P$. \textbf{right:} Continuous-time Markov Chain defined by $\Gamma$.}
+	\caption[Discrete and continuous time Markov Chains.]{\textbf{Discrete and continuous time Markov Chains.} Discrete-time Markov Chain defined by $P$ (\textbf{left}). Continuous-time Markov Chain defined by $\Gamma$ (\textbf{right}).}
 	\label{fig:mc-diagrams}
 \end{figure}
 
@@ -309,7 +309,7 @@ gives the full description of the CTMC. With this formulation in mind we now int
 
 \section{The Feynman-Kac formula}
 \label{subsec:fk-fk}
-The Feynman path integral formulation introduced in chapter~\ref{chapter2} was extensively used by physicists for decades, even in the absence of a formal mathematical formulation which is hard to define because of the difficulties with defining an appropriate measure on the path space. Kac~\cite{kac1949distributions} provided a rigorous formulation of the \textit{real-valued} case of the Feynman path integral, and the resulting \textbf{Feynman-Kac formula} eq.~\eqref{eq:fkac} provides a bridge between \emph{parabolic} partial differential equations and stochastic processes. 
+The Feynman path integral formulation introduced in chapter~\ref{chapter2} was extensively used by physicists for decades, even in the absence of a formal mathematical formulation which is hard to define because of the difficulties with defining an appropriate measure on the path space. Kac~\cite{kac1949distributions} provided a rigorous formulation of the \textit{real-valued} case of the Feynman path integral, and the resulting {Feynman-Kac formula} eq.~\eqref{eq:fkac} provides a bridge between \emph{parabolic} partial differential equations and stochastic processes. 
 
 \subsection{Feynman-Kac in continuous state space}
 \label{subsec:FK_in_continuous_space}
@@ -328,7 +328,7 @@ In close analogy to arguments presented in the DMC section~\ref{subsubsec-PMC}, 
 	\psi(x, t)=\underset{X \sim \text { Brownian with } X_{t}=x}{\mathbb{E}}
 	\left[\exp \left(-\int_{0}^{t}  V\left(X_{\tau}, \tau \right) \mathrm{d}\tau \right) \psi\left(X_{0}, 0\right)\right],
 \end{equation}
-where only the \textbf{endpoint} at time $t$ of the Brownian process fixed, whereas the starting point at time $t=0$ is not. $\psi (x, 0)$ encodes the initial condition into this representation. When there is no external potential $V(x) = 0$, the Schr\" odinger equation in imaginary time is the diffusion equation and the Feynman-Kac solution is simply
+where only the \emph{endpoint} at time $t$ of the Brownian process fixed, whereas the starting point at time $t=0$ is not. $\psi (x, 0)$ encodes the initial condition into this representation. When there is no external potential $V(x) = 0$, the Schr\" odinger equation in imaginary time is the diffusion equation and the Feynman-Kac solution is simply
 \begin{equation}
 	\begin{aligned} 
 		\psi(x, t) &= \underset{X \sim \text { Brownian with } X_{t}=x}{\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right] \\
@@ -336,34 +336,12 @@ where only the \textbf{endpoint} at time $t$ of the Brownian process fixed, wher
 		\frac{1}{\sqrt{2 \pi t}} \int  e^{-\left(x-x^{\prime}\right)^{2} / 2 t} \psi_{0}\left(x^{\prime}\right) \mathrm{d} x^{\prime}
 	\end{aligned}
 \end{equation}
-An illustration of the Feynman-Kac approach to the problem with no external potential $V(x)$ in 1D is depicted in Fig.~\ref{fig:fk_1d_example}. The role of the potential in the Feynman-Kac formula is to weight the Brownian paths, in turn defining the Feynman-Kac \emph{path measure} $\mathbb{P}_{\mathrm{FK}}$ it is related to the Brownian measure $\mathbb{P}_{0}$ by the Radon-Nykodym derivative
+An illustration of the Feynman-Kac approach to the problem with no external potential $V(x)$ in 1D is depicted in Fig.~\ref{fig:fk_1d_example}. The role of the potential in the Feynman-Kac formula is to weight the Brownian paths, in turn defining the Feynman-Kac {path measure} $\mathbb{P}_{\mathrm{FK}}$ which is related to the Brownian measure $\mathbb{P}_{0}$ by the Radon-Nykodym derivative
 \begin{equation}
 \label{eq:RNderiv}
 \frac{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}{\mathrm{d} \mathbb{P}_{0}}=\mathcal{N} \exp \left(-\int V\left(X_{t}\right) d t\right),
 \end{equation}
-where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}.
-\begin{figure}[H]
-	\centering
-	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_top.pdf}} \\
-	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_mid1.pdf}} \\
-	\subfloat
-	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_bottom.pdf}}
-	
-	\caption[Feynman-Kac for a free particle in 1D]{\textbf{Feynman-Kac for a free particle  in 1D.} \textbf{top:} $N=400$ Brownian walks starting from different $x_0$, the color signifies initial position. In order to evaluate $\psi$ between $x-\frac{\delta x}{2}$ and $x+\frac{\delta x}{2}$ at some time $t$ we must first find Brownian paths that end there. \textbf{middle:} The paths that pass through at $x \in (1.5, 1.6)$ (blue) and through $x \in (-0.4,-0.3)$ (red) are colored, others are left in grey. \textbf{bottom:} Time evolution of the initial condition $\psi_{0} = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^{2}}$, by estimating ${\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right]$ from the filtered paths at each timestep.}
-	\label{fig:fk_1d_example}
-\end{figure}
-\begin{figure}[t]
-	\centering
-	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight1.pdf}}
-	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight2.png}}
-	\caption[Feynman-Kac measure in a linear potential]{\textbf{Feynman-Kac measure in a linear potential.} 
-		\textbf{left:} $N=30$ Brownian paths. \textbf{right:} The paths colored ($P(\text{black})=1$, $P(\text{white})=0$) by their likelihood under the Feynman-Kac measure with $V(x)=x$.}
-	\label{fig:fkac_measure_reweight}
-\end{figure}
-\noindent
-Moreover, this new stochastic process is Markovian, meaning that a clear connection exists between the imaginary time Schr\" odinger equation and a SDE of form~\eqref{eq:SDE_general} with time-homogeneous $\sigma$ and $v$.
+where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}. Moreover, this new stochastic process is Markovian, meaning that a clear connection exists between the imaginary time Schr\" odinger equation and a SDE of form~\eqref{eq:SDE_general} with time-homogeneous $\sigma$ and $v$.
 Indeed, in the continuous case we have discussed so far, the mapping between the Fokker-Planck equation~\eqref{eq:Fokker-Planck-General} and the Schr\" odinger equation exists in the form of a similarity transform. Starting from the FP equation of a stochastic process with constant volatility $\sigma = 1$
 \begin{equation}
 \label{eq:not_prime_cont_process}
@@ -389,7 +367,28 @@ The ground state of this Hamiltonian has zero energy and is
 \begin{equation}
 \psi_{0}(x)=\sqrt{\rho_{0}(x)}.
 \end{equation}
-In other words, the quantum ground state probability distribution $|\psi_{0}|^2$ is the same as classical stationary distribution $\rho_{0}$ of the stochastic process $X_{t}$ in the literature referred to as the \emph{Nelson's ground state process}~\cite{nelson1967dynamical, albeverio1977energy}. This connection is one that our computational method will exploit, as the ability to efficiently sample from the stochastic process with correct drift $v$ is equivalent to sampling from the ground state of the quantum system. Even though the connection is simple, it comes with a caveat. Starting from the Schr\" odinger equation one needs to find the drift $v(x)$ and while the connection with the potential of the Hamiltonian is clear-cut in this simple example, this is not the case in many-body systems, i.e. the \emph{inverse problem} of finding the stochastic process of a given Hamiltonian is difficult, and is one of the core problems approached in this thesis.
+\begin{figure}[H]
+	\centering
+	\subfloat
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_top.pdf}} \\
+	\subfloat
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_mid1.pdf}} \\
+	\subfloat
+	{\includegraphics[width = \linewidth]{Chapter3/Figs/Raster/fkac_vs_fplanck_bottom.pdf}}
+	
+	\caption[Feynman-Kac for a free particle in 1D]{\textbf{Feynman-Kac for a free particle  in 1D.} $N=400$ Brownian walks starting from different $x_0$, the colour signifies initial position (\textbf{top}). In order to evaluate $\psi$ between $x-\frac{\delta x}{2}$ and $x+\frac{\delta x}{2}$ at some time $t$ we must first find Brownian paths that end there. The paths that pass through $x \in (1.5, 1.6)$ (blue) and through $x \in (-0.4,-0.3)$ (red) at $t=0.4$ are coloured, others are left in grey (\textbf{middle}). Time evolution of the initial condition $\psi_{0} = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^{2}}$, by estimating ${\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right]$ from the filtered paths at each timestep (\textbf{bottom}).}
+	\label{fig:fk_1d_example}
+\end{figure}
+\begin{figure}[t]
+	\centering
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight1.pdf}}
+	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/reweight2.png}}
+	\caption[Feynman-Kac measure in a linear potential]{\textbf{Feynman-Kac measure in a linear potential.} 
+		$N=30$ Brownian paths (\textbf{left}). The paths coloured ($P(\text{black})=1$, $P(\text{white})=0$) by their likelihood under the Feynman-Kac measure with $V(x)=x$ (\textbf{right}).}
+	\label{fig:fkac_measure_reweight}
+\end{figure}
+\noindent
+In other words, the quantum ground state probability distribution $|\psi_{0}|^2$ is the same as classical stationary distribution $\rho_{0}$ of the stochastic process $X_{t}$ in the literature referred to as the {Nelson's ground state process}~\cite{nelson1967dynamical, albeverio1977energy}. This connection is one that our computational method will exploit, as the ability to efficiently sample from the stochastic process with correct drift $v$ is equivalent to sampling from the ground state of the quantum system. Even though the connection is simple, it comes with a caveat. Starting from the Schr\" odinger equation one needs to find the drift $v(x)$ and while the connection with the potential of the Hamiltonian is clear-cut in this simple example, this is not the case in many-body systems, i.e. the \emph{inverse} problem of finding the stochastic process of a given Hamiltonian is difficult, and is one of the core problems approached in this thesis.
 
 \subsection{Stoquastic Hamiltonians}
 \label{subsec:fk-latt}
@@ -429,7 +428,7 @@ and the potential is
 \begin{equation}
 V(\boldsymbol{s})=H_{s s}+\sum_{s^{\prime} \neq s} H_{s s^{\prime}}.
 \end{equation}
-From now on we use $\rightarrow$ notation to emphasise the transition between \emph{adjacent} states $s\neq s^\prime$ which satisfy $H_{s s^{\prime}} \neq 0$. 
+From now on we use $\rightarrow$ notation to emphasise the transition between \textbf{adjacent states} $s\neq s^\prime$ which satisfy $H_{s s^{\prime}} \neq 0$. 
 
 \subsection{Stoquastic representations of the lattice models}
 \label{subsec:stoq_latt_forms}
@@ -466,7 +465,7 @@ In this case two states $\mathbf{s} \neq \mathbf{s}^\prime$ are adjacent if ther
 \begin{equation}
 	\Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} = 1,
 \end{equation}
-and the corresponding passive process is the \emph{symmetric exclusion process} (SEP) depicted in Fig.~\ref{fig:xypassive}. The potential follows as
+and the corresponding passive process is the \textbf{symmetric exclusion process} (SEP) depicted in Fig.~\ref{fig:xypassive}. The potential follows as
 \begin{equation}
 V(\mathbf{s}) = -\sum_{\mathbf{s} \neq \mathbf{s}^\prime} \Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} = -\sum_{\langle i, j \rangle} \left[n_i\left(1-n_j\right) - n_j\left(1-n_i\right)\right]
 \end{equation}
@@ -476,10 +475,6 @@ V(\mathbf{s}) = -\sum_{\mathbf{s} \neq \mathbf{s}^\prime} \Gamma_{\mathbf{s}\rig
 	\caption[Symmetric exclusion process]{\textbf{Symmetric exclusion process.} Adjacent states of the XY model are ones separated by a switch of two non-equal neighboring spins, the associated passive process is the SEP \textbf{a)}. On subfigure $\mathbf{b)}$ a mask of all sites that can make a transition in the next time step (either up or right) is shown, the mask is necessary for implementing the SEP, see section~\ref{sec:qoptsampl}.}
 	\label{fig:xypassive}
 \end{figure}
-
-\begin{equation}
-\hat H_{\mathrm{F}}=-\frac{1}{2} \sum_{j}\left[\hat{\sigma}_{j}^{x} \hat{\sigma}_{j+1}^{x}+\hat{\sigma}_{j}^{y} \hat{\sigma}_{j+1}^{y}+\hat{\sigma}_{j}^{z} \hat{\sigma}_{j+1}^{z}\right],
-\end{equation}
 where $n_i$ is the occupation number of site $i$.
 %
 %\subsubsection{XXZ model}
@@ -537,7 +532,7 @@ In section~\ref{subsec:FK_in_continuous_space} we explored a connection between 
 	\label{eq:holl_opt_process}
 	\mathrm{d} X_{t}=\mathrm{d} W_{t}+v^\prime\left(X_{t}\right) \mathrm{d} t,
 \end{equation}
-where $v^\prime$ is the \emph{optimal}/correct drift. Finding the correct drift in one-dimension was straightforward, but how to do it in higher dimensions ($W_{t}, X_{t} \in \mathbb{R}^n$ and $v: \mathbb{R}^n \rightarrow \mathbb{R}^n$) remained unanswered. Holland~\cite{holland1977cost} formulated the search for optimal rates as a stochastic control problem with cost function
+where $v^\prime$ is the optimal/correct drift. Finding the correct drift in one-dimension was straightforward, but how to do it in higher dimensions ($W_{t}, X_{t} \in \mathbb{R}^n$ and $v: \mathbb{R}^n \rightarrow \mathbb{R}^n$) remained unanswered. Holland~\cite{holland1977cost} formulated the search for optimal rates as a stochastic control problem with cost function
 \begin{equation}
 	\label{eq:holland_cost}
 	C[v]=\lim _{T \rightarrow \infty} \frac{1}{T} \mathbb{E}\left[\int \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d} t\right],
@@ -558,7 +553,7 @@ For normalised $\psi$ the integrand is the expected value of the quantum energy 
 
 \subsection{Loss for continuous state space}
 \label{subsec:continuous_loss}
-To see that the path measures $\mathbb{P}_v$ of the process in eq.~\eqref{eq:not_prime_cont_process}  and the Feynman-Kac measure $\mathbb{P}_{\mathrm{FK}}$ coincide for the optimal rates $v^\prime$, we first need a measure of similarity between probability distributions. For this purpose we will use the \textbf{Kullback–Leibler} divergence $D_{\mathrm{KL}}$
+To see that the path measures $\mathbb{P}_v$ of the process in eq.~\eqref{eq:not_prime_cont_process}  and the Feynman-Kac measure $\mathbb{P}_{\mathrm{FK}}$ coincide for the optimal rates $v^\prime$, we first need a measure of similarity between probability distributions. For this purpose we will use the \textbf{Kullback–Leibler} (KL) divergence $D_{\mathrm{KL}}$
 \begin{equation}
 	D_{\mathrm{KL}}(p \| q)=\underset{p}{\mathbb{E}}\left[\log \left(\frac{p}{q}\right)\right],
 \end{equation}
@@ -660,27 +655,3 @@ While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\
 \right] \underset{\Gamma^{(v)} = \Gamma^\prime}{\rightarrow} 0.
 \end{equation}
 The trajectories can be sampled using arbitrary rates $r$, but for convenience $\Gamma^{(v)}$ can be used. How to obtain a batch poses a technical challenge which is to be solved on a system by system basis, usually by generating a single trajectory and perturbing it in such a way that one obtains many paths with fixed endpoints.
-
-
-%********************************** % Ch3 Nomenclature *************************************
-\nomenclature[Z-sde]{SDE}{Stochastic Differential Equations}
-\nomenclature[Z-RN]{RN}{Radon-Nikodym}
-\nomenclature[Z-fp]{FP}{Fokker-Planck}
-\nomenclature[z-pdf]{pdf}{Probability density function}
-\nomenclature[z-cdf]{cdf}{Cumulative density function}
-\nomenclature[z-stochprocs]{s.p.}{Stochastic process}
-\nomenclature[z-dtmc]{DTMC}{Discrete time Markov Chain}
-\nomenclature[z-ctmc]{XTMC}{Continuous time Markov Chain}
-\nomenclature[z-mdp]{mdp}{Markov Decision Process}
-
-\nomenclature[x-ratematrix]{$\Gamma$}{Transition rate matrix}
-\nomenclature[x-kldiv]{$D_{\mathrm{KL}}$}{Kullback-Liebler divergence}
-\nomenclature[x-statespace]{S}{State space of a Markov process}
-\nomenclature[x-reals]{$\mathbb{R}$}{The set of real numbers}
-\nomenclature[x-normal]{$\mathcal{N}$}{The Gaussian distribution}
-\nomenclature[x-measure]{$\mathbb{P}$}{Measure}
-\nomenclature[x-filtration]{$\mathbb{F}$}{Filtration}
-\nomenclature[x-field]{"$\mathcal{F}$"}{$\sigma$-field (algebra)}
-\nomenclature[x-stochprocs]{$\{X_t\}$}{Stochastic process}
-\nomenclature[x-randomvariable]{$\{X\}$}{Random variable}
-\nomenclature[x-wiener]{$W_t$}{Wiener process, mathematical Brownian motion}

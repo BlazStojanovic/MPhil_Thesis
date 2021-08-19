@@ -26,7 +26,7 @@ We can reinterpret the second term in eq.~\eqref{eq:a-hc1} as a minimum over all
 We define $v$ to be a Lipshitz continuous function, i.e. the drift $v(x)$. Each drift now generates an It\^ o process
 \begin{equation}
 	\label{eq:a-hc3}
-	\mathrm{d}X_{t}=\mathrm{d}W_{t}+v\left(X_{t}\right) \mathrm{d}t; \quad \text{ and } \quad X_0 = x,
+	\mathrm{d}X_{t}=\mathrm{d}W_{t}+v\left(X_{t}\right) \mathrm{d}t \quad \text{ and } \quad X_0 = x,
 \end{equation}
 and we can define the cost function $C[v]$ for each $v$ as
 \begin{equation}
@@ -103,7 +103,7 @@ and accounts for the boundary term and $E_0 T$ term in the Kullback-Leibler dive
 
 \section{Todorov cost}
 \label{app:todorov-cost}
-Optimal decision processes are formalised using Markov Decision processes, here we follow work of Todorov~\cite{todorov2007linearly, todorov2009efficient} to fit the imaginary Schr\" odinger equation in this mould, we illustrate the concepts on the Ising model. An MDP is a $4$-tuple $\left(S, A, P_{a}, R_{a}\right)$:
+Optimal decision processes are formalised using Markov Decision processes, here we follow work of Todorov~\cite{todorov2007linearly, todorov2009efficient} to fit the imaginary Schr\" odinger equation in this mould. An MDP is a $4$-tuple $\left(S, A, P_{a}, R_{a}\right)$:
 \begin{itemize}
 	\item $S$: Is the \emph{state space}, i.e. all possible configurations of the system $s_k$
 	\item $U$: Is the \emph{control space}, i.e. all possible single-spin flips in each configuration
@@ -118,11 +118,11 @@ The optimal decision/control problem is then given by the Bellman equation for t
 	\underbrace{\mathbb{E}_{s^{\prime} \sim p(\cdot \mid s, u)}\left[\nu\left(x^{\prime}\right)\right]}_{\text{expected cost of next state}}
 	\right\}.
 \end{equation}
-Todorov introduces a formalism where the agent does not perform specific symbolic actions (e.g. flips a certain spin) but is instead allowed to specify transition probabilities $u(s^\prime|s)$. Formally this means 
+Todorov introduces a formalism where the agent does not perform specific symbolic actions (e.g. flips a certain spin) but is instead allowed to specify transition probabilities $u(s^\prime|s)$. Formally this means that
 \begin{equation}
 	p\left(s^{\prime} \mid s, u\right)=u\left(s^{\prime} \mid s\right),
 \end{equation}
-the agent reshapes the dynamics of the system as it wishes, but for this it pays a price depending on how much it changes the dynamics. In absence of controls $u$ the system follows \emph{passive dynamics} $p(s^\prime | s)$ which correspond to the first term in eq.~\eqref{eq:hamilton_split} of the stoquastic Hamiltonian. The cost is thus
+and the agent reshapes the dynamics of the system as it wishes, but for this it pays a price depending on how much it changes the dynamics. In absence of controls $u$ the system follows \emph{passive dynamics} $p(s^\prime | s)$ which correspond to the first term in eq.~\eqref{eq:hamilton_split} of the stoquastic Hamiltonian. The cost is thus
 \begin{equation}
 	\ell(s, u)=\underbrace{q(s)}_{\text{state cost}}+\underbrace{D_\mathrm{KL}((\cdot \mid s) \| p(\cdot \mid s))}_{\text{control cost}}.
 \end{equation}
@@ -133,9 +133,9 @@ Optimal control problem in this form can be linearised in terms of the \emph{des
 with
 \begin{equation}
 	\label{eq:lintod}
-	z(s_k, t)=e^{-q(s_k)} \sum_{s_j} p(s_j \mid s_k) z(s_j, t+1)
+	z(s_k, t)=e^{-q(s_k)} \sum_{s_j} p(s_j \mid s_k) z(s_j, t+1).
 \end{equation}
-and it is this linear equation, what we can connect to the imaginary time Schr\" odinger equation. We start by transforming the MDP into continuous time (transition probabilities to rates $p, u \rightarrow \Gamma, \Gamma^{(v)}$) as
+It is this linear equation, that we can connect to the imaginary time Schr\" odinger equation. We start by transforming the MDP into continuous time (transition probabilities to rates $p, u \rightarrow \Gamma, \Gamma^{(v)}$) as
 \begin{equation}
 	p(s_j \mid s_k)=\left\{\begin{array}{ll}
 	1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l} & s_j=s_k \\
@@ -163,36 +163,35 @@ and setting $q(s_j) = \Delta t V(s_j)$ eq.~\eqref{eq:lintod} becomes
 		     	\right]
 	\end{aligned}
 \end{equation}
-keeping only the first order in $\Delta t$ and dropping the unnecessary $\neq$ in the sum
+keeping only the first order in $\Delta t$, dropping the unnecessary $\neq$ in the sum
 \begin{equation}
 	\frac{z(s_k, t) - z(s_k, t + \Delta t)}{\Delta t} = V(s_k) z(s_k, t + \Delta t) - \sum_{s_j} \Gamma_{s_k \rightarrow s_j} 
 	\left[
 	z(s_j, t + \Delta t) - z(s_k, t + \Delta t)\right]
 \end{equation}
-taking limit $\Delta t \rightarrow 0$ finally gives
+and taking the limit $\Delta t \rightarrow 0$ finally gives
 \begin{equation}
 	-\frac{\mathrm{d} z(s_k, t)}{\mathrm{d} t} =  V(s_k) z(s_k, t) - \sum_{s_j} \Gamma_{s_k \rightarrow s_j} 
 	\left[
 	z(s_j, t) - z(s_k, t)\right],
 \end{equation}
-it is the imaginary time Schr\" odinger equation~\eqref{eq:sch_split}.
+which is the imaginary time Schr\" odinger equation~\eqref{eq:sch_split}. 
 
-\noindent
 The $D_{\mathrm{KL}}$ in the loss $\ell (s, v)$ is expressed in the same manner
 \begin{equation}
 	\begin{aligned}
 		D_{\mathrm{KL}}(v(\cdot \mid s_k) \| p(\cdot \mid s_k))
 		&=\left[1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l}^{(v)}\right] \log \left[\frac{1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l}^{(v)}}{1-\Delta t \sum_{s_l} \Gamma_{s_k \rightarrow s_l}}\right]+\Delta t \sum_{s_j \neq s_k} \Gamma_{s_k \rightarrow s_j}^{(v)} \log \left[\frac{\Gamma_{s_k \rightarrow s_j}^{(v)}}{\Gamma_{s_k \rightarrow s_j}}\right]\\
-		&= \Delta t \sum_{s_j \neq s_k} \Gamma_{s_k \rightarrow s_j}^{(v)}\underbrace{\left(\log \left[\frac{\Gamma_{s_k \rightarrow s_j}^{(v)}}{\Gamma_{s_k \rightarrow s_j}}\right]+\frac{\Gamma_{s_k \rightarrow s_j}}{\Gamma_{s_k \rightarrow s_j}^{(v)}}-1\right)}_{\mathrm{Itakura-Saito~divergence~} D_{\mathrm{IS}}(\Gamma_{s_k \rightarrow s_j}^{(v)}, \Gamma_{s_k \rightarrow s_j})},
+		&= \Delta t \sum_{s_j \neq s_k} \Gamma_{s_k \rightarrow s_j}^{(v)}\underbrace{\left(\log \left[\frac{\Gamma_{s_k \rightarrow s_j}^{(v)}}{\Gamma_{s_k \rightarrow s_j}}\right]+\frac{\Gamma_{s_k \rightarrow s_j}}{\Gamma_{s_k \rightarrow s_j}^{(v)}}-1\right)}_{\mathrm{Itakura-Saito~divergence~} D_{\mathrm{IS}}(\Gamma_{s_k \rightarrow s_j}^{(v)}, \Gamma_{s_k \rightarrow s_j})}.
 	\end{aligned}
 \end{equation}
-If we consider an ensemble of systems in state $s_k$ there is $\Delta t \Gamma_{s_k \rightarrow s_j}^{(v)}$ probability of transitioning $s_k \rightarrow s_j$ in the next time increment, meaning that the ensemble contribution to the $D_{\mathrm{KL}}$ each time increment is $\sum_{s_j} \Delta t \Gamma_{s_k \rightarrow s_j}^{(v)} D_{\mathrm{IS}}\left(\Gamma_{s_k \rightarrow s_j}^{(v)}, \Gamma_{s_k \rightarrow s_j}\right)$, thus we can express the Kullback-Liebler divergence as
+If we consider an ensemble of systems in state $s_k$ there is a $\Delta t \Gamma_{s_k \rightarrow s_j}^{(v)}$ probability of transitioning $s_k \rightarrow s_j$ in the next time increment, meaning that the ensemble contribution to the $D_{\mathrm{KL}}$ each time increment is $\sum_{s_j} \Delta t \Gamma_{s_k \rightarrow s_j}^{(v)} D_{\mathrm{IS}}\left(\Gamma_{s_k \rightarrow s_j}^{(v)}, \Gamma_{s_k \rightarrow s_j}\right)$, thus we can express the Kullback-Liebler divergence as
 \begin{equation}
 	D_{\mathrm{KL}}=\underset{\Sigma_{[0, t]}=k_{t} \sim \Gamma^{(v)}}{\mathbb{E}}\left[\sum_{n} D_{\mathrm{IS}}\left(\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}, \Gamma_{k^{(n)} \rightarrow k^{(n+1)}}\right)\right].
 \end{equation}
 \section{Probabilistic interpretation of Todorov's cost function}
 \label{app:todorov-prob}
-To find the Radon-Nikodym derivative between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{FK}}$ we proceed in the same way as in the continuous case, by first finding the respective RN derivatives with the passive process. From the discrete space Feynman-Kac formula~\eqref{eq:fkac_disc} follows
+To find the Radon-Nikodym derivative between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{FK}}$ we proceed analogous to the continuous case, by first finding the respective RN derivatives with the passive process. From the discrete space Feynman-Kac formula~\eqref{eq:fkac_disc} follows
 \begin{equation}
 	\log \left(\frac{\mathrm{d} \mathbb{P}_{0}}{\mathrm{d} \mathbb{P}_{F K}}(k(t))\right)=\int V(k(t)) d t-E_{0} T-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right),
 \end{equation}
@@ -202,7 +201,7 @@ and by using the Girsanov theorem equivalent for discrete space\footnote{see pro
 	=
 	\int \sum_{l \neq k(t)}\left(\Gamma_{k(t) \rightarrow l}-\Gamma_{k(t) \rightarrow l}^{(v)}\right) d t+\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right).
 \end{equation}
-We combine both
+We combine both to get
 \begin{equation}
 	\begin{aligned}
 	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{~d} \mathbb{P}_{\mathrm{FK}}}\right)

@@ -12,7 +12,7 @@
 
 \chapter{Methodology}
 \label{chapter4}
-This chapter presents the computational method developed in this thesis. We start by introducing each component of the method separately before presenting how they fit together into a single procedure. We discuss neural networks, automatic differentiation, gradient estimation, gradient-based optimisation, as well as importance sampling. Finally, we present the actual implementation in \emph{JAX}, and discuss computational considerations and intricacies of thereof.
+This chapter presents the computational method developed in this thesis. We start by introducing each component of the method separately. We discuss neural networks, automatic differentiation, gradient estimation, gradient-based optimisation, and importance sampling. Finally, we present the actual implementation in \emph{JAX}, and discuss computational considerations and intricacies of thereof.
 
 \section{Neural Networks} % ~150 words
 \subsection{The Multilayer Perceptron}
@@ -50,7 +50,7 @@ A variety of activations have been used, namely $\tanh(\cdot)$ and the logistic 
 
 \subsection{Convolutional Neural Networks}
 \label{subsec:nn-cnn} 
-Convolutional neural networks (CNN)~\cite{lecun1989generalization} are neural network architectures specialised to work with grid/image inputs. They make use of three powerful concepts to increase performance, \textbf{sparse interactions}, \textbf{parameter sharing} and \textbf{equivariant representations}~\cite{goodfellow2016deep}. At the core of a CNN is the {convolutional} layer, in which the input $I$ is convolved with the \textbf{kernel} $K$ as 
+Convolutional neural networks (CNN)~\cite{lecun1989generalization} are neural network architectures specialised for working with gridded inputs. They make use of three powerful concepts to increase performance, \textbf{sparse interactions}, \textbf{parameter sharing} and \textbf{equivariant representations}~\cite{goodfellow2016deep}. At the core of a CNN is the {convolutional} layer, in which the input $I$ is convolved with the \textbf{kernel} $K$ as 
 \begin{equation}
 	\label{eq:convolution}
 	S_{i,j} = (I * K)_{i,j} = \sum_m \sum_n I_{m,n} K_{i-m, j-n},
@@ -121,7 +121,7 @@ The \emph{score function} is a logarithm of a probability distribution w.r.t to 
 &= \mathbb{E}_{p_{\boldsymbol{\theta}}(\mathbf{x})}\left[f(\mathbf{x}) \nabla_{\boldsymbol{\theta}} \log p_{\boldsymbol{\theta}}(\mathbf{x})\right].
 \end{aligned}
 \end{equation}
-The score-function estimator is compatible with any cost function, it requires that the measure $p_{\boldsymbol{\theta}}(\mathbf{x})$ is differentiable and easy to sample. Importantly it is applicable to both discrete and continuous distribution, but has the drawback of having high variance.
+The score-function estimator is compatible with any cost function, it requires that the measure $p_{\boldsymbol{\theta}}(\mathbf{x})$ is differentiable and easy to sample. Importantly it is applicable to both discrete and continuous distributions, but has the drawback of having high variance.
 
 \subsubsection{Pathwise estimator}
 Continuous distributions can be sampled either directly by generating samples from the distribution $p_{\boldsymbol{\theta}}(\mathbf{x})$ or indirectly, by sampling from a simpler base distribution $p(\boldsymbol{\epsilon})$ and transforming the variate through a deterministic path $g_{\boldsymbol{\theta}}(\boldsymbol{\epsilon})$. Using this, it is possible to move the source of randomness in such a way that the objective is differentiable. In essence this approach pushes the parameters of the measure into the cost function which is then differentiated. The estimator is
@@ -205,7 +205,7 @@ and a Metropolis correction step\footnote{Throwing away holding times $\tau_i$ b
 
 \section{Software implementation details}
 \label{sec:qoptsampl}
-The aim of the software implementation is to facilitate experimentation with training the rates, as well as using the rates to perform importance sampling. The main developing principles were flexibility in the choice of variational model, hyperparameters, or stoquastic Hamiltonian itself, and extendability, the ability to add new Hamiltonians and models with relative ease. Additionally, the implementation needs to be computationally efficient with its most demanding parts running on the GPU. This sort dichotomy between flexibility and speed is aided by modern ML frameworks. We worked in \emph{JAX}~\cite{jax2018github} which extends \emph{numpy} with \emph{function transformations}, provides automatic differentiation capabilities, and uses just-in-time\footnote{It uses the \emph{Accelerated Linear Algebra} XLA compiler.} (jit) compilation to improve performance, all while maintaining the expressive nature of Python. 
+The main developing principles for the implementation were flexibility in the choice of variational model, hyperparameters, or stoquastic Hamiltonian itself, and extendability, the ability to add new Hamiltonians and models with relative ease. Additionally, the implementation needs to be computationally efficient with its most demanding parts running on the GPU. This sort dichotomy between flexibility and speed is aided by modern ML frameworks. We worked in \emph{JAX}~\cite{jax2018github} which extends \emph{numpy} with \emph{function transformations}, provides automatic differentiation capabilities, and uses just-in-time\footnote{It uses the \emph{Accelerated Linear Algebra} XLA compiler.} (jit) compilation to improve performance. The design of the implemented software is shown in Fig.~\ref{fig:qsampl}. Since the workflow of the method is split between training and sampling, so is the software.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl1}
@@ -217,16 +217,20 @@ The aim of the software implementation is to facilitate experimentation with tra
 	\caption[Implementation details]{\textbf{Software implementation details.} The software implementation in JAX is divided into three layers. The input layer (\textbf{a}) specifies the Hamiltonian for which we are learning the rates, the model used to represent the rates and training hyperparameters. The trainer layer (\textbf{b}) specialises the general functions for the system at hand and training details (batch size, time, etc.), before training the rates and outputing a sampler object. The sampler object (\textbf{c}) can then be used to perform importance sampling using the trained rates in either discrete or continuous time, if operators are provided observables can be evaluated while sampling a trajectory.}
 	\label{fig:qsampl}
 \end{figure}
-\noindent
-The design of the implemented software is displayed in Fig.~\ref{fig:qsampl}, since the workflow of the method is split between training and sampling, so is the software. It is split into the training and sampling modules, along with the input layer, that can but need not be used together.
+The \textbf{input layer} includes the implementation of a Stoquastic Hamiltonian, which must include methods for calculating the passive rates, potential, adjacent states, and for transforming one adjacent state into another. The variational module must be a subclass of \emph{flax.linen.Module} and returns $\Gamma_{s\rightarrow s^\prime}$ for input $s$, pCNN and group-equivariant CNN are implemented by default. Finally all parameters are taken as an \emph{.ml\_collections} dictionary.
 
-The \textbf{input layer} includes the implementation of a Stoquastic Hamiltonian, which must include methods for calculating the passive rates, potential, adjacent states, and for transforming one adjacent state into another. The variational module must be a a subclass of \emph{flax.linen.Module} and return $\Gamma$ for the input state, pCNN and group-equivariant CNN are implemented by default. Finally all inputs are taken as an .json file. 
+The \textbf{training layer}, takes the input functions and specialises\footnote{Partially compiles.} them for the input parameters before performing training. The most important part of the training procedure is the generation of a batch of trajectories, which can be performed in a number of ways so long as all trajectories have constant $T$ and fixed endpoints. The generation is system dependent, we propose three approaches for the TFIM model. 
+\begin{enumerate}[label=\roman*)]
+	\item \textbf{Permute:} This is the simplest batch generation technique. First a single trajectory is obtained and is stored as holding times $\tau_i$ and actions $a_i$, along with the initial state $S_0$. Then the times and actions are permuted to create a batch of $N_b$ permutations. The sampling of the initial trajectory is arbitrary, the implementation supports sampling it from the current rates $\Gamma^{v_i}_{s \rightarrow s^\prime}$, passive rates, or the initial rates $\Gamma^{v_0}_{s \rightarrow s^\prime}$, essentially from random rates. The problem with \emph{permute} batch generation is that the number of actions is constant, and this may pose problems as discussed in~\ref{subsec:elusive_lambda}.
+	
+	\item \textbf{Split:} Batch generation using the \emph{split} method also relies on sampling an initial trajectory before modifying it. But instead of only permuting the original, we now append two flips of a randomly chosen spin to the trajectory before shuffling. This has no bearing on the endpoint of the trajectory, but changes its length\footnote{Length refers to number of spins not $T$.}. The times can be resampled or a random holding time can be split among the new visited state, so that all trajectories in the batch have constant $T$.
+	
+	\item \textbf{Construct:} The \emph{construct} method does not sample any trajectory. It exploits the fact that if we assign each spin an odd or even number of flips, we obtain a family of trajectories with fixed endpoints. We first randomly choose $N_a$ spins, which will be flipped during the trajectory. Of these spins, we then mark $N_e$ spins to be even and the rest to be odd. To obtain a batch of trajectories with variable length, we assign different odd numbers of flips to odd spins, and analogous to the even flips. The times are sampled independently from an exponential distribution and normalised to add up to $T$. The benefit of this method is that we can have trajectories of very different length in the same batch. 		
+\end{enumerate}
+The gradient of the $\log RN$ loss is then evaluated using an MC estimate and the parameters updated accordingly, the implementation only supports the \emph{ADAM} optimiser. 
 
-The \textbf{training layer}, takes the input functions and specialises\footnote{partially compiles} them for all of the input parameters before performing training. At each training step, a single trajectory is generated, either sampled from the rates $\Gamma^{(v)}$ or in some other way. A trajectory is stored as holding times $\tau_i$ and actions $a_i$ along with the initial state $S_0$, before a batch of trajectories is created by permuting the actions and times. The loss can be made to work on times and actions if memory is an issue, but the current implementation converts them into states $(S_0, S_1, \ldots, S_{N_t})$ as this makes it easier to optimise the code. The training module outputs a sampler object, along with any metrics measured throughout learning. 
-
-The \textbf{sampling layer} reimplements much of the training layer, essentially it is an interface that provides a friendly way of working with the learned rates. It provides functionality for sampling with rates in parallel, either in discrete or continuous time, as well as evaluation diagonal and off-diagonal observables. 
-
-\hl{TODO, redo at end, nujno omeni nekje enacbo za loss razpisano in da uporabis MC estimator}
-\hl{Povej o nacinu samplanja trajectorija}
-\hl{Povej o nacinu generiranja batcha}
-\hl{Gumbel trick}
+The \textbf{sampling layer} is essentially a wrapper that provides a friendly way of working with the learned rates. It implements functionality for sampling with rates in parallel, either in discrete or continuous time, as well as evaluation diagonal and off-diagonal observables. The sampling from a CTMC can be done with one of two implemented methods
+\begin{enumerate}[label=\roman*)]
+	\item \textbf{Max step (competing exponentials):} For all adjacent states sample a holding time $\tau_i \sim \operatorname{Exp}(\lambda_i)$, then move into the state with the minimum time $\tau_i$.
+	\item \textbf{Gumbel step:} The minimum of $n$ independent exponential distributions $\{\lambda_1, \lambda_2, \cdots, \lambda_n\}$ is also exponentially distributed with rate $\lambda = \sum_i \lambda_i$, its minimizer is distributed according to a multinomial distribution with $\pi_i =\frac{\lambda_{i}}{\lambda_{1}+\cdots+\lambda_{n}} $ and independent of time. We first sample a holding time $\tau$ from the exponential distribution and then the index from the multinomial.
+\end{enumerate}

@@ -15,11 +15,11 @@
 In the penultimate chapter we present results obtained using the methodology and software presented in Chapter~\ref{chapter4}. We begin by discussing the training of rates $\Gamma^{(v)}$ and problems that we run into, before turning our attention to sampling with the obtained rates.  
 
 \section{Training the rates}
+\label{sec:training_exp}
 We exclusively work with the second proposed loss, or the $\log \text{RN}$ loss for short, as there is no need for an approximation to the wave function.
 
-
-
 \subsection{The elusive timescale $\lambda$}
+\label{subsec:elusive_lambda}
 An intuitive explanation of the Todorov loss introduced in section~\ref{subsec:todorov}, is in terms of penalisation for deviations away from the passive dynamics of the system, i.e. an agent has full control over the system but pays for straying far from the passive dynamics. Our method in its most basic form, using the current variational rates $\Gamma^{(v)}_{s \rightarrow s^\prime}$ to sample a trajectory (active sampling) and obtaining a batch with fixed endpoints by permuting holding times $\tau_i$ and actions $a_i$, seems to completely disregard this penalty for straying far away from the passive dynamics when applied to the TFIM. The optimised rates $\Gamma_*^{(v)}$ obtained with this method vary depending on the initialisation, but the training itself is not sensitive to it. The training is robust in the sense that low loss is obtained irrespective of the initialisation, barring vary bad hyperparameter settings, but the rates $\Gamma_*^{(v_i)}$ corresponding to these low losses are not the same. It appears that there are many \emph{local optima} for the rates, or that there is an invariance in the loss and many rates are optimal. We will see that the latter is the case, and we denote this problem the inability to learn the correct \textbf{timescale} of the process. This issue is illustrated in Fig.~\ref{fig:scaleblowup} which shows the number of spin flips in the sampled trajectory throughout training for three initialisations, along with the distributions of holding times $P \sim \tau$ of the final learned rates. 
 \begin{figure}[t]
 	\centering
@@ -62,8 +62,14 @@ to obtain
 The terms in red contain the passive rates, and can be taken out of $\operatorname{Var}[\cdot]$. The TFIM obeys both listed properties, and a batch obtained by permuting a single trajectory has constant $T$ and $N_{\text{actions}}$, meaning that we find ourselves in a regime where the correct timescale $\lambda$ \textbf{cannot} be learned. 
 
 \subsection{Alternative Batch generation}
-Simple permutation batches not working for the TFIM puts us in a precarious situation, the only way forward in models with the timescale learning issue is to work with batches of different lengths $N_{\text{actions}}$, fixed endpoints, and fixed time\footnote{Otherwise we cannot neglect $E_0T$ term.} $T$. This is computationally disadvantageous, because we can no longer evaluate $log \text{RN}$ on the whole batch in parallel, but must do so sequentially. Moreover, the generation of the batch becomes difficult to implement for the general system and may become a bottleneck in itself. Here we test the two alternative batch generation techniques described in section~\ref{sec:qoptsampl}. 
-
+Simple permutation batches not working for the TFIM puts us in a precarious situation, the only way forward in models with the timescale learning issue is to work with batches of different lengths $N_{\text{actions}}$, fixed endpoints, and fixed time\footnote{Otherwise we cannot neglect $E_0T$ term.} $T$. This is computationally disadvantageous, because we can no longer evaluate $\log \text{RN}$ on the whole batch in parallel, but must do so sequentially. Moreover, the generation of the batch becomes difficult to implement for the general system and may become a bottleneck in itself. Here we test alternative batch generation techniques described in section~\ref{sec:qoptsampl}. 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{Chapter5/Figs/Vector/constr-g-loss}
+	\caption[Rate training in 1d-TFIM using the construct method]{\textbf{Rate training in 1d-TFIM using the construct method}. This approach converges for different values of $h$, $L=6, N_a=4, N_e=2$.}
+	\label{fig:constr-g-loss}
+\end{figure}
+Fig.~\ref{fig:constr-g-loss} displays the training loss for the TFIM with different values of $h$ when using the \emph{construct} method for batch generation. We find, that $N_b$
 
 \newpage
 \subsection{Architectural choices}
@@ -75,7 +81,7 @@ As expected architecture choices and hyperparameters play an important role in l
 	\caption[Initial rate training experiments]{\textbf{Initial rate training experiments}. Learning experiments using \emph{initial} sampling mode and different simulation setups for 2d-TFIM ($L=3, J=1.0, h=1.0$). \textbf{top left:} $T = 75, N_w = 5, N_l = 3$, \textbf{top right:} $N_b = 50, N_w = 5, N_l = 3$, \textbf{bottom left:} $N_b = 50, T = 50, N_l = 3$, \textbf{bottom right:} $N_b = 50, T = 50, N_w = 5$.}
 	\label{fig:inittestlearning}
 \end{figure}
-Initial experiments are shown in Fig.~\ref{fig:inittestlearning}, the top row displays the mentioned stability, increasing the batch size decreases the "volatility" of the loss, and same is true for increasing $T$, but only if we consider loss normalized per time unit. As a rule of thumb $N_w$ and $N_l$ do not have a significant impact on the efficiency/speed of training, so long as both hyperparameters are chosen to be somewhere in the goldilocks zone, deep and narrow networks sometimes struggle to converge, bottom right Fig.~\ref{fig:inittestlearning}.
+Initial experiments are shown in Fig.~\ref{fig:inittestlearning}, the top row displays the aforementioned stability. Increasing the batch size decreases the "volatility" of the loss, and same is true for $T$, but only if we consider loss normalized per time unit. As a rule of thumb $N_w$ and $N_l$ do not have a significant impact on the efficiency/speed of training, so long as both hyperparameters are chosen to be somewhere in the goldilocks zone, deep and narrow networks sometimes struggle to converge, bottom right Fig.~\ref{fig:inittestlearning}.
 
 Going beyond the training itself, we need to evaluate the \emph{generalisation} of the rates. The worry is that training the rates at certain $T$ and $N_b$ could overfit and negatively impact sampling down the line, where the $T$ will be very different. To test this the rates were trained for various settings of $T, N_b, N_w, N_l$ and tested them by evaluating the loss at $T=50$, $N_b=50$, Fig.~\ref{fig:avgvarloss}. What we learn is that the rates do not overfit, average test loss is in the same order of magnitude than the train loss, and that $N_b$ is more important for stability than $T$. Finally, as we want to construct the most effective ansatz for eventual sampling experiments, we also investigate the relative time and size cost, of increasing hyperparameters, the results are in Fig.~\ref{fig:initialtimespace}.
 
@@ -94,8 +100,9 @@ Going beyond the training itself, we need to evaluate the \emph{generalisation} 
 \end{figure}
 
 \subsubsection{Comparison with G-pCNN}
-stronger inductive bias
+A strong inductive bias, e.g. equivariance to translation or other appropriate symmetries should provide an advantage when learning a mapping equivariant to these same symmetries. Moreover, we expect this advantage to be even more significant in the case of learning with the $\log \text{RN}$ loss. This is because variational rates $\Gamma^{(v)}$ are evaluated multiple times in succession to evaluate the logarithm Radon-Nikodym derivative on a single trajectory, and this is repeated for a whole batch of trajectories.  
 
+Initial training experiments were conducted with the TFIM, comparing the learning of a fully connected network, and the pCNN in 1D, as well as both compared to the group-equivariant CNN in two dimensions. Qualitatively, there is little difference in the performance of the pCNN and the MLP in 1d, whereas the difference becomes more notable in 2d, where the gCNN seems to learn quickest, when comparing networks with comparable numbers of variational parameters. These experiments are limited in two ways. First, due to the stochastic nature of the loss it is hard to tell which architecture is performing better and statistical metrics are needed. Second, because of a suboptimal implementation of the gCNN, runs with many epochs could not be carried out and the results are thus not conclusive. Further investigation is needed to confirm these qualitative results, it is suggested as future work. 
 
 \section{Importance sampling}
 \begin{figure}[H]
@@ -105,10 +112,19 @@ stronger inductive bias
 	\label{fig:samplingexample}
 \end{figure}
 
-
-
-\section{Results}
 \subsection{Ising model}
 \subsubsection{One dimension}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{Chapter5/Figs/Vector/tfim1d_finite_scaling}
+	\caption[Importance sampling in the 1d-TFIM]{\textbf{Importance sampling in the 1d-TFIM}}
+	\label{fig:tfim1dfinitescaling}
+\end{figure}
+
 \subsubsection{Two dimensions}
-\subsection{XY model}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{Chapter5/Figs/Vector/tfim2d_finite_scaling}
+	\caption[Importance sampling in the 2d-TFIM]{\textbf{Importance sampling in the 2d-TFIM}}
+	\label{fig:tfim2dfinitescaling}
+\end{figure}

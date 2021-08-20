@@ -16,7 +16,7 @@ This chapter presents the computational method developed in this thesis. We star
 
 \section{Neural Networks} % ~150 words
 \subsection{The Multilayer Perceptron}
-The \textbf{multilayer perceptron} (MLP), also referred to as a \textbf{deep feedforward network} or simply a \textbf{deep neural network} (DNN), is the paradigmatic model of deep learning and serves as a foundation for more advanced models. In essence it is nothing more than a mapping of inputs to outputs
+The \textbf{multilayer perceptron} (MLP), also referred to as \textbf{deep neural network} (DNN), is the paradigmatic model of deep learning and serves as a foundation for more advanced models. In essence it is nothing more than a mapping of inputs to outputs
 \begin{equation}
 	f(\mathbf{x}; ~\theta): \mathbb{R}^\text{in} \rightarrow \mathbb{R}^{\text{out}},
 \end{equation}
@@ -44,7 +44,7 @@ A variety of activations have been used, namely $\tanh(\cdot)$ and the logistic 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Chapter4/Figs/Vector/activations}
-	\caption[Activation functions]{\textbf{Activation functions.} $\operatorname{ReLu}$ and Softmax nonlinearities.}
+	\caption[$\operatorname{ReLu}$ and Softmax nonlinearities.]{\textbf{$\operatorname{ReLu}$ and Softmax nonlinearities.}}
 	\label{fig:activations}
 \end{figure}
 
@@ -100,7 +100,7 @@ This yields a standard convolution with a transformed filter $\rho(\mathfrak{r})
 
 \subsection{Automatic differentiation}
 \label{subsec:autodiff}
-The demand for automatic evaluation of derivatives is today greater than ever, and automatic differentiation has seen wide adoption within the scientific computing and machine learning communities~\cite{baydin2018automatic, lyu2013automatic, tamayo2018automatic}, with the development of high profile libraries such as \emph{PyTorch}~\cite{paszke2017automatic}, \emph{TensorFlow}~\cite{abadi2016tensorflow}, or \emph{JAX}~\cite{jax2018github}. Not to be confused with numerical or symbolic differentiation, \textbf{automatic differentiation} (AD) provides a way to mechanically find derivatives of functions expressed as a computer program, with certain complexity guarantees~\cite{barak2016history}. While modern implementations employ a variety of tricks, AD has two basic \emph{modi operandi} of calculating partial derivatives of $f(x_1, x_2, \ldots, x_n): \mathbb{R}^n \rightarrow \mathbb{R}^m$ at $\mathbf{a}$. We start by representing the computation $y = f(\mathbf{x})$ as an \emph{evaluation trace} of elementary operations, composed of inputs, intermediate values, and outputs:
+The demand for automatic evaluation of derivatives is today greater than ever, and automatic differentiation has seen wide adoption within the scientific computing and machine learning communities~\cite{baydin2018automatic, lyu2013automatic, tamayo2018automatic}, with the development of high profile libraries such as \emph{PyTorch}~\cite{paszke2017automatic}, \emph{TensorFlow}~\cite{abadi2016tensorflow}, or \emph{JAX}~\cite{jax2018github}. \textbf{Automatic differentiation} (AD) provides a way to mechanically find derivatives of functions expressed as a computer program, with certain complexity guarantees~\cite{barak2016history}. While modern implementations employ a variety of tricks, AD has two basic \emph{modi operandi} of calculating partial derivatives of $f(x_1, x_2, \ldots, x_n): \mathbb{R}^n \rightarrow \mathbb{R}^m$ at $\mathbf{a}$. We start by representing the computation $y = f(\mathbf{x})$ as an \emph{evaluation trace} of elementary operations, composed of inputs, intermediate values, and outputs:
 \begin{itemize}
 	\item \textbf{Forward accumulation mode}~\cite{wengert1964simple}:  In forward mode, when evaluating the partial derivative w.r.t input $x_j$, we associate each intermediate value $v_i$ with the partial derivative $\frac{\partial v_i}{\partial x_j}$. We then apply the chain rule to each operation in the evaluation trace, producing the derivative trace. A single forward pass, in tandem passing both primals $v_i$ and their tangents $\frac{\partial v_i}{\partial x_j}$ through the trace, produces the output of the function, as well as the desired partial derivative. Forward mode AD produces one \emph{column} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \ll m$.
 	

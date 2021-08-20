@@ -6,10 +6,49 @@
 \chapter{Discussion}
 \label{chapter6}
 
+\section{Summary and contributions}
+In this work, we provided an overview of common quantum many-body methods, with a special focus on Monte Carlo and Machine Learning methods, as well as an introduction to stochastic processes. We then derived a novel loss function termed the variance $\log \text{RN}$ loss with fixed endpoints, which when optimised yields a trajectory distribution of a stoquastic lattice model. This new method is closely related to previous work of Barr et al.~\cite{barr2020quantum}, which uses a similar loss function but for continuous systems where there is no need for fixed endpoint trajectories. The method is also closely related to work of Gispen et al.~\cite{gispen2020ground}, which is based on much of the same theoretical foundation, but uses reinforcement learning to find ground states of lattice models. The main disadvantage of our method over standard methods is its limited applicability. It can only be applied to stoquastic Hamiltonians, and the batch generation process must be tailored to the system at hand. The main advantage of our method is at inference time, where it is much more efficient at sampling from the ground state than vanilla Metropolis-Hastings as no transitions are ever rejected. 
+
+Based on this, the main contributions of this thesis are twofold:
+
+\begin{enumerate}
+	\item We provide a clear and thorough introduction to the many very diverse topics needed to understand, derive, and implement the $\log {RN}$ loss. 
+	\item We implement the $\log {RN}$ loss and analyse its properties on the TFIM in both one and two dimensions. Most notably, we show that while the loss has nice convergence properties in theory, the restriction to \emph{fixed endpoint} trajectories is very impractical. Since such trajectories cannot be sampled, they need to be constructed in some way. We propose three batch generation methods for the TFIM, identify a family of Hamiltonians which pose problems for the $\log{\text{RN}}$ loss, and discuss their failure modes.  
+\end{enumerate}
+
+
 \section{Direction for further work}
+As with any scientific work, this thesis leaves many questions unanswered and many more new questions uncovered. Future work should focus on:
 
-\section{Remarks}
+\begin{enumerate}
+	\item \textbf{Questions regarding the loss and trajectories:} 
+	\begin{itemize}
+		\item Answering the most pressing question the thesis leaves unanswered. Why does the \emph{construct} method not work?
+		
+		\item Is there a batch construction method that will behave nicely for TFIM like models?
+		
+		\item How do we construct batches in models where the actions are not independent (e.g. XY), and we cannot just permute them. Can we devise a general way to construct fixed endpoint trajectories under certain constraints?
 
+		\item More general questions regarding the generalisation properties of the loss. Since we artificially construct trajectories to feed into the loss, does this hinder its learning? Can the loss overfit to certain trajectories? Do trajectories that are very \emph{instructive} and expedite the training process exist? Can we specifically engineer trajectories to facilitate learning?
+	
+	\end{itemize}
+	
+	\item \textbf{Technical improvements:}
+	\begin{itemize}
+		\item Improve the implementation of the gCNN and conduct more extensive tests.
+		\item Reduce the memory requirement of the method to facilitate larger computations. 
+		\item Can our method be used effectively in tandem with some other standard method?
+		\item Further exploration of the effects of equivariance on learning.
+		\item Randomly choose the time for each epoch, perhaps from the Erlang distribution. Does this stabilise learning?
+	\end{itemize}
+	
+	\item \textbf{Theoretical considerations:}
+	\begin{itemize}
+		\item How can we extend the method to a broader range of Hamiltonians? Perhaps using the fixed-node Feynman-Kac formula?~\cite{caffarel2015talking}.
+		\item Does a lattice model with an analytical solution for the rates exist?
+	\end{itemize}
+
+\end{enumerate}
 
 
 

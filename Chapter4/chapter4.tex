@@ -12,19 +12,19 @@
 
 \chapter{Methodology}
 \label{chapter4}
-This chapter presents the computational method developed in this thesis. We start by introducing each component of the method separately. We discuss neural networks, automatic differentiation, gradient estimation, gradient-based optimisation, and importance sampling. Finally, we present the actual implementation in \emph{JAX}, and discuss computational considerations and intricacies of thereof.
+This chapter presents the computational method developed in this thesis. We start by introducing each component of the method separately. We discuss neural networks, automatic differentiation, gradient-based optimisation, and importance sampling. Finally, we present the actual implementation in \emph{JAX}, and discuss computational considerations and intricacies of thereof.
 
 \section{Neural Networks} % ~150 words
 \subsection{The Multilayer Perceptron}
-The \textbf{multilayer perceptron} (MLP), also referred to as a \textbf{deep feedforward network} or simply a \textbf{deep neural network} (DNN), is the paradigmatic model of deep learning and serves as a foundation of more advanced models. In essence it is nothing more than a mapping of inputs to outputs
+The \textbf{multilayer perceptron} (MLP), also referred to as a \textbf{deep feedforward network} or simply a \textbf{deep neural network} (DNN), is the paradigmatic model of deep learning and serves as a foundation for more advanced models. In essence it is nothing more than a mapping of inputs to outputs
 \begin{equation}
 	f(\mathbf{x}; ~\theta): \mathbb{R}^\text{in} \rightarrow \mathbb{R}^{\text{out}},
 \end{equation}
-which is structured in a certain way and depends on parameters $\theta$. The mapping is a composition of vector-valued functions $f$ which are called \emph{layers} of the network, and with each layer we associate variational parameters $\mathbf{w}$, or simply the weights. The MLP can be described with a directed acyclic graph which details the compositions of the layers. The simplest and most common is a chain of compositions, Fig~\ref{fig:mlp}b, 
+which is structured in a certain way and depends on parameters $\theta$. The mapping is a composition of vector-valued functions $f$ which are called \emph{layers} of the network, and with each layer we associate variational parameters $\mathbf{w}$, or simply the weights. The MLP can be described with a directed acyclic graph which details the compositions of the layers. The simplest and most common is a chain of compositions, in Fig~\ref{fig:mlp}b, 
 \begin{equation}
 f_{\text{MLP}} = \left(f^{(n)} \circ f^{(n-1)} \circ \cdots \circ f^{(2)} \circ f^{(1)} \right)(\mathbf{x}),
 \end{equation}
-where the input $\textbf{x}$ passes through \emph{hidden} layers before the \emph{output} layer outputs the result. The length of this chain is the \emph{depth} of the network, and the dimensionality of hidden layers is the \emph{width} of the network. We can interpret each transformation $f^{(i)}$ as consisting of a unit/node/neuron for each input dimension, which is vector-to-scalar transformation, Fig~\ref{fig:mlp}a.
+where the input $\textbf{x}$ passes through \emph{hidden} layers before the \emph{output} layer outputs the result. The length of this chain is the \emph{depth} of the network, and the dimensionality of hidden layers is the \emph{width} of the network. We can interpret each transformation $f^{(i)}$ as consisting of a unit/node/neuron for each input dimension, which is a vector-to-scalar transformation, Fig~\ref{fig:mlp}a.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/mlp.pdf}
@@ -40,7 +40,7 @@ However, a linear neural network famously cannot learn the XOR function~\cite{mi
 \begin{equation}
 f(\mathbf{x}; \mathbf{w}, b) = g\left(\mathbf{x}^\intercal \mathbf{w} + b\right).
 \end{equation}
-A variety of activations have been used, namely $\tanh(\cdot)$ and the logistic sigmoid $\sigma(\cdot)$, but have since been displaced by the use of the \textbf{rectified linear unit} or $\operatorname{ReLu}(\cdot)$, which is advantageous for training, for the output layer we will use the \emph{softplus}, which fulfils the requirement of being positive everywhere, Fig.~\ref{fig:activations}. A multilayer perceptron is a \textbf{universal function approximator}, meaning that with at least one hidden layer it can approximate any Borel measurable function mapping from a finite-dimensional space to another with desired accuracy, given sufficient hidden units~\cite{leshno1993multilayer}. This means that a large enough network will be able do represent the rates, however this provides no guarantee that learning the correct rates will be efficient or possible. 
+A variety of activations have been used, namely $\tanh(\cdot)$ and the logistic sigmoid $\sigma(\cdot)$, but have since been displaced by the use of the \textbf{rectified linear unit} or $\operatorname{ReLu}(\cdot)$, which is advantageous for training. For the output layer we will use the \emph{softplus}, which fulfils the requirement of being positive everywhere, Fig.~\ref{fig:activations}. A multilayer perceptron is a \textbf{universal function approximator}, meaning that it can approximate any Borel measurable function mapping from a finite-dimensional space to another with desired accuracy, if it has at least one hidden layer and sufficient hidden units~\cite{leshno1993multilayer}. While this means that a large enough network will be able do represent the rates, it provides no guarantee that learning the correct rates will be efficient or possible. 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Chapter4/Figs/Vector/activations}
@@ -50,12 +50,12 @@ A variety of activations have been used, namely $\tanh(\cdot)$ and the logistic 
 
 \subsection{Convolutional Neural Networks}
 \label{subsec:nn-cnn} 
-Convolutional neural networks (CNN)~\cite{lecun1989generalization} are neural network architectures specialised for working with gridded inputs. They make use of three powerful concepts to increase performance, \textbf{sparse interactions}, \textbf{parameter sharing} and \textbf{equivariant representations}~\cite{goodfellow2016deep}. At the core of a CNN is the {convolutional} layer, in which the input $I$ is convolved with the \textbf{kernel} $K$ as 
+Convolutional neural networks (CNN)~\cite{lecun1989generalization} make use of three powerful concepts to increase performance, \textbf{sparse interactions}, \textbf{parameter sharing} and \textbf{equivariant representations}~\cite{goodfellow2016deep}. At the core of a CNN is the {convolutional} layer, in which the input $I$ is convolved with the \textbf{kernel} $K$ as 
 \begin{equation}
 	\label{eq:convolution}
 	S_{i,j} = (I * K)_{i,j} = \sum_m \sum_n I_{m,n} K_{i-m, j-n},
 \end{equation}
-in two dimensions, Fig.~\ref{fig:pcnn}a. Outputs of convolutions are referred to as \emph{feature maps}. In practice the kernel $K$ is much smaller than the input, meaning that each neuron is connected only to a small fraction of neurons in the previous layer, hence the layers are sparsely connected in contrast to the fully connected layer Fig.~\ref{fig:pcnn}c. This decreases the number of weights and operations required. Moreover, the kernel is applied everywhere in the input, meaning the weights are shared across all connections and need to be learned for the whole input as opposed to every single position in the input. This makes the convolutional layer much more memory efficient than the fully connected layer. Moreover, the nature of convolution in eq.~\eqref{eq:convolution} means that the convolutional layer is equivariant to translation, i.e. a translation of the input results in the same translation of the output. Altogether, a convolutional layer is a transformation acting on a batch of examples $N_b$ with channels $N_c$
+in two dimensions, Fig.~\ref{fig:pcnn}a. Outputs of convolutions are referred to as \emph{feature maps}. In practice the kernel $K$ is much smaller than the input, meaning that each neuron is connected only to a small fraction of neurons in the previous layer. Hence the layers are sparsely connected in contrast to the fully connected layer, see Fig.~\ref{fig:pcnn}c. This decreases the number of weights and operations required. Moreover, the kernel is applied everywhere in the input, meaning the weights are shared across all connections and need to be learned for the whole input as opposed to every single position in the input. This makes the convolutional layer much more memory efficient than the fully connected layer. Moreover, the nature of convolution in eq.~\eqref{eq:convolution} means that the convolutional layer is equivariant to translation, i.e. a translation of the input results in the same translation of the output. Altogether, a convolutional layer is a transformation acting on a batch of examples $N_b$ with channels $N_c$
 \begin{equation}
 	f: \mathbb{R}^{(N_b, N_w, N_h, N_c)} \rightarrow \mathbb{R}^{(N_b, O_w, O_h, N_c)}.
 \end{equation}
@@ -63,7 +63,7 @@ The output dimensions also depend on the \textbf{stride} (how quick the kernel t
 \begin{equation}
 	O_{\text{out}} = \frac{N_{\text{in}}-N_K+2N_P}{N_S}+1.
 \end{equation}
-Alongside convolutional layers CNNs often employ \emph{pooling} layers which downsample the input by combining a cluster of neurons into a single one. \emph{Max} and \emph{average} pooling are in common use, the pooling output is the max or average of the cluster respectively. A pooling layer can act globally, on the whole feature map, or locally. 
+Alongside convolutional layers, CNNs often employ \emph{pooling} layers which downsample the input by combining a cluster of neurons into a single one. \emph{Max} and \emph{average} pooling are in common use, the pooling output is the max or average of the cluster respectively. A pooling layer can act globally, on the whole feature map, or locally. 
 
 The models we are interested in will be image-to-image networks that preserve the input shape, as the outputs will represent the rates corresponding to adjacent states. In the Ising model, the output at $(i, j)$ is the rate associated with transition $s \rightarrow s^\prime$ where the spin at $(i, j)$ is flipped.
 \subsubsection{Periodic CNN}
@@ -79,7 +79,7 @@ for $N_S = 1$. Given that the underlying lattice is chosen to be periodic, we us
 	\label{fig:pcnn}
 \end{figure}
 \subsection{Group-Equivariant CNN}
-The basic convolutional layer is translation equivariant, providing an advantage when we expect the same equivariant behaviour between the input and output. Alongside translational symmetry we can take advantage of other symmetries present in the lattice model. Recent work~\cite{cohen2016group, bronstein2021geometric} in the field of \textbf{geometric} deep learning has shown how to construct layers equivariant to arbitrary group symmetry, in the case of discrete grid-like data referred to as \textbf{group-equivariant} convolutional layers. At the core of {group convolution} is moving the filter using group action (rotation, translation, etc.). Adopting notation of Bronstein~\cite{bronstein2021geometric}, we write a group convolution as the inner product of the input $x$ and a filter transformed by group element $\mathfrak{g} \in \mathfrak{G}$ via group representation $\rho(\mathfrak{g})$ as $\rho(\mathfrak{g}) \theta_{u}=\theta_{\mathfrak{g}^{-1} u}$,
+The basic convolutional layer is translation equivariant, providing an advantage when we expect the same equivariant behaviour between the input and output. Alongside translational symmetry we can take advantage of other symmetries present in the lattice model. Recent work~\cite{bronstein2021geometric, cohen2016group} in the field of \textbf{geometric} deep learning has shown how to construct layers equivariant to arbitrary group symmetry, in the case of discrete grid-like data referred to as \textbf{group-equivariant} convolutional layers. At the core of {group convolution} is moving the filter using group action (rotation, translation, etc.). Adopting notation of Bronstein~\cite{bronstein2021geometric}, we write a group convolution as the inner product of the input $x$ and a filter transformed by group element $\mathfrak{g} \in \mathfrak{G}$ via group representation $\rho(\mathfrak{g})$ as $\rho(\mathfrak{g}) \theta_{u}=\theta_{\mathfrak{g}^{-1} u}$,
 \begin{equation}
 (x \star \theta)(\mathfrak{g})=\sum_{u \in \Omega} x_{u} \rho(\mathfrak{g}) \theta_{u}.
 \end{equation}
@@ -97,61 +97,23 @@ This yields a standard convolution with a transformed filter $\rho(\mathfrak{r})
 
 \section{Gradient-based optimisation}
 \label{sec:gbopt}
-There are three components needed to perform gradient based optimisation. \textbf{Automatic differentiation} (AD), the ability to efficiently and reliably differentiate through computations. \textbf{Gradient estimation} methods for estimating gradients of expectations of functions, and an \textbf{optimisation algorithm}.
 
 \subsection{Automatic differentiation}
 \label{subsec:autodiff}
-The demand for automatic evaluation of derivatives is today greater than ever, and automatic differentiation has seen wide adoption within the scientific computing and machine learning communities~\cite{lyu2013automatic, tamayo2018automatic, baydin2018automatic}, with the development of high profile libraries such as \emph{PyTorch}~\cite{paszke2017automatic}, \emph{TensorFlow}~\cite{abadi2016tensorflow}, or \emph{JAX}~\cite{jax2018github}. Not to be confused with numerical or symbolic differentiation, AD provides a way to mechanically find derivatives of functions expressed as a computer program, with certain complexity guarantees~\cite{barak2016history}. While modern implementations employ a variety of tricks, AD has two basic \emph{modi operandi} of calculating partial derivatives of $f(x_1, x_2, \ldots, x_n): \mathbb{R}^n \rightarrow \mathbb{R}^m$ at $\mathbf{a}$. We start by representing the computation $y = f(\mathbf{x})$ as an \emph{evaluation trace} of elementary operations, composed of inputs, intermediate values, and outputs:
+The demand for automatic evaluation of derivatives is today greater than ever, and automatic differentiation has seen wide adoption within the scientific computing and machine learning communities~\cite{baydin2018automatic, lyu2013automatic, tamayo2018automatic}, with the development of high profile libraries such as \emph{PyTorch}~\cite{paszke2017automatic}, \emph{TensorFlow}~\cite{abadi2016tensorflow}, or \emph{JAX}~\cite{jax2018github}. Not to be confused with numerical or symbolic differentiation, \textbf{automatic differentiation} (AD) provides a way to mechanically find derivatives of functions expressed as a computer program, with certain complexity guarantees~\cite{barak2016history}. While modern implementations employ a variety of tricks, AD has two basic \emph{modi operandi} of calculating partial derivatives of $f(x_1, x_2, \ldots, x_n): \mathbb{R}^n \rightarrow \mathbb{R}^m$ at $\mathbf{a}$. We start by representing the computation $y = f(\mathbf{x})$ as an \emph{evaluation trace} of elementary operations, composed of inputs, intermediate values, and outputs:
 \begin{itemize}
 	\item \textbf{Forward accumulation mode}~\cite{wengert1964simple}:  In forward mode, when evaluating the partial derivative w.r.t input $x_j$, we associate each intermediate value $v_i$ with the partial derivative $\frac{\partial v_i}{\partial x_j}$. We then apply the chain rule to each operation in the evaluation trace, producing the derivative trace. A single forward pass, in tandem passing both primals $v_i$ and their tangents $\frac{\partial v_i}{\partial x_j}$ through the trace, produces the output of the function, as well as the desired partial derivative. Forward mode AD produces one \emph{column} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \ll m$.
 	
-	\item \textbf{Reverse accumulation mode}~\cite{speelpenning1980compiling}: In reverse mode we instead associate each intermediate value $v_i$ with adjoint $\bar{v}_i = \frac{\partial y_i}{\partial v_i}$, partial derivative of the output $y_i$. Derivatives w.r.t inputs are then evaluated in a two step process, first a forward pass populates intermediate values $v_i$ and stores their dependencies before the adjoints $\bar{v}_i$ are propagated in reverse, from outputs to inputs. Reverse mode AD produces one \emph{row} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \gg m$, it is a generalisation of the \emph{backpropagation} algorithm.
+	\item \textbf{Reverse accumulation mode}~\cite{speelpenning1980compiling}: In reverse mode, we associate each intermediate value $v_i$ with adjoint $\bar{v}_i = \frac{\partial y_i}{\partial v_i}$, partial derivative of the output $y_i$. Derivatives w.r.t inputs are then evaluated in a two step process. First, a forward pass populates intermediate values $v_i$ and stores their dependencies before the adjoints $\bar{v}_i$ are propagated in reverse, from outputs to inputs. Reverse mode AD produces one \emph{row} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \gg m$.
 \end{itemize}
 AD is most commonly implemented in one of two ways, either by \emph{operator overloading}, abstracting away the derivative part of the calculation, e.g. in \emph{TensorFlow} of \emph{JAX}~\cite{abadi2016tensorflow, jax2018github}. Or alternatively via \emph{source code transformation}, where a new function is constructed by altering the source code, see \emph{Zygote}~\cite{innes2018don}.
 
-\subsection{Gradient estimation}
-\label{subsec:gbopt-gest}
-The problem of stochastic gradient estimation of an expectation of a function is a well studied problem that transcends machine learning and has a variety of applications~\cite{chriss1997black, schrittwieser2020mastering}. Different estimators differ in form and their properties, variance being one of the most important. In their review~\cite{mohamed2020monte} Mohamed et al. categorise MC gradient estimators into three categories
-
-\subsubsection{Score-function estimator}
-The \emph{score function} is a logarithm of a probability distribution w.r.t to distributional parameters. It can be used as a gradient estimator
-\begin{equation}
-\begin{aligned}
-\nabla_{\boldsymbol{\theta}} \mathbb{E}_{p_{\boldsymbol{\theta}}(\mathbf{x})}[f(\mathbf{x})] &=  \nabla_{\boldsymbol{\theta}} \int p_{\boldsymbol{\theta}}(\mathbf{x}) f(\mathbf{x}) d \mathbf{x} \\
-&= \mathbb{E}_{p_{\boldsymbol{\theta}}(\mathbf{x})}\left[f(\mathbf{x}) \nabla_{\boldsymbol{\theta}} \log p_{\boldsymbol{\theta}}(\mathbf{x})\right].
-\end{aligned}
-\end{equation}
-The score-function estimator is compatible with any cost function, it requires that the measure $p_{\boldsymbol{\theta}}(\mathbf{x})$ is differentiable and easy to sample. Importantly it is applicable to both discrete and continuous distributions, but has the drawback of having high variance.
-
-\subsubsection{Pathwise estimator}
-Continuous distributions can be sampled either directly by generating samples from the distribution $p_{\boldsymbol{\theta}}(\mathbf{x})$ or indirectly, by sampling from a simpler base distribution $p(\boldsymbol{\epsilon})$ and transforming the variate through a deterministic path $g_{\boldsymbol{\theta}}(\boldsymbol{\epsilon})$. Using this, it is possible to move the source of randomness in such a way that the objective is differentiable. In essence this approach pushes the parameters of the measure into the cost function which is then differentiated. The estimator is
-\begin{equation}
-\begin{aligned}
-\nabla_{\boldsymbol{\theta}} \mathbb{E}_{p_{\boldsymbol{\theta}}(\mathbf{x})}[f(\mathbf{x})] 
-&=\nabla_{\boldsymbol{\theta}} \int p_{\boldsymbol{\theta}}(\mathbf{x}) f(\mathbf{x}) d \mathbf{x} \\
-&= \nabla_{\boldsymbol{\theta}} \int p(\boldsymbol{\epsilon}) f(g_{\boldsymbol{\theta}}(\boldsymbol{\epsilon})) d \boldsymbol{\epsilon} \\
-&= \mathbb{E}_{p(\boldsymbol{\epsilon})}\left[\nabla_{\boldsymbol{\theta}} f(g_{\boldsymbol{\theta}}(\boldsymbol{\epsilon}))\right].
-\end{aligned}
-\end{equation}
-\begin{figure}
-	\centering
-	\subfloat[Original]{\includegraphics[height=5cm]{Appendix2/Figs/Vector/reparam_diagram.pdf}}
-	\quad
-	\subfloat[Reparametrized]{\includegraphics[height=5cm]{Appendix2/Figs/Vector/reparam_diagram2.pdf}}
-	\caption[The reparametrization trick]{\textbf{The reparametrization trick}, adapted from~\cite{kingma2017variational}. Stochasticity of the $\mathbf{z}$ node is pushed out into a separate input to the same node, resulting in deterministic gradients w.r.t $\boldsymbol{\phi}$ through the node.}
-	\label{fig:reparam}
-\end{figure}
-This was the gradient estimator originally used in the variational autoencoder implementation~\cite{kingma2013auto}, there named as the \emph{reparametrization trick}, see also Figure~\ref{fig:reparam}. In many cases the transformation paths are so simple they can be implemented in one line of code, referred to as \emph{one-liners}. The pathwise-estimator can only be used on differentiable cost functions, but is easy to implement and crucially has lower variance than the score-function estimator. 
-
-\subsubsection{Measure-valued gradient estimator}
-The measure-valued gradient estimator is less frequently used in ML. It exploits properties of signed-measures to construct a weak derivative of the probability density w.r.t parameters $\theta$, which can in turn be used to derive an unbiased gradient estimator with favourable variance properties. 
-
 \subsection{Optimisation algorithms}
-Variants of the \textbf{stochastic gradient descent} (SGD) are by far the most used optimisation algorithms in ML, instead of calculating the true gradient of the parameters w.r.t loss, it is estimated using an unbiased estimator - taking the average gradient on a minibatch of examples. SGD introduces only a single hyperparameter, the learning rate $\alpha$, which determines the size of correction $\theta \leftarrow \theta - \alpha \nabla_\theta L$ at each iteration. The main advantage of this approach is that the time complexity of an iteration does not depend on the number of examples, this is useful for cases with large, or even infinite in our case, training sets. The first improvement over vanilla SGD is the use of momentum~\cite{polyak1964some}, where an exponentially decaying average of past gradients determines the update direction, and hyperparameter $\beta$ determines how quickly this value decays. Second improvement is using an adaptive learning rate, \emph{ADAM}~\cite{kingma2014adam} is perhaps the most popular such algorithm. 
+Variants of the \textbf{stochastic gradient descent} (SGD) are by far the most used optimisation algorithms in ML. Instead of calculating the true gradient of the parameters w.r.t loss, it is estimated using an unbiased estimator which takes the average gradient on a minibatch of examples. SGD introduces only a single hyperparameter, the learning rate $\alpha$, which determines the size of correction $\theta \leftarrow \theta - \alpha \nabla_\theta L$ at each iteration. The main advantage of this approach is that the time complexity of an iteration does not depend on the number of examples. This is useful for cases with large, or even infinite in our case, training sets. The first improvement over vanilla SGD is the use of momentum~\cite{polyak1964some}, where an exponentially decaying average of past gradients determines the update direction. Second improvement is using an adaptive learning rate, \emph{ADAM}~\cite{kingma2014adam} is perhaps the most popular such algorithm. 
 
 \section{Importance Sampling}
 \label{sec:Impl-MCIP}
-Ultimately we want to use the optimal learned rates $\Gamma^{(v)}$ to evaluate observables $\hat O$ in our model, be it the ground state energy or something else. Recall from section~\ref{sec:vmc}, that we can express observables as a Monte Carlo average of the local operator $\hat O_L$. But not all operators are made equal and some are more convenient to evaluate than others, in our implementation it will be helpful to make a distinction between \emph{diagonal} and \emph{off-diagonal} observables~\cite{torlai2018neural}. Since the wave functions of stoquastic Hamiltonians are real and positive we denote $\psi(\boldsymbol{s}) = \sqrt{\rho(\boldsymbol{s})/Z}$, where $Z$ is the normalisation constant. If the observable
+Ultimately we want to use the optimal learned rates $\Gamma^{(v)}$ to evaluate observables $\hat O$ in our model, be it the ground state energy or something else. Recall from section~\ref{sec:vmc}, that we can express observables as a Monte Carlo average of the local operator $\hat O_L$. But not all operators are made equal and some are more convenient to evaluate than others. In our implementation it will be helpful to make a distinction between \emph{diagonal} and \emph{off-diagonal} observables~\cite{torlai2018neural}. Since the wave functions of stoquastic Hamiltonians are real and positive, we denote $\psi(\boldsymbol{s}) = \sqrt{\rho(\boldsymbol{s})/Z}$, where $Z$ is the normalisation constant. If the observable
 \begin{equation}
 	\hat {O}=\sum_{\boldsymbol{s}, \boldsymbol{s}^{\prime}} {O}_{\boldsymbol{s} \boldsymbol{s}^{\prime}}|\boldsymbol{s}\rangle \langle \boldsymbol{s}^{\prime}|,
 \end{equation}
@@ -182,11 +144,11 @@ thus the local operator for $\langle \hat \sigma^x_j \rangle$ is sparse with onl
 
 \subsection{MCMC and the Metropolis-Hastings Algorithm}
 \label{subsec:Impl-MCMC}
-The integration technique from the previous section relies on our ability to obtain samples from an un-normalised probability distribution $\rho$. \textbf{Markov Chain Monte Carlo} (MCMC) avoids sampling directly from $\rho$ by constructing a Markov chain whose stationary distribution $\pi$ is the same as $\rho$. Propagating this chain, if it is done for long enough, then produces a sequence of samples from the desired distribution. For the process to have a unique stationary distribution two conditions must be met, the process must be \emph{ergodic} and it must obey \emph{detailed balance}
+The integration technique from the previous section relies on our ability to obtain samples from an unnormalised probability distribution $\rho$. \textbf{Markov Chain Monte Carlo} (MCMC) avoids sampling directly from $\rho$ by constructing a Markov chain, whose stationary distribution $\pi$ is the same as $\rho$. Propagating this chain produces a sequence of samples from the desired distribution. For the process to have a unique stationary distribution, it must be \emph{ergodic} and it must obey \emph{detailed balance}
 \begin{equation}
 	P_{\mathbf{s \rightarrow \mathbf{s}^\prime}}\rho(\mathbf{s}) = P_{\mathbf{s^\prime \rightarrow \mathbf{s}}} \rho(\mathbf{s}^\prime),
 \end{equation}
-where $P$ are the transition probabilities. The equivalent condition in continuous time uses the rate matrix $\Gamma$
+where $P$ are transition probabilities. The equivalent condition in continuous time uses the rate matrix $\Gamma$
 \begin{equation}
 	\Gamma_{\mathbf{s \rightarrow \mathbf{s}^\prime}}\rho(\mathbf{s}) = \Gamma_{\mathbf{s^\prime \rightarrow \mathbf{s}}} \rho(\mathbf{s}^\prime).
 \end{equation}
@@ -205,27 +167,29 @@ and a Metropolis correction step\footnote{Throwing away holding times $\tau_i$ b
 
 \section{Software implementation details}
 \label{sec:qoptsampl}
-The main developing principles for the implementation were flexibility in the choice of variational model, hyperparameters, or stoquastic Hamiltonian itself, and extendability, the ability to add new Hamiltonians and models with relative ease. Additionally, the implementation needs to be computationally efficient with its most demanding parts running on the GPU. This sort dichotomy between flexibility and speed is aided by modern ML frameworks. We worked in \emph{JAX}~\cite{jax2018github} which extends \emph{numpy} with \emph{function transformations}, provides automatic differentiation capabilities, and uses just-in-time\footnote{It uses the \emph{Accelerated Linear Algebra} XLA compiler.} (jit) compilation to improve performance. The design of the implemented software is shown in Fig.~\ref{fig:qsampl}. Since the workflow of the method is split between training and sampling, so is the software.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl1}
-\end{figure}
-\begin{figure}[t!]
-	\ContinuedFloat
-	\centering
-	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl2}
-	\caption[Implementation details]{\textbf{Software implementation details.} The software implementation in JAX is divided into three layers. The input layer (\textbf{a}) specifies the Hamiltonian for which we are learning the rates, the model used to represent the rates and training hyperparameters. The trainer layer (\textbf{b}) specialises the general functions for the system at hand and training details (batch size, time, etc.), before training the rates and outputing a sampler object. The sampler object (\textbf{c}) can then be used to perform importance sampling using the trained rates in either discrete or continuous time, if operators are provided observables can be evaluated while sampling a trajectory.}
-	\label{fig:qsampl}
-\end{figure}
-The \textbf{input layer} includes the implementation of a Stoquastic Hamiltonian, which must include methods for calculating the passive rates, potential, adjacent states, and for transforming one adjacent state into another. The variational module must be a subclass of \emph{flax.linen.Module} and returns $\Gamma_{s\rightarrow s^\prime}$ for input $s$, pCNN and group-equivariant CNN are implemented by default. Finally all parameters are taken as an \emph{.ml\_collections} dictionary.
+The main developing principles for the implementation are flexibility in the choice of variational model, hyperparameters, or stoquastic Hamiltonian itself, and extendability, the ability to add new Hamiltonians and models with relative ease. Additionally, the implementation needs to be computationally efficient with its most demanding parts running on the GPU. This sort of dichotomy between flexibility and speed is aided by modern ML frameworks. We work in \emph{JAX}~\cite{jax2018github} which extends \emph{numpy} with \emph{function transformations}, provides automatic differentiation capabilities and uses just-in-time\footnote{It uses the \emph{Accelerated Linear Algebra} XLA compiler.} (jit) compilation to improve performance. The design of the implemented software is shown in Fig.~\ref{fig:qsampl}. Since the workflow of the method is split between training and sampling, so is the software.
 
-The \textbf{training layer}, takes the input functions and specialises\footnote{Partially compiles.} them for the input parameters before performing training. The most important part of the training procedure is the generation of a batch of trajectories, which can be performed in a number of ways so long as all trajectories have constant $T$ and fixed endpoints. The generation is system dependent, we propose three approaches for the TFIM model. 
+The \textbf{input layer} includes the implementation of a Stoquastic Hamiltonian, which must include methods for calculating the passive rates, potential, adjacent states, and for transforming one adjacent state into another. The variational module must be a subclass of \emph{flax.linen.Module} and returns $\Gamma_{s\rightarrow s^\prime}$ for input $s$. All parameters are taken as an \emph{.ml\_collections} dictionary.
+
+The \textbf{training layer}, takes the input functions and partially compiles them for the input parameters before performing training. The most important part of the training procedure is the generation of a batch of trajectories. This can be performed in a number of ways, so long as all trajectories have constant $T$ and fixed endpoints. The generation is system dependent, and we propose the following three approaches for the TFIM model, where spin flips are independent. 
 \begin{enumerate}[label=\roman*)]
-	\item \textbf{Permute:} This is the simplest batch generation technique. First a single trajectory is obtained and is stored as holding times $\tau_i$ and actions $a_i$, along with the initial state $S_0$. Then the times and actions are permuted to create a batch of $N_b$ permutations. The sampling of the initial trajectory is arbitrary, the implementation supports sampling it from the current rates $\Gamma^{v_i}_{s \rightarrow s^\prime}$, passive rates, or the initial rates $\Gamma^{v_0}_{s \rightarrow s^\prime}$, essentially from random rates. The problem with \emph{permute} batch generation is that the number of actions is constant, and this may pose problems as discussed in~\ref{subsec:elusive_lambda}.
+	\item \textbf{Permute:} This is the simplest batch generation technique. First a single trajectory is obtained and is stored as holding times $\tau_i$ and actions $a_i$, along with the initial state $S_0$. Then the times and actions are permuted into a batch of $N_b$ permutations. The choice of initial trajectory is arbitrary, current implementation supports sampling it from the latest rates $\Gamma^{v_i}_{s \rightarrow s^\prime}$, passive rates, or the initial rates $\Gamma^{v_0}_{s \rightarrow s^\prime}$. The problem with \emph{permute} batch generation is that the number of actions is constant, and this may pose problems as discussed in~\ref{subsec:elusive_lambda}.
 	
-	\item \textbf{Split:} Batch generation using the \emph{split} method also relies on sampling an initial trajectory before modifying it. But instead of only permuting the original, we now append two flips of a randomly chosen spin to the trajectory before shuffling. This has no bearing on the endpoint of the trajectory, but changes its length\footnote{Length refers to number of spins not $T$.}. The times can be resampled or a random holding time can be split among the new visited state, so that all trajectories in the batch have constant $T$.
+	\item \textbf{Split:} Batch generation using the \emph{split} method also relies on sampling an initial trajectory before modifying it. Instead of only permuting the original, we now append two flips of a randomly chosen spin to the trajectory before shuffling. This has no bearing on the endpoints of the trajectory but changes its length\footnote{Length refers to number of spin flips not $T$.}. The times can be resampled or a random holding time can be split among the new visited states, so that all trajectories in the batch have constant $T$.
 	
-	\item \textbf{Construct:} The \emph{construct} method does not sample any trajectory. It exploits the fact that if we assign each spin an odd or even number of flips, we obtain a family of trajectories with fixed endpoints. We first randomly choose $N_a$ spins, which will be flipped during the trajectory. Of these spins, we then mark $N_e$ spins to be even and the rest to be odd. To obtain a batch of trajectories with variable length, we assign different odd numbers of flips to odd spins, and analogous to the even flips. The times are sampled independently from an exponential distribution and normalised to add up to $T$. The benefit of this method is that we can have trajectories of very different length in the same batch. 		
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl1}
+	\end{figure}
+	\begin{figure}[t!]
+		\ContinuedFloat
+		\centering
+		\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl2}
+		\caption[Implementation details]{\textbf{Software implementation details.} The software implementation in JAX is divided into three layers. The input layer (\textbf{a}) specifies the Hamiltonian for which we are learning the rates, the model used to represent the rates and training hyperparameters. The trainer layer (\textbf{b}) specialises the general functions for the system at hand and training details (batch size, time, etc.), before training the rates and outputing a sampler object. The sampler object (\textbf{c}) can then be used to perform importance sampling using the trained rates in either discrete or continuous time, if operators are provided observables can be evaluated while sampling a trajectory.}
+		\label{fig:qsampl}
+	\end{figure}
+	
+	\item \textbf{Construct:} The \emph{construct} method does not sample any trajectory. It exploits the fact that if we assign each spin an odd or even number of flips, we obtain a family of trajectories with fixed endpoints. We first randomly choose $N_a$ spins, which will be flipped during the trajectory. Of these spins, we then mark $N_e$ spins to be even and the rest to be odd. To obtain a batch of trajectories with variable length, we assign different odd numbers of flips to odd spins, and analogous to even flips. The times are sampled independently from an exponential distribution and normalised to add up to desired $T$. The benefit of this method is that we can have trajectories of very different length in the same batch.
 \end{enumerate}
 The gradient of the $\log RN$ loss is then evaluated using an MC estimate and the parameters updated accordingly, the implementation only supports the \emph{ADAM} optimiser. 
 

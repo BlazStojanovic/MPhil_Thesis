@@ -286,7 +286,7 @@ In order for the process to possess the Markov property, the distribution of hol
 \begin{equation}
 	S_{n+1} \sim \operatorname{Exp}(-{\Gamma_{ii}}(X_n)),
 \end{equation}
-with exponential parameters being $-\Gamma_{ii}$ where $i$ is the current state.
+with exponential parameters being $-\Gamma_{ii}$, where $i$ is the current state.
 Processes with different holding time distributions are called \textbf{semi-Markov}. The jump times $\{J_n\}$ are simply 
 \begin{equation}
 	J_{n}=S_{1}+\ldots+S_{n}.
@@ -310,11 +310,11 @@ gives the full description of the CTMC. We now interpret $\Gamma_{ii}$ as the ra
 
 \section{The Feynman-Kac formula}
 \label{subsec:fk-fk}
-The Feynman path integral formulation introduced in chapter~\ref{chapter2} was extensively used by physicists for decades, even in the absence of a formal mathematical formulation which is hard to define because of the difficulties with defining an appropriate measure on the path space. Kac~\cite{kac1949distributions} provided a rigorous formulation of the \textit{real-valued} case of the Feynman path integral, and the resulting {Feynman-Kac formula} eq.~\eqref{eq:fkac} provides a bridge between \emph{parabolic} partial differential equations and stochastic processes. 
+The Feynman path integral formulation introduced in Chapter~\ref{chapter2} was extensively used by physicists for decades, even in the absence of a formal mathematical formulation which is hard to define because of the difficulties with defining an appropriate measure on the path space. Kac~\cite{kac1949distributions} provided a rigorous formulation of the \textit{real-valued} case of the Feynman path integral, and the resulting {Feynman-Kac formula} eq.~\eqref{eq:fkac} provides a bridge between \emph{parabolic} partial differential equations and stochastic processes. 
 
 \subsection{Feynman-Kac in continuous state space}
 \label{subsec:FK_in_continuous_space}
-To illustrate the Feynman-Kac formula let us consider a single particle with Hamiltonian
+To illustrate the Feynman-Kac formula, let us consider a single particle with Hamiltonian
 \begin{equation}
 	\hat{H} = -\frac{\mathrm{d}^2~~}{\mathrm{d}x^2} + V(x)
 \end{equation}
@@ -329,7 +329,7 @@ In close analogy to arguments presented in the DMC section~\ref{subsubsec-PMC}, 
 	\psi(x, t)=\underset{X \sim \text { Brownian with } X_{t}=x}{\mathbb{E}}
 	\left[\exp \left(-\int_{0}^{t}  V\left(X_{\tau}, \tau \right) \mathrm{d}\tau \right) \psi\left(X_{0}, 0\right)\right],
 \end{equation}
-where only the \emph{endpoint} at time $t$ of the Brownian process fixed, whereas the starting point at time $t=0$ is not. $\psi (x, 0)$ encodes the initial condition into this representation. When there is no external potential $V(x) = 0$, the Schr\" odinger equation in imaginary time is the diffusion equation and the Feynman-Kac solution is simply
+where only the \emph{endpoint} at time $t$ of the Brownian process is fixed, whereas the starting point at time $t=0$ is not. $\psi (x, 0)$ encodes the initial condition into this representation. When there is no external potential $V(x) = 0$, the Schr\" odinger equation in imaginary time is the diffusion equation and the Feynman-Kac solution is simply
 \begin{equation}
 	\begin{aligned} 
 		\psi(x, t) &= \underset{X \sim \text { Brownian with } X_{t}=x}{\mathbb{E}}\left[\psi\left(X_{0}, 0\right)\right] \\
@@ -342,7 +342,7 @@ An illustration of the Feynman-Kac formula applied to a free particle in 1D is d
 \label{eq:RNderiv}
 \frac{\mathrm{d} \mathbb{P}_{\mathrm{FK}}}{\mathrm{d} \mathbb{P}_{0}}=\mathcal{N} \exp \left(-\int V\left(X_{t}\right) d t\right),
 \end{equation}
-where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$), this is illustrated in Fig.~\ref{fig:fkac_measure_reweight}. 
+where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the measure as assigning more weight to Brownian paths that spend more time in the attractive region ($V(x) < 0$) than in repulsive regions ($V(x) > 0$). This is illustrated in Fig.~\ref{fig:fkac_measure_reweight}. 
 \begin{figure}[H]
 	\centering
 	\subfloat
@@ -389,7 +389,7 @@ The ground state of this Hamiltonian has zero energy and is
 \begin{equation}
 \psi_{0}(x)=\sqrt{\rho_{0}(x)}.
 \end{equation}
-In other words, the quantum ground state probability distribution $|\psi_{0}|^2$ is the same as the classical stationary distribution $\rho_{0}$ of the stochastic process $X_{t}$ in the literature referred to as the {Nelson's ground state process}~\cite{nelson1967dynamical, albeverio1977energy}. This connection is one that our computational method will exploit, as the ability to efficiently sample from the stochastic process with correct drift $v$ is equivalent to sampling from the ground state of the quantum system. Even though the connection is simple, it comes with a caveat. Starting from the Schr\" odinger equation one needs to find the drift $v(x)$, and while the connection with $V(x)$ is clear-cut in this simple example, this is not the case in many-body systems. The \emph{inverse} problem of finding the stochastic process of a given Hamiltonian is difficult, and is one of the core problems approached in this thesis.
+In other words, the quantum ground state probability distribution $|\psi_{0}|^2$ is the same as the classical stationary distribution $\rho_{0}$ of the stochastic process $X_{t}$ which is in the literature known as the {Nelson's ground state process}~\cite{nelson1967dynamical, albeverio1977energy}. This connection is one that our computational method will exploit, as the ability to efficiently sample from the stochastic process with correct drift $v$ is equivalent to sampling from the ground state of the quantum system. Even though the connection is simple, it comes with a caveat. Starting from the Schr\" odinger equation one needs to find the drift $v(x)$, and while the connection with $V(x)$ is clear-cut in this simple example, this is not the case in many-body systems. The \emph{inverse} problem of finding the stochastic process of a given Hamiltonian is difficult, and is one of the core problems approached in this thesis.
 
 \subsection{Stoquastic Hamiltonians}
 \label{subsec:fk-latt}
@@ -429,7 +429,7 @@ and the potential is
 \begin{equation}
 V(\boldsymbol{s})=H_{s s}+\sum_{s^{\prime} \neq s} H_{s s^{\prime}}.
 \end{equation}
-From now on we use $\rightarrow$ notation to emphasise the transition between \textbf{adjacent states} $s\neq s^\prime$ which satisfy $H_{s s^{\prime}} \neq 0$. 
+From now on we use $\rightarrow$ notation to emphasise the transition between \textbf{adjacent states} $s\neq s^\prime$, which satisfy $H_{s s^{\prime}} \neq 0$. 
 
 \subsection{Stoquastic representations of the lattice models}
 \label{subsec:stoq_latt_forms}
@@ -437,7 +437,7 @@ Let us now reinterpret lattice models introduced in section~\ref{sec:lattice-mod
 
 \subsubsection{Transverse-field Ising model}
 \label{subsubsec:res-im}
-In the $z$-spin basis a state is defined as $\mathbf{s} = \boldsymbol{\sigma}^z$, where $\boldsymbol{\sigma}^z = (\sigma_1^z, \sigma_2^z, \ldots, \sigma_N^z) \equiv (s_1^z, s_2^z, \ldots, s_N^z)$ and $\sigma_i^N$ represent either spin-up or spin-down states at site $i$. The TFIM Hamiltonian eq.~\eqref{eq:h-ising} in this representation becomes
+In the $z$-spin basis a state is defined as $\mathbf{s} = \boldsymbol{\sigma}^z$, where $\boldsymbol{\sigma}^z = (\sigma_1^z, \sigma_2^z, \ldots, \sigma_N^z) \equiv (s_1^z, s_2^z, \ldots, s_N^z)$ and $\sigma_i^N$ represent either spin-up or spin-down state at site $i$. The TFIM Hamiltonian eq.~\eqref{eq:h-ising} in this representation becomes
 \begin{equation}
 	\langle \mathbf{s}^\prime | H_{\text{TFIM}} | \mathbf{s}\rangle = -J \sum_{\langle i, j \rangle} s_i s_j \langle \mathbf{s}^\prime | \mathbf{s}\rangle -h \sum_i \langle \mathbf{s}^\prime | \sigma_{i}^+ + \sigma_{i}^- | \mathbf{s} \rangle.
 \end{equation}
@@ -445,7 +445,7 @@ If we examine the second term for $\mathbf{s}^\prime \neq \mathbf{s}$ we see tha
 \begin{equation}
 	\Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} = h.
 \end{equation}
-Passive process in the TFIM is then just individual spin flips, see Fig.~\ref{fig:isingpassive}. The potential follows from its definition
+The passive process in the TFIM is then just individual spin flips, see Fig.~\ref{fig:isingpassive}. The potential follows from its definition
 \begin{equation}
 	V(\mathbf{s}) = -\sum_{\mathbf{s} \neq \mathbf{s}^\prime} \Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} + H_{ss} = -hN - J\sum_{\langle i, j \rangle} s_i s_j,
 \end{equation}
@@ -458,15 +458,15 @@ where $N$ is the number of lattice sites.
 \end{figure}
 \subsubsection{The XY model}
 \label{subsubsec:res-hm}
-In $z$-spin basis the XY Hamiltonian~\eqref{eq:h-xy} becomes
+In the $z$-spin basis the XY Hamiltonian~\eqref{eq:h-xy} becomes
 \begin{equation}
 	\langle \mathbf{s}^\prime | H_{\text{XY}} | \mathbf{s} \rangle = -\sum_{\langle i, j \rangle}\langle \mathbf{s}^\prime | \hat \sigma_i^+ \hat \sigma_j^- + \hat \sigma_i^- \hat \sigma_j^+| \mathbf{s}\rangle.
 \end{equation}
-Here two states $\mathbf{s} \neq \mathbf{s}^\prime$ are adjacent if there exists two sites $i$, $j$ with $s_i \neq s_j$ in $\mathbf{s}$, such that swapping the values $s_i$ and $s_j$ gives $s^\prime$. The passive rates are then
+Here two states $\mathbf{s} \neq \mathbf{s}^\prime$ are adjacent if we can find two neighbouring $i$, $j$ with $s_i \neq s_j$ in $\mathbf{s}$, such that swapping the values $s_i$ and $s_j$ gives $s^\prime$. The passive rates are then
 \begin{equation}
 	\Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} = 1,
 \end{equation}
-and the corresponding passive process is the \textbf{symmetric exclusion process} (SEP) depicted in Fig.~\ref{fig:xypassive}. The potential follows as
+and the corresponding passive process is the \textbf{symmetric exclusion process} (SEP), depicted in Fig.~\ref{fig:xypassive}. The potential follows as
 \begin{equation}
 V(\mathbf{s}) = -\sum_{\mathbf{s} \neq \mathbf{s}^\prime} \Gamma_{\mathbf{s}\rightarrow\mathbf{s}^\prime} = -\sum_{\langle i, j \rangle} \left[n_i\left(1-n_j\right) - n_j\left(1-n_i\right)\right]
 \end{equation}
@@ -495,7 +495,7 @@ The decomposition $H = -\Gamma + V$ allows us to define the Feynman-Kac formula 
 \end{equation}
 The expectation is now taken over the process driven by $\Gamma$ and weighted by the potential $V$. We denote the trajectory as $\Sigma_{[0, t]}$, where $\Sigma_{t^\prime}$ is the state of the system at time $t^\prime \in [0, t]$. Analogous as with the Feynman-Kac formula in continuous state space, this defines a new CTMC with measure $\mathbb{P}_{\text{FK}}$, which is related to  passive dynamics with measure $\mathbb{P}_0$ via the RN derivative, eq.~\eqref{eq:RNderiv}.
 
-How exactly is this CTMC related to the imaginary time Schr\" odinger equation? As in the continuous space, via a similarity transform. The difference being that instead of Fokker-Planck we use the master equation to describe the time evolution of the pdf $P$
+How exactly is this CTMC related to the imaginary time Schr\" odinger equation? Again via a similarity transform. The difference being that instead of Fokker-Planck we use the master equation to describe the time evolution of the pdf $P$
 \begin{equation}
 \frac{\partial P(s)}{\partial t}=\sum_{s^\prime \neq s}\left[\Gamma_{s^\prime \rightarrow s} P(s^\prime)-\Gamma_{s \rightarrow s^\prime} P(s)\right].
 \end{equation}
@@ -533,7 +533,7 @@ In section~\ref{subsec:FK_in_continuous_space} we explored a connection between 
 	\label{eq:holl_opt_process}
 	\mathrm{d} X_{t}=\mathrm{d} W_{t}+v^\prime\left(X_{t}\right) \mathrm{d} t,
 \end{equation}
-where $v^\prime$ is the optimal/correct drift. Finding the correct drift in one-dimension was straightforward, but how to do it in higher dimensions ($W_{t}, X_{t} \in \mathbb{R}^n$ and $v: \mathbb{R}^n \rightarrow \mathbb{R}^n$) remained unanswered. Holland~\cite{holland1977cost} formulated the search for optimal drift as a stochastic control problem with cost function
+where $v^\prime$ is the optimal drift. Finding the correct drift in one-dimension was straightforward, but how to do it in higher dimensions ($W_{t}, X_{t} \in \mathbb{R}^n$ and $v: \mathbb{R}^n \rightarrow \mathbb{R}^n$) remained unanswered. Holland~\cite{holland1977cost} formulated the search for optimal drift as a stochastic control problem with cost function
 \begin{equation}
 	\label{eq:holland_cost}
 	C[v]=\lim _{T \rightarrow \infty} \frac{1}{T} \mathbb{E}\left[\int \left(\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\right)\right)\mathrm{d} t\right],
@@ -546,7 +546,7 @@ The distribution $\pi$ must satisfy the stationary Fokker-Planck equation
 \begin{equation}
 \frac{1}{2} \nabla^{2} \pi-\nabla \cdot(v \pi)=0,.
 \end{equation}
-Equality holds for drift $v = \frac{\nabla \psi}{\psi}$ and distribution $\pi = \psi^2$, the cost is then
+Since the equality holds for drift $v = \frac{\nabla \psi}{\psi}$ and distribution $\pi = \psi^2$, cost is
 \begin{equation}
 C[v]=\int \left[\frac{1}{2}(\nabla \psi)^{2}+V\left(X_{t}\right) \psi^{2}\right]\mathrm{d}x.
 \end{equation}
@@ -556,9 +556,9 @@ For normalised $\psi$ the integrand is the expected value of the quantum energy 
 \label{subsec:continuous_loss}
 To see that the path measures $\mathbb{P}_v$ of the process in eq.~\eqref{eq:not_prime_cont_process}  and the Feynman-Kac measure $\mathbb{P}_{\mathrm{FK}}$ coincide for the optimal rates $v^\prime$, we first need a measure of similarity between probability distributions. For this purpose we will use the \textbf{Kullback–Leibler} (KL) divergence $D_{\mathrm{KL}}$
 \begin{equation}
-	D_{\mathrm{KL}}(p \| q)=\underset{p}{\mathbb{E}}\left[\log \left(\frac{p}{q}\right)\right],
+	D_{\mathrm{KL}}(p \| q)=\underset{p}{\mathbb{E}}\left[\log \left(\frac{p}{q}\right)\right].
 \end{equation}
-the quantity is a divergence because of the asymmetry $D_{\mathrm{KL}}(p \| q) \neq D_{\mathrm{KL}}(q \| p)$. It is a strictly positive quantity $D_{\mathrm{KL}}(p \| q) \geq 0$ except for $p = q$ when $D_{\mathrm{KL}}(p \| q) = 0$. In order to obtain the KL divergence between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{KL}}$ we first express the RN derivative of each path measure w.r.t. Brownian motion using Girsanov theorem~\eqref{eq:Girsanov_theorem}. Both RN derivatives can then be combined to express the logarithm Radon-Nikodym derivative or the \emph{log-likelihood} ratio as
+The quantity is a divergence because of the asymmetry $D_{\mathrm{KL}}(p \| q) \neq D_{\mathrm{KL}}(q \| p)$. It is a strictly positive quantity $D_{\mathrm{KL}}(p \| q) \geq 0$ except for $p = q$ when $D_{\mathrm{KL}}(p \| q) = 0$. In order to obtain the KL divergence between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{KL}}$ we first express the RN derivative of each path measure w.r.t. Brownian motion using Girsanov theorem~\eqref{eq:Girsanov_theorem}. Both RN derivatives can then be combined to express the logarithm Radon-Nikodym derivative or the \emph{log-likelihood} ratio as
 \begin{equation}
 \log \left(\frac{d \mathbb{P}_{v}}{d \mathbb{P}_{\mathrm{FK}}}\right)=
 \tilde{\ell}-
@@ -577,7 +577,7 @@ The boundary term depends the ground state $\varphi_0$ at initial $r_0$ and fina
 \label{eq:ltilde-cont}
 D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right)=\underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\ell^\prime-E_{0} T+\log \left(\frac{\varphi_{0}\left(r_{0}\right)}{\varphi_{0}\left(r_{T}\right)}\right)\right].
 \end{equation}
-If we consider the above Kullback-Leibler divergence in the long time limit $T \rightarrow \infty$, we see that the expectation of the first term of $\tilde{\ell}$ is zero. Moreover, if the marginal distributions $\psi_{0}(r_0)$ and $\psi_{0}(r_T)$ coincide, the boundary term vanishes as well, and the KL divergence is equivalent to the Holland cost, thus vanishes for optimal drift. This means that finding the correct path measure is equivalent to finding the optimal drift, and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be used to find the optimal rates. Sampling the trajectories becomes a matter of integrating a SDE and can be done with some standard approach, e.g. Euler-Mayurama method. Tje gradients of $D_{\mathrm{KL}}$ w.r.t rate parameters $\theta$ can be obtained using stochastic backpropagation where the reparameterisation trick is used for each increment in the discretised SDE. The gradient of the boundary term is non-zero, but can be estimated by expressing $\psi_0$ in terms of $v_{\theta}$. Missing steps of the derivation can be found in Appendix~\ref{app:holland-prob}, more details in~\cite{barr2020quantum}. 
+If we consider the above Kullback-Leibler divergence in the long time limit $T \rightarrow \infty$, we see that the expectation of the first term of $\tilde{\ell}$ is zero. Moreover, if the marginal distributions $\psi_{0}(r_0)$ and $\psi_{0}(r_T)$ coincide, the boundary term vanishes as well, and the KL divergence is equivalent to the Holland cost, thus vanishes for optimal drift. This means that finding the correct path measure is equivalent to finding the optimal drift, and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be used to find the optimal rates. Sampling the trajectories becomes a matter of integrating a SDE and can be done with some standard approach, e.g. Euler-Mayurama method. Tje gradients of $D_{\mathrm{KL}}$ w.r.t rate parameters $\theta$ can be obtained using stochastic backpropagation where the reparameterisation trick is used for each increment in the discretised SDE. The gradient of the boundary term is non-zero, but can be estimated by expressing $\psi_0$ in terms of $v_{\theta}$. Missing steps of the derivation can be found in Appendix~\ref{app:holland-prob}, and more details in~\cite{barr2020quantum}. 
 
 \subsection{Todorov Cost in discrete state space}
 \label{subsec:todorov}
@@ -593,7 +593,7 @@ to emphasise the decomposition of the Hamiltonian eq.~\eqref{eq:hamilton_split} 
 	-\frac{\partial u(s_j, t)}{\partial t}=\min _{\Gamma^{(v)}}\left[\ell(s_j, v)+\sum_{s_k} \Gamma_{s_j \rightarrow s_k}^{(v)}(u(s_k, t)-u(s_j, t))\right],
 \end{equation}
 where $\Gamma^{(v)}$ are the rates of the modified CTMC, and $\ell(s_j, v)$ is the cost per time associated with state $s_j$ and parameters $v$.
-This is a form of Bellman equation, a very general concept in control theory and reinforcement learning, related to the Hamilton-Jacobi equation in physics. It is used to find the optimal actions, i.e. how we should choose $v$ at each moment w.r.t the cost associated with each state and parameters $\ell(s_j, v)$. The function $u(s_j, t)$ is the cost-to-go function, it is the cumulative cost obtained starting from state $s_j$ at time $t$ and acting optimally afterwards. The optimal parameters $v(t)$ are computed greedily with each step and guarantee minimum $u(s_j, t)$, which is most easily illustrated by looking $\Delta t$ into the past, where the cost-to-go is given by the cost of remaining in the same state $\ell(s_j, t) \Delta t$ and the changes in costs-to-go when transitioning to other states weighted by the probability of making the transition $\Gamma^{(v)}_{s_j \rightarrow s_k}$
+This is a form of Bellman equation, a very general concept in control theory and reinforcement learning, related to the Hamilton-Jacobi equation in physics. It is used to find the optimal actions, i.e. how we should choose $v$ at each moment w.r.t the cost associated with each state and parameters $\ell(s_j, v)$. The function $u(s_j, t)$ is the cost-to-go function, it is the cumulative cost obtained starting from state $s_j$ at time $t$ and acting optimally afterwards. The optimal parameters $v(t)$ are computed greedily with each step and guarantee minimum $u(s_j, t)$, this is most easily illustrated by looking $\Delta t$ into the past. Here the cost-to-go is given by the cost of remaining in the same state $\ell(s_j, t) \Delta t$ and the changes in costs-to-go when transitioning to other states weighted by the probability of making the transition $\Gamma^{(v)}_{s_j \rightarrow s_k}$
 \begin{equation}
 	u_{j}(t-\Delta t)=u_{j}(t)+\Delta t \min _{\Gamma^{(v)}}\left[\ell(j, v)+\sum_{k} \Gamma_{j \rightarrow k}^{(v)}(u(k, t)-u(j, t))\right].
 \end{equation}
@@ -601,7 +601,7 @@ The cost $\ell(s_j, v)$ introduced by Todorov is of the form
 \begin{equation}
 	\ell(j, v)=q(j)+D_{\mathrm{KL}}(v(\cdot \mid j) \| p(\cdot \mid j)),
 \end{equation}
-where the first term encodes how undesirable different states are, and the second measures how costly the deviation from passive dynamics is, the agent (controlled rates) pay a price for reshaping the environment (passive rates), for more rigour see Appendix~\ref{app:todorov-cost}. In the case of the imaginary time Schr\" odinger equation, these terms are
+where the first term encodes how undesirable different states are, and the second measures how costly the deviation from passive dynamics is, i.e. the agent (controlled rates) pay a price for reshaping the environment (passive rates). A more rigorous discussion can be found in Appendix~\ref{app:todorov-cost}. In the case of the imaginary time Schr\" odinger equation, these terms are
 \begin{equation}
 	q(s_j)=V(s_j) \Delta t,
 \end{equation}
@@ -613,7 +613,7 @@ where $\Sigma_{[0, t]}$ is the trajectory of states sampled from controlled dyna
 
 \subsection{Loss for discrete state space}
 \label{subsec:discrete_loss}
-As we have done in the continuous space, we will compare the cost to the Kullback-Liebler divergence between path measures $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{FK}}$ to see that the optimal rates $\Gamma^{(v)}$ coincide with sampling from the Feynman-Kac measure. Full derivations in~\ref{app:todorov-prob}.
+Analogous to the derivation in continuous space, we will compare the cost to the Kullback-Liebler divergence between path measures $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{FK}}$ to see that the optimal rates $\Gamma^{(v)}$ coincide with sampling from the Feynman-Kac measure. Full derivations in~\ref{app:todorov-prob}.
 
 The logarithm Radon-Nikodym between the controlled rates and Feynman-Kac measure is
 \begin{equation}
@@ -633,8 +633,8 @@ The KL divergence can be written as
 		&+\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) d t-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)\Bigg]-E_{0} T,
 	\end{aligned}
 \end{equation}
-which is the Todorov's cost and vanishes for optimal rates, meaning that finding the these rates is equivalent to finding the Feynman-Kac measured process. One might be tempted to use $D_{\mathrm{KL}}$ as an optimisation objective, but this is not possible because its gradient is biased due to the boundary term
-$\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)$. We now propose two alternatives.
+which is the Todorov's cost and vanishes for optimal rates, meaning that finding them is equivalent to finding the Feynman-Kac measured process. One might be tempted to use $D_{\mathrm{KL}}$ as an optimisation objective, but this is not possible because its gradient is biased due to the boundary term
+$\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)$. Hence, we propose two alternatives.
 
 \subsubsection{Loss no. 1: Variance of $\tilde \ell$}
 The variance of quantity $\tilde{\ell}$
@@ -658,4 +658,4 @@ While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\
 +\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)-E_{0} T-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)
 \right] \underset{\Gamma^{(v)} = \Gamma^\prime}{\rightarrow} 0.
 \end{equation}
-The trajectories can be sampled using arbitrary rates $r$, but for convenience $\Gamma^{(v)}$ can be used. How to obtain a batch poses a technical challenge which is to be solved on a system by system basis, and is discussed in section~\ref{sec:qoptsampl}.
+The trajectories can be sampled using arbitrary rates $r$, but for convenience $\Gamma^{(v)}$ can be used. How to obtain a batch poses a technical challenge which is to be solved on a system by system basis, and is discussed in section~\ref{sec:qoptsampl}. This is the loss we focus on, we refer to it as the $\log \text{RN}$ loss. 

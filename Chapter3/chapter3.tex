@@ -33,7 +33,7 @@ The sample space is simply the set of all possible outcomes. A canonical example
 \begin{definition}[$\sigma$-field]
 	A $\sigma$-field $\mathcal{F}$ on a set $\Omega$, is a nonempty collection of subsets of $\Omega$ that includes $\Omega$ itself, is closed under complement, i.e. if $A \in \mathcal{F}$ then $A^c \in \mathcal{F}$, and is closed under countable unions, $\cup_{i} A_{i} \in \mathcal{F}$ if $A_{i} \in \mathcal{F}$ is a countable union of sets.
 \end{definition}
-The main utility of the $\sigma$-field to us is its use in defining measures. We want to be able to assign a non-negative real number to all subsets of $\Omega$, as well as the size of the union of the disjoint sets to be the sum of their individual sizes. This is not always possible, a counterexample for the real line being Vitali sets. The collection $\mathcal{F}$, must thus only include \emph{measurable} sets, which are precisely the ones that satisfy the constraints imposed by the $\sigma$-field.
+The main utility of the $\sigma$-field to us is its use in defining measures. We want to be able to assign a non-negative real number to all subsets of $\Omega$, as well as the size of the union of disjoint sets to be the sum of their individual sizes. This is not always possible, a counterexample for the real line being Vitali sets~\cite{samuel2013simple}. The collection $\mathcal{F}$, must thus only include \emph{measurable} sets, which are precisely the ones that satisfy the constraints imposed by the $\sigma$-field.
 \begin{definition}[Measure]
 	A non-negative countably additive set function $\mu: \mathcal{F} \rightarrow \mathbb{R}$ that satisfies
 	\begin{enumerate}[label=\roman*)]
@@ -67,20 +67,20 @@ In essence, the random variable provides a connection between the less familiar 
 \begin{definition}[Stochastic process]
 		Given a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ and a measurable (state) space $(E, \mathcal{E})$, we define the collection $\left\{X_{t}: t \in T\right\}$ of set $T$ indexed and $(E, \mathcal{E})$ valued random variables a \textbf{stochastic process}.
 \end{definition}
-By far the most common case for the index set $T$ is time $T = \mathbb{R}^+$. Such s.p's are called \emph{temporal}, with examples including the model of velocity of a Brownian particle under influence of friction, in Fig.~\ref{fig:sp-brown}, or the Black-Scholes model. Nevertheless, the index set is not limited to time, as is often the case with Gaussian Process regression~\cite{rasmussen2006gaussian}. In this thesis we will mostly deal with temporal s.p's of the kind that do not "see into the future". This notion is formalized using \textbf{filtrations}. A filtration $\mathbb{F}=\left(\mathcal{F}_{t}\right)_{t \in T}$ on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is just an increasing sequence or order of $\sigma$-fields
+By far the most common case for the index set $T$ is time $T = \mathbb{R}^+$. Such s.p.s are called \emph{temporal}, with examples including the model of velocity of a Brownian particle under influence of friction, in Fig.~\ref{fig:sp-brown}, or the Black-Scholes model. Nevertheless, the index set is not limited to time, as is often the case with Gaussian Process regression~\cite{rasmussen2006gaussian}. In this thesis we will mostly deal with temporal s.p.s of the kind that do not "see into the future". This notion is formalized using \textbf{filtrations}. A filtration $\mathbb{F}=\left(\mathcal{F}_{t}\right)_{t \in T}$ on a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ is just an increasing sequence or order of $\sigma$-fields
 \begin{equation}
 	\mathcal{F}_{s} \subset \mathcal{F}_{t} \text { if } 0 \leq s \leq t<\infty.
 \end{equation}
 The filtration associated to a process that records its "past behaviour" at each time is called the \textbf{natural filtration}. 
 \begin{definition}[Adapted process]
-	A process $\{X_t\}$ is said to be \textbf{adapted to the filtration} $\left(\mathcal{F}_{t}\right)_{t \in T}$ if the random variable $X_t : \Omega \rightarrow E$ is $\mathcal{F}_t$-measurable function for each $t \in T$. 
+	A process $\{X_t\}$ is said to be \textbf{adapted to the filtration} $\left(\mathcal{F}_{t}\right)_{t \in T}$ if the random variable $X_t : \Omega \rightarrow E$ is a $\mathcal{F}_t$-measurable function for each $t \in T$. 
 \end{definition}
 A process that is \emph{non-anticipating}, i.e. depends only on the past and present, is adapted to the filtration $\left(\mathcal{F}_{t}\right)_{t \in T}$.
 \begin{definition}[Brownian motion]
 	\textbf{Brownian motion} or a non-anticipating \textbf{Wiener process} is a stochastic process $W_t$, with the following properties:
 	\begin{enumerate}[label=\roman*)]
 		\item $W_0 = 0$
-		\item $W_t$ is almost surely continuous in t
+		\item $W_t$ is almost surely continuous\footnote{i.e. with Lebesgue measure $1$, it could be discontinuous but with probability $0$.} in t
 		\item $W_t$ has independent increments
 		\item $W_t - W_s \sim \mathcal{N} (0, t-s)$ for $0 \leq s \leq t$
 	\end{enumerate}
@@ -93,27 +93,27 @@ A realisation of Brownian motion can be found in Fig.~\ref{fig:sp-brown}.
 	\subfloat{\includegraphics[width=0.5\linewidth]{Chapter3/Figs/Raster/OU-BM-II.png}}
 	\caption[Brownian motion and Ornstein–Uhlenbeck process
 	]{\textbf{Brownian motion and Ornstein–Uhlenbeck process.} 
-		A single realisation of the Brownian process (\textbf{left}). The mean, variance and 10 samples of the Ohrnstein-Uhlenbeck process with $\theta=0.6, \sigma=1.1, X_0=1.0, \mu=-1.3$, integrated using Euler-Maruyama method (\textbf{right}).}
+		A single realisation of the Brownian process (\textbf{left}). The mean, variance and 10 samples of the Ohrnstein-Uhlenbeck process $\mathrm{d} X_{t}=-\theta (\mu - X_{t}) \mathrm{d} t+\sigma \mathrm{d} W_{t}$ with $\theta=0.6, \sigma=1.1, X_0=1.0, \mu=-1.3$, integrated using Euler-Maruyama method (\textbf{right}).}
 	\label{fig:sp-brown}
 \end{figure}
 
 \subsection{Integrals}
-In order to proceed and define \textbf{stochastic differential equations} (SDE's) and the \textbf{Radon-Nikodyn} (RN) derivative, we must spend some time discussing various integrals we will use. In particular, alongside the usual Riemann integral, we will need three more types of integrals, which we will briefly describe without mathematical derivation. The simplest kind of integral we will introduce is the integral of a stochastic process
+In order to proceed and define \textbf{stochastic differential equations} (SDE's) and the \textbf{Radon-Nikodym} (RN) derivative, we must spend some time discussing various integrals we will use. In particular, alongside the usual Riemann integral, we will need three more types of integrals, which we will briefly describe without mathematical derivation. The simplest kind of integral we will introduce is the integral of a stochastic process
 \begin{equation}
 	I = \int_{0}^{t} X_t \mathrm{d}t.
 \end{equation}
-The simple appearance of the integral is deceiving as the integrand is a realisation of a $\mathcal{F}_t$-adapted stochastic process $\{X_t\}: \Omega \times T \rightarrow \mathbb{R}^{d}$, meaning that $I$ itself is a random variable. However, since each realisation of $X_t$ is almost surely continuous, $I$ can be expanded as a Riemann sum, which converges under mean-squared norm to $I$, so long as the mean $\mathbf{m}(t) = \mathbb{E}[X_t]$ and covariance $\textbf{k}(t,s) = \operatorname{Cov}(X_t, X_s)$ are continuous. In practice, computing the mean and covariance of $I$ is usually enough to understand the resulting stochastic process. Importantly, integrals of continuous functions of s.p's $h(X_t),~ h: \mathbb{R} \rightarrow \mathbb{R}$ can be computed in a similar manner.
+The simple appearance of the integral is deceiving as the integrand is a realisation of a $\mathcal{F}_t$-adapted stochastic process $\{X_t\}: \Omega \times T \rightarrow \mathbb{R}^{d}$, meaning that $I$ itself is a random variable. However, since each realisation of $X_t$ is almost surely continuous, $I$ can be expanded as a Riemann sum, which converges under mean-squared norm to $I$, so long as the mean $\mathbf{m}(t) = \mathbb{E}[X_t]$ and covariance $\textbf{k}(t,s) = \operatorname{Cov}(X_t, X_s)$ are continuous. In practice, computing the mean and covariance of $I$ is usually enough to understand the resulting stochastic process. Importantly, integrals of continuous functions of s.p.s $h(X_t),~ h: \mathbb{R} \rightarrow \mathbb{R}$ can be computed in a similar manner.
 
-The second type of integrals we need to consider, are integrals with respect to a s.p, known as \textbf{It\^ o integrals}
+The second type of integrals we need to consider are integrals with respect to a s.p., known as \textbf{It\^ o integrals}
 \begin{equation}
 	\label{eq:ito}
 	Y_t = \int_{0}^{t} H_s \mathrm{d}X_s,
 \end{equation}
-where both $H_s$ and $X_s$ are stochastic processes. The result integral $Y_t$ is itself a stochastic process which resides in the probability space $(\Omega, \mathcal{F}, \mathbb{P})$, filtered by $\left(\mathcal{F}_t\right)_{t\in T}$. The integral can be formalised by putting slight constraints on the sort of stochastic processes $X_s$ and $H_t$ can be, expanding $Y_t$ as a Riemann sum and proving convergence. Details of this procedure can be found in~\cite{rogers2000diffusions}.
+where both $H_s$ and $X_s$ are stochastic processes. The resulting integral $Y_t$ is itself a stochastic process which resides in the probability space $(\Omega, \mathcal{F}, \mathbb{P})$, filtered by $\left(\mathcal{F}_t\right)_{t\in T}$. The integral can be formalised by putting slight constraints on the sort of stochastic processes $X_s$ and $H_t$ can be, expanding $Y_t$ as a Riemann sum and proving convergence. Details of this procedure can be found in~\cite{rogers2000diffusions}.
 
 Finally we must define the \textbf{Lebesgue-Stieltjes integral}~\cite{halmos2013measure}, which is required to properly define expectations of stochastic processes. 
 \begin{definition}[Lebesgue-Stieltjes Integral]
-		Given probability space $(\Omega, \mathcal{F}, \mathbb{P})$ and measurable function $f:\Omega \rightarrow \mathbb{R}$, the \textbf{Lebesgue-Stieltjes integral} 
+		Given a probability space $(\Omega, \mathcal{F}, \mathbb{P})$ and a measurable function $f:\Omega \rightarrow \mathbb{R}$, the \textbf{Lebesgue-Stieltjes integral} 
 		\begin{equation}
 			I = \int_A f(x) \mathrm{d}\mathbb{P}(x),
 		\end{equation}
@@ -123,14 +123,11 @@ With it we can define expectations in the probability space $(\Omega, \mathcal{F
 \begin{equation}
 	\underset{{\mathbb{P}}}{\mathbb{E}}[f(x)]=\int_{\Omega} f(x) d \mathbb{P}(\boldsymbol{x}).
 \end{equation}
-For a newcomer to stochastic processes this formulation may seem redundant, can we not just calculate expectations using a Riemann integral and the pdf? We can, and when the distribution $\mathbb{P}$ can be expressed in terms of the pdf~\eqref{eq:pdf}, the Lebesgue integral can be interpreted in this way. However, stochastic processes need not admit a pdf, that is when the Lebesgue-Stieltjes integral is necessary.
-%\begin{equation}
-%	\int_{\Omega} f(x) \mathrm{d} \mathbb{P}(x)=\int_{\Omega} f(x) p(x) d \lambda(x)
-%\end{equation}
+For a newcomer to stochastic processes this formulation may seem redundant, can we not just calculate expectations using a Riemann integral and the pdf? We can, and when the distribution $\mathbb{P}$ can be expressed in terms of the pdf~\eqref{eq:pdf}, the Lebesgue integral can be interpreted in this way. However, stochastic processes need not admit a pdf, and that is when the Lebesgue-Stieltjes integral is necessary.
 \subsection{Stochastic Differential Equations}
 In this thesis we will refer to an SDE as an informal notation of an It\^ o integral equation or \textbf{It\^ o process}. 
 \begin{definition}[It\^ o process]
-	Given deterministic functions $v: \mathbb{R}^{d} \times \mathbb{R}^{+} \rightarrow \mathbb{R}^{d}$ and $\sigma: \mathbb{R}^{d} \times \mathbb{R}^{+} \rightarrow \mathbb{R}^{d \times d}$, we define the \textbf{It\^ o process} $X_t$ as the sum of It\^ o and Lebesgue integrals
+	Given a deterministic functions $v: \mathbb{R}^{d} \times \mathbb{R}^{+} \rightarrow \mathbb{R}^{d}$ and $\sigma: \mathbb{R}^{d} \times \mathbb{R}^{+} \rightarrow \mathbb{R}^{d \times d}$, we define the \textbf{It\^ o process} $X_t$ as the sum of the It\^ o and Lebesgue integrals
 	\begin{equation}
 		\label{eq:ito-process}
 		X_{t+s}-X_{t}=\int_{t}^{t+s} \sigma\left(X_{u}, u\right) \mathrm{d} W_{u} + \int_{t}^{t+s} v\left(X_{u}, u\right) \mathrm{d} u,
@@ -142,7 +139,7 @@ In simplified notation eq.~\eqref{eq:ito-process} can be written as
 	\label{eq:SDE_general}
 	\mathrm{d} X_t = \sigma \left(X_{t}, t\right)\mathrm{d}W_t + v\left(X_{t}, t\right) \mathrm{d}t,
 \end{equation}
-this is what we refer to as an SDE, an example can be found in Fig.~\ref{fig:sp-brown}. We will refer to functions $v$ and $\sigma$, as the \textbf{drift} and \textbf{volatility} of an It\^ o process. The most intuitive interpretation of an SDE is in terms of the time evolution of the pdf of the process $X_t$. It is described by the \textbf{Fokker-Planck equation}~\footnote{Derivation in~\cite{sarkka2019applied}.} 
+is what we refer to as an SDE. An example can be found in Fig.~\ref{fig:sp-brown}. We will refer to functions $v$ and $\sigma$, as the \textbf{drift} and \textbf{volatility} of an It\^ o process. The most intuitive interpretation of an SDE is in terms of the time evolution of the pdf of the process $X_t$. It is described by the \textbf{Fokker-Planck equation}~\footnote{Derivation in~\cite{sarkka2019applied}.} 
 \begin{equation}
 	\label{eq:Fokker-Planck-General}
 	\frac{\partial p(\mathbf{x}, t)}{\partial t}=
@@ -154,26 +151,27 @@ where $p(\mathbf{x}, t)$ is the pdf of the solution to the SDE and $\mathbf{D}=\
 	Given an It\^ o process $X_t$ as given by ~\eqref{eq:ito-process} and a twice differentiable scalar function $f(X_t, t)$, then the It\^ o process for $f$ is
 	\begin{equation}
 		\label{eq:ito_lemma}
-		\mathrm{d} f = \frac{\partial f}{\partial t}\mathrm{d}t + \sum_i \frac{\partial f}{\partial x_i} \mathrm{d}x_i + \frac{1}{2}\sum_{ij} \frac{\partial^{2}}{\partial x_{i} \partial x_{j}} f \mathrm{d}x_i \mathrm{d}x_j,
+		\mathrm{d} f = \frac{\partial f}{\partial t}\mathrm{d}t + \sum_i \frac{\partial f}{\partial x_i} \mathrm{d}x_i + \frac{1}{2}\sum_{ij} \frac{\partial^{2}}{\partial x_{i} \partial x_{j}} f \mathrm{d}x_i \mathrm{d}x_j.
 	\end{equation}
 \end{lemma}
-when compared to ordinary calculus we notice an additional quadratic term.
+\noindent
+When compared to ordinary calculus we notice an additional quadratic term.
 
 \subsection{Radon-Nikodym Derivative and Girsanov theorem}
 To perform importance sampling we perform a change of measure in an integral
 \begin{equation}
 	\int_{A} f(x) \mathrm{d} \mathbb{P}(x)=\int_{A} f(x) \frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x) \mathrm{d} \mathbb{Q}(x).
 \end{equation}
-The function that measures the rate of change of density of one measure w.r.t another is the \textbf{Radon-Nikodym derivative} $\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x)$.
+The function that measures the rate of change of density of one measure w.r.t. another is the \textbf{Radon-Nikodym derivative} $\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x)$.
 
 \begin{theorem}[Radon-Nikodym theorem]
-	Let $\mathbb{P}$ and $\mathbb{Q}$ be probability measures on the measurable space $(\Omega, \mathcal{F})$, then the measurable function \textbf{Radon-Nikodym derivative} $\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x): \Omega \rightarrow[0, \infty)$ exists and 
+	Let $\mathbb{P}$ and $\mathbb{Q}$ be probability measures on the measurable space $(\Omega, \mathcal{F})$ then the measurable function \textbf{Radon-Nikodym derivative} $\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x): \Omega \rightarrow[0, \infty)$ exists and 
 	\begin{equation}
 		\mathbb{P}(A)=\int_{A} \frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{Q}}(x) \mathrm{d} \mathbb{Q}(x),
 	\end{equation}
-	for set $A \subseteq \mathcal{F}$.
+	for a set $A \subseteq \mathcal{F}$.
 \end{theorem}
-The RN derivative will also be useful in defining the KL divergence between two \textbf{path measures}. Properly defining the path measure would bring a lot of notational overhead. It is enough to think of it as a measure on the \textbf{path space}, i.e all possible paths of a SDE, for rigour see~\cite{leonard2014pathmeasure}. 
+The RN derivative will also be useful in defining the Kullback-Liebler divergence between two \textbf{path measures}. Properly defining the path measure would bring a lot of notational overhead. It is enough to think of it as a measure on the \textbf{path space}, i.e of all possible paths of a SDE, for rigour see~\cite{leonard2014pathmeasure}. 
 Finally, we state \textbf{Girsanov theorem} that is often used for transforming or removing drift functions of SDEs. It is the RN derivative between an It\^ o process and one with $v = 0$ and $\sigma = 1$, i.e. Brownian motion. 
 \begin{theorem}[Girsanov Theorem]
 	Given It\^ o process
@@ -193,12 +191,12 @@ Finally, we state \textbf{Girsanov theorem} that is often used for transforming 
 This \emph{change in dynamics}, as we will call it, is true in the sense that expectations for an arbitrary functional $h(\cdot)$ of the path from $0$ to $t$ are
 \begin{equation}
 	\label{eq:girsanov_consequence}
-	\underset{\mathbb{P}}{\mathbb{E}}\left[h(X_t)\right] = \underset{\mathbb{P}_0}{\mathbb{E}}\left[\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{P}_0}. h(Y_t)\right]. 
+	\underset{\mathbb{P}}{\mathbb{E}}\left[h(X_t)\right] = \underset{\mathbb{P}_0}{\mathbb{E}}\left[\frac{\mathrm{d} \mathbb{P}}{\mathrm{d} \mathbb{P}_0} h(Y_t)\right]. 
 \end{equation}
 For a more general case and proof see~\cite{sarkka2019applied}.
 
 \subsection{Markov processes}
-We now shift our view to a special kind of s.p's, ones that satisfy the \textbf{Markov property} called \textbf{Markov processes} or \textbf{Markovian}. The property is sometimes referred to as \emph{memorylessness}, as the future of a Markov process depends only on the present state. We can classify the processes based on the system's \textbf{state-space} $S$, which can be either discrete (countable) or continuous, and \textbf{time indexing} of the system, either discrete-time $\{X_n\}_{n \geq 0}$ or continuous-time $\{X_t\}_{t \geq 0}$. A taxonomy is given in Table~\ref{tab:MP-taxonomy}. We will not specifically discuss Markov processes in continuous state-space, but it is important to note that any It\^ o process with time-homogenous drift $v = v(X_t)$ and volatility $\sigma = \sigma(X_t)$ is Markovian.
+We now shift our view to a special kind of s.p.s, ones that satisfy the \textbf{Markov property} called \textbf{Markov processes} or \textbf{Markovian}. The property is sometimes referred to as \emph{memorylessness}, as the future of a Markov process depends only on the present state. We can classify the processes based on the system's \textbf{state-space} $S$, which can be either discrete (countable) or continuous, and \textbf{time indexing} of the system, either discrete-time $\{X_n\}_{n \geq 0}$ or continuous-time $\{X_t\}_{t \geq 0}$. A taxonomy is given in Table~\ref{tab:MP-taxonomy}. We will not specifically discuss Markov processes in continuous state-space, but it is important to note that any It\^ o process with time-homogenous drift $v = v(X_t)$ and volatility $\sigma = \sigma(X_t)$ is Markovian.
 
 From now on we refer to Markov processes in countable state-space as \textbf{Markov chains}. We base our discussion on~\cite{rogers1994diffusions} and~\cite{norris1998markov}. 
 \begin{table}[h]
@@ -223,7 +221,7 @@ From now on we refer to Markov processes in countable state-space as \textbf{Mar
 \subsubsection{Discrete-time Markov Chains}
 The simplest and most common Markov process is a Markov chain in discrete time, see Fig.~\ref{fig:mc-diagrams}a. Its state-space is a countable set $I$ and we call each $i \in I$ a \textbf{state}. We define a distribution $\lambda$ in a familiar way
 \begin{equation}
-	\lambda = \{\lambda_i : i \in I\} \quad \text{where} \quad \forall i:~ 0 \leq \lambda_i < \infty \quad \text{and} \quad \sum_{i \in I} \lambda_i = 1.
+	\lambda = \{\lambda_i : i \in I\} \quad \text{where} \quad \forall i:~ 0 \leq \lambda_i < 1 \quad \text{and} \quad \sum_{i \in I} \lambda_i = 1.
 \end{equation}
 We can now set $\lambda$ as a distribution of some random variable $X:\Omega \rightarrow I$ as
 \begin{equation}
@@ -231,7 +229,7 @@ We can now set $\lambda$ as a distribution of some random variable $X:\Omega \ri
 \end{equation}
 where we are still working in the probability space $(\Omega, \mathcal{F}, \mathbb{P})$. A discrete-time Markov chain is defined in terms of its \textbf{transition matrix} $P=\{p_{i j}: i, j \in I\}$, which is a \textbf{stochastic matrix} meaning all of its rows $\{p_{i j}: j \in I\}$ are distributions.
 \begin{definition}[Discrete-time Markov chain]
-	A discrete time stochastic process $\{X_n\}_{n \geq 0}$ is a \textbf{discrete-time Markov chain} with initial distribution $\lambda$ and transition matrix $P$ if for $i_1, \dots, i_n+1 \in I$ and $n \geq 0$
+	A discrete time stochastic process $\{X_n\}_{n \geq 0}$ is a \textbf{discrete-time Markov chain} with initial distribution $\lambda$ and transition matrix $P$ if for $i_1, \dots, i_{n+1} \in I$ and $n \geq 0$
 	\begin{enumerate}[label=\roman*)]
 		\item $\mathbb{P}\left(X_{0}=i_{1}\right)=\lambda_{i_{1}}$
 		\item $\mathbb{P}\left(X_{n+1}=i_{n+1} \mid X_{0}=i_{0}, \dots, X_{n}=i_{n}\right)=p_{i_{n} i_{n+1}}$
@@ -252,9 +250,9 @@ Intuitively we understand the discrete-time Markov chain as a system changing it
 
 \subsubsection{Continuous-time Markov Chains}
 \label{subsubsect:CTMC}
-Defining a Markov chain in continuous time is trickier, as describing the system with a stochastic matrix no longer suffices due to transition probabilities becoming zero considering an infinitesimal time. Instead a continuous-time Markov Chain (CTMC) is characterised with a \textbf{rate matrix} or \textbf{infinitesimal generator matrix} $\Gamma$ defined on the set $I$, which has the following three properties
+Defining a Markov chain in continuous time is trickier, as describing the system with a stochastic matrix no longer suffices due to transition probabilities becoming zero considering an infinitesimal time. Instead a continuous-time Markov Chain (CTMC) is characterised by a \textbf{rate matrix} or \textbf{infinitesimal generator matrix} $\Gamma$ defined on the set $I$, which has the following three properties
 \begin{enumerate}[label=\roman*)]
-	\item $0 \leq \Gamma_{ii} <\infty, \quad \forall i$
+	\item $0 \leq \Gamma_{ii} <-\infty, \quad \forall i$
 	\item $\Gamma_{ij} \geq 0, \quad \forall i \neq j$
 	\item $\sum_{j \in I} \Gamma_{i j}=0, \quad \forall i$.
 \end{enumerate}
@@ -306,7 +304,7 @@ The chain $\{Y_n\}_{n\geq0}$ along with times
 \begin{equation}
 	S_{n} = \min _{k} \tau_{j \rightarrow k},
 \end{equation}
-gives the full description of the CTMC. We now interpret $\Gamma_{ii}$ as the rate ob \emph{leaving} current state and $\Gamma_{i j}$ as the rate of \emph{going} from $i$ to $j$.
+gives the full description of the CTMC. We now interpret $\Gamma_{ii}$ as the rate of \emph{leaving} the current state and $\Gamma_{i j}$ as the rate of \emph{going} from $i$ to $j$.
 
 \section{The Feynman-Kac formula}
 \label{subsec:fk-fk}
@@ -363,7 +361,7 @@ where $\mathcal{N}$ is a normalizing constant. Intuitively we can understand the
 		$N=30$ Brownian paths (\textbf{left}). The paths coloured ($P(\text{black})=1$, $P(\text{white})=0$) by their likelihood under the Feynman-Kac measure with $V(x)=x$ (\textbf{right}).}
 	\label{fig:fkac_measure_reweight}
 \end{figure}
-Moreover, this new stochastic process is Markovian, meaning that a clear connection exists between the imaginary time Schr\" odinger equation and a SDE of form~\eqref{eq:SDE_general} with time-homogeneous $\sigma$ and $v$.
+Moreover, this new stochastic process is Markovian, meaning that a clear connection exists between the imaginary time Schr\" odinger equation and a SDE of the form~\eqref{eq:SDE_general} with time-homogeneous $\sigma$ and $v$.
 Indeed, in the continuous case the mapping between the Fokker-Planck equation~\eqref{eq:Fokker-Planck-General} and the Schr\" odinger equation exists in the form of a similarity transform. Starting from the FP equation of a stochastic process with constant volatility $\sigma = 1$
 \begin{equation}
 \label{eq:not_prime_cont_process}
@@ -395,7 +393,7 @@ In other words, the quantum ground state probability distribution $|\psi_{0}|^2$
 \label{subsec:fk-latt}
 Before we illustrate the connection between the imaginary time Schr\" odinger equation and CTMCs we must introduce \textbf{Stoquastic Hamiltonians}~\cite{bravyi2006complexity}, a class of Hamiltonians which do not suffer from the sign problem.
 \begin{definition}[Stoquastic Hamiltonian]
-	A $k$-local Hamiltonian $\hat H=\sum_{i} \hat H_{i}$ is \textbf{stoquastic} if there exists a local basis $\mathcal{B}$ in which off-diagonal matrix elements of terms $\hat{H}_i$ are zero or negative
+	A $k$-local Hamiltonian, i.e. a Hermitian matrix acting on $n$ spins which can be represented as the sum of $m$ Hamiltonian terms acting upon at most $k$ qubits each, $\hat H=\sum_{i} \hat H_{i}$ is \textbf{stoquastic} if there exists a local basis $\mathcal{B}$ in which the off-diagonal matrix elements of the terms $\hat{H}_i$ are zero or negative
 	\begin{equation}
 		\langle x|\hat H| y\rangle \leq 0, \quad \forall x, y \in \mathcal{B} \text {\quad with } x \neq y.
 	\end{equation}
@@ -421,7 +419,7 @@ We can decompose a stoquastic Hamiltonian into a rate matrix $\Gamma$, defined a
 The rates $\Gamma$ are analogous to the Brownian motion in the continuum case, and can be interpreted as the kinetic contribution. They represent a CTMC which we will understand as \emph{passive dynamics}. In terms of the Hamiltonian matrix,
 \begin{equation}
 \Gamma_{s \rightarrow s^{\prime}}=\left\{\begin{array}{ll}
--H_{s s^{\prime}} & \text { if } s \neq s \\
+-H_{s s^{\prime}} & \text { if } s \neq s^\prime \\
 \sum_{s^{\prime} \neq s} H_{s s^{\prime}} & \text { if } s=s^{\prime}
 \end{array}\right.
 \end{equation}
@@ -429,11 +427,11 @@ and the potential is
 \begin{equation}
 V(\boldsymbol{s})=H_{s s}+\sum_{s^{\prime} \neq s} H_{s s^{\prime}}.
 \end{equation}
-From now on we use $\rightarrow$ notation to emphasise the transition between \textbf{adjacent states} $s\neq s^\prime$, which satisfy $H_{s s^{\prime}} \neq 0$. 
+From now on we use the $\rightarrow$ notation to emphasise transition between \textbf{adjacent states} $s\neq s^\prime$, which satisfy $H_{s s^{\prime}} \neq 0$. 
 
 \subsection{Stoquastic representations of the lattice models}
 \label{subsec:stoq_latt_forms}
-Let us now reinterpret lattice models introduced in section~\ref{sec:lattice-models} in terms of the stoquastic Hamiltonian decomposition in eq.~\eqref{eq:hamilton_split}.
+Let us now reinterpret the lattice models introduced in section~\ref{sec:lattice-models} in terms of the stoquastic Hamiltonian decomposition in eq.~\eqref{eq:hamilton_split}.
 
 \subsubsection{Transverse-field Ising model}
 \label{subsubsec:res-im}
@@ -453,7 +451,7 @@ where $N$ is the number of lattice sites.
 \begin{figure}[h]
 	\centering
 	\includegraphics[height=4.5cm]{Chapter5/Figs/Vector/ising_passive}
-	\caption[Ising passive process]{\textbf{Ising passive process.} Adjacent states in the TFIM are ones that differ by a single spin flip. The transition rates for all adjacent states are constant $h$ and the passive process flips individual spins according to the rates.}	
+	\caption[Ising passive process]{\textbf{Ising passive process.} Adjacent states in the TFIM are ones that differ by a single spin flip. The transition rates for all adjacent states are constant and the passive process flips individual spins according to the rates.}	
 	\label{fig:isingpassive}
 \end{figure}
 \subsubsection{The XY model}
@@ -493,9 +491,9 @@ The decomposition $H = -\Gamma + V$ allows us to define the Feynman-Kac formula 
 	\exp \left(-\int_{0}^{t} V\left(\boldsymbol{s}_{t^{\prime}}\right) \mathrm{d} t^{\prime}\right) \psi\left(s_0, 0\right)
 	\right].
 \end{equation}
-The expectation is now taken over the process driven by $\Gamma$ and weighted by the potential $V$. We denote the trajectory as $\Sigma_{[0, t]}$, where $\Sigma_{t^\prime}$ is the state of the system at time $t^\prime \in [0, t]$. Analogous as with the Feynman-Kac formula in continuous state space, this defines a new CTMC with measure $\mathbb{P}_{\text{FK}}$, which is related to  passive dynamics with measure $\mathbb{P}_0$ via the RN derivative, eq.~\eqref{eq:RNderiv}.
+The expectation is now taken over the process driven by $\Gamma$ and weighted by the potential $V$. We denote the trajectory as $\Sigma_{[0, t]}$, where $\Sigma_{t^\prime}$ is the state of the system at time $t^\prime \in [0, t]$. The Feynman-Kac formula in continuous state space, this defines a new CTMC with measure $\mathbb{P}_{\text{FK}}$, which is related to  passive dynamics with measure $\mathbb{P}_0$ via the RN derivative, eq.~\eqref{eq:RNderiv}.
 
-How exactly is this CTMC related to the imaginary time Schr\" odinger equation? Again via a similarity transform. The difference being that instead of Fokker-Planck we use the master equation to describe the time evolution of the pdf $P$
+How exactly is this CTMC related to the imaginary time Schr\" odinger equation? Again via a similarity transform~\cite{castelnovo2005quantum}. The difference being that instead of Fokker-Planck we use the master equation to describe the time evolution of the pdf $P$
 \begin{equation}
 \frac{\partial P(s)}{\partial t}=\sum_{s^\prime \neq s}\left[\Gamma_{s^\prime \rightarrow s} P(s^\prime)-\Gamma_{s \rightarrow s^\prime} P(s)\right].
 \end{equation}
@@ -544,21 +542,21 @@ C[v]=\int \left[\frac{1}{2}\left|v\left(X_{t}\right)\right|^{2}+V\left(X_{t}\rig
 \end{equation}
 The distribution $\pi$ must satisfy the stationary Fokker-Planck equation
 \begin{equation}
-\frac{1}{2} \nabla^{2} \pi-\nabla \cdot(v \pi)=0,.
+\frac{1}{2} \nabla^{2} \pi-\nabla \cdot(v \pi)=0.
 \end{equation}
-Since the equality holds for drift $v = \frac{\nabla \psi}{\psi}$ and distribution $\pi = \psi^2$, cost is
+Since the equality holds for drift $v = \frac{\nabla \psi}{\psi}$ and distribution $\pi = \psi^2$, the cost is
 \begin{equation}
 C[v]=\int \left[\frac{1}{2}(\nabla \psi)^{2}+V\left(X_{t}\right) \psi^{2}\right]\mathrm{d}x.
 \end{equation}
-For normalised $\psi$ the integrand is the expected value of the quantum energy of the system, its minimum value $\lambda$ is the ground state energy $E_0$ which is achieved for the ground state wave function $\psi_{0}$. We could directly use the Holland's cost to find the optimal rates $v^\prime$, but we will instead use the fact that trajectories sampled under the Feynman-Kac measure $\mathbb{P}_{\mathrm{FK}}$ coincide with ones sampled from the optimal drift, and base our variational approach on finding the FK measure.
+For normalised $\psi$ the integrand is the expectation value of the quantum energy of the system. Its minimum value $\lambda$ is the ground state energy $E_0$ which is achieved for the ground state wave function $\psi_{0}$. We could directly use the Holland cost to find the optimal rates $v^\prime$, but we will instead use the fact that trajectories sampled under the Feynman-Kac measure $\mathbb{P}_{\mathrm{FK}}$ coincide with the ones sampled from the optimal drift, and base our variational approach on finding the FK measure.
 
 \subsection{Loss for continuous state space}
 \label{subsec:continuous_loss}
-To see that the path measures $\mathbb{P}_v$ of the process in eq.~\eqref{eq:not_prime_cont_process}  and the Feynman-Kac measure $\mathbb{P}_{\mathrm{FK}}$ coincide for the optimal rates $v^\prime$, we first need a measure of similarity between probability distributions. For this purpose we will use the \textbf{Kullback–Leibler} (KL) divergence $D_{\mathrm{KL}}$
+To see that the path measure $\mathbb{P}_v$ of the process in eq.~\eqref{eq:not_prime_cont_process}  and the Feynman-Kac measure $\mathbb{P}_{\mathrm{FK}}$ coincide for the optimal rates $v^\prime$, we first need a measure of similarity between probability distributions. For this purpose we will use the \textbf{Kullback–Leibler} (KL) divergence $D_{\mathrm{KL}}$
 \begin{equation}
 	D_{\mathrm{KL}}(p \| q)=\underset{p}{\mathbb{E}}\left[\log \left(\frac{p}{q}\right)\right].
 \end{equation}
-The quantity is a divergence because of the asymmetry $D_{\mathrm{KL}}(p \| q) \neq D_{\mathrm{KL}}(q \| p)$. It is a strictly positive quantity $D_{\mathrm{KL}}(p \| q) \geq 0$ except for $p = q$ when $D_{\mathrm{KL}}(p \| q) = 0$. In order to obtain the KL divergence between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{KL}}$ we first express the RN derivative of each path measure w.r.t. Brownian motion using Girsanov theorem~\eqref{eq:Girsanov_theorem}. Both RN derivatives can then be combined to express the logarithm Radon-Nikodym derivative or the \emph{log-likelihood} ratio as
+The quantity is a divergence because of the asymmetry $D_{\mathrm{KL}}(p \| q) \neq D_{\mathrm{KL}}(q \| p)$. It is a strictly positive quantity $D_{\mathrm{KL}}(p \| q) \geq 0$ except for $p = q$ when $D_{\mathrm{KL}}(p \| q) = 0$. In order to obtain the KL divergence between $\mathbb{P}_v$ and $\mathbb{P}_{\mathrm{KL}}$ we first express the RN derivative of each path measure w.r.t. the Brownian motion using Girsanov theorem~\eqref{eq:Girsanov_theorem}. Both RN derivatives can then be combined to express the logarithm Radon-Nikodym derivative or the \emph{log-likelihood} ratio as
 \begin{equation}
 \log \left(\frac{d \mathbb{P}_{v}}{d \mathbb{P}_{\mathrm{FK}}}\right)=
 \tilde{\ell}-
@@ -572,12 +570,12 @@ where we have defined $\tilde{\ell}$ as
 \begin{equation}
 \tilde{\ell} \equiv \int v\left(r_{t}\right) \mathrm{d} W_{t}+\int \left(\frac{1}{2}\left|v\left(r_{t}\right)\right|^{2}+V\left(r_{t}\right)\right)\mathrm{d} t.
 \end{equation}
-The boundary term depends the ground state $\varphi_0$ at initial $r_0$ and final $r_T$ points in the trajectory, and originates from the normalisation constant $\mathcal{N}$ in the Radon-Nikodym derivative. The KL divergence is 
+The boundary term depends on the ground state $\varphi_0$ at an initial $r_0$ and final $r_T$ points in the trajectory, and originates from the normalisation constant $\mathcal{N}$ in the Radon-Nikodym derivative. The KL divergence is 
 \begin{equation}
 \label{eq:ltilde-cont}
 D_{\mathrm{KL}}\left(\mathbb{P}_{v} \| \mathbb{P}_{\mathrm{FK}}\right)=\underset{\mathbb{P}_{v}}{\mathbb{E}}\left[\ell^\prime-E_{0} T+\log \left(\frac{\varphi_{0}\left(r_{0}\right)}{\varphi_{0}\left(r_{T}\right)}\right)\right].
 \end{equation}
-If we consider the above Kullback-Leibler divergence in the long time limit $T \rightarrow \infty$, we see that the expectation of the first term of $\tilde{\ell}$ is zero. Moreover, if the marginal distributions $\psi_{0}(r_0)$ and $\psi_{0}(r_T)$ coincide, the boundary term vanishes as well, and the KL divergence is equivalent to the Holland cost, thus vanishes for optimal drift. This means that finding the correct path measure is equivalent to finding the optimal drift, and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be used to find the optimal rates. Sampling the trajectories becomes a matter of integrating a SDE and can be done with some standard approach, e.g. Euler-Mayurama method. Tje gradients of $D_{\mathrm{KL}}$ w.r.t rate parameters $\theta$ can be obtained using stochastic backpropagation where the reparameterisation trick is used for each increment in the discretised SDE. The gradient of the boundary term is non-zero, but can be estimated by expressing $\psi_0$ in terms of $v_{\theta}$. Missing steps of the derivation can be found in Appendix~\ref{app:holland-prob}, and more details in~\cite{barr2020quantum}. 
+If we consider the above Kullback-Leibler divergence in the long time limit $T \rightarrow \infty$, we see that the expectation of the first term of $\tilde{\ell}$ is zero. Moreover, if the marginal distributions $\psi_{0}(r_0)$ and $\psi_{0}(r_T)$ coincide, the boundary term vanishes as well, and the KL divergence is equivalent to the Holland cost, it thus vanishes for optimal drift. This means that finding the correct path measure is equivalent to finding the optimal drift, and in standard machine learning fashion, minimizing $D_{\mathrm{KL}}$ can be used to find the optimal rates. Sampling the trajectories becomes a matter of integrating a SDE and can be done with some standard approach, e.g. the Euler-Mayurama method. The gradients of $D_{\mathrm{KL}}$ w.r.t. the rate parameters $\theta$ can be obtained using stochastic backpropagation where the reparameterisation trick is used for each increment in the discretised SDE. The gradient of the boundary term is non-zero, but can be estimated by expressing $\psi_0$ in terms of $v_{\theta}$. The missing steps of the derivation can be found in Appendix~\ref{app:holland-prob}, and more details in~\cite{barr2020quantum}. 
 
 \subsection{Todorov Cost in discrete state space}
 \label{subsec:todorov}
@@ -593,7 +591,7 @@ to emphasise the decomposition of the Hamiltonian eq.~\eqref{eq:hamilton_split} 
 	-\frac{\partial u(s_j, t)}{\partial t}=\min _{\Gamma^{(v)}}\left[\ell(s_j, v)+\sum_{s_k} \Gamma_{s_j \rightarrow s_k}^{(v)}(u(s_k, t)-u(s_j, t))\right],
 \end{equation}
 where $\Gamma^{(v)}$ are the rates of the modified CTMC, and $\ell(s_j, v)$ is the cost per time associated with state $s_j$ and parameters $v$.
-This is a form of Bellman equation, a very general concept in control theory and reinforcement learning, related to the Hamilton-Jacobi equation in physics. It is used to find the optimal actions, i.e. how we should choose $v$ at each moment w.r.t the cost associated with each state and parameters $\ell(s_j, v)$. The function $u(s_j, t)$ is the cost-to-go function, it is the cumulative cost obtained starting from state $s_j$ at time $t$ and acting optimally afterwards. The optimal parameters $v(t)$ are computed greedily with each step and guarantee minimum $u(s_j, t)$, this is most easily illustrated by looking $\Delta t$ into the past. Here the cost-to-go is given by the cost of remaining in the same state $\ell(s_j, t) \Delta t$ and the changes in costs-to-go when transitioning to other states weighted by the probability of making the transition $\Gamma^{(v)}_{s_j \rightarrow s_k}$
+This is a form of Bellman equation, a very general concept in control theory and reinforcement learning, related to the Hamilton-Jacobi equation in physics. It is used to find the optimal actions, i.e. how we should choose $v$ at each moment w.r.t. the cost associated with each state and parameters $\ell(s_j, v)$. The function $u(s_j, t)$ is the cost-to-go function, it is the cumulative cost obtained starting from state $s_j$ at time $t$ and acting optimally afterwards. The optimal parameters $v(t)$ are computed greedily with each step and guarantee minimum $u(s_j, t)$. This is most easily illustrated by looking $\Delta t$ into the past. Here the cost-to-go is given by the cost of remaining in the same state $\ell(s_j, t) \Delta t$ and the changes in costs-to-go when transitioning to other states weighted by the probability of making the transition $\Gamma^{(v)}_{s_j \rightarrow s_k}$
 \begin{equation}
 	u_{j}(t-\Delta t)=u_{j}(t)+\Delta t \min _{\Gamma^{(v)}}\left[\ell(j, v)+\sum_{k} \Gamma_{j \rightarrow k}^{(v)}(u(k, t)-u(j, t))\right].
 \end{equation}
@@ -633,11 +631,11 @@ The KL divergence can be written as
 		&+\Gamma_{k(t) \rightarrow l}^{(v)} \log \left(\frac{\Gamma_{k(t) \rightarrow l}^{(v)}}{\Gamma_{k(t) \rightarrow l}}\right) d t-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)\Bigg]-E_{0} T,
 	\end{aligned}
 \end{equation}
-which is the Todorov's cost and vanishes for optimal rates, meaning that finding them is equivalent to finding the Feynman-Kac measured process. One might be tempted to use $D_{\mathrm{KL}}$ as an optimisation objective, but this is not possible because its gradient is biased due to the boundary term
+which is the Todorov's cost and vanishes for optimal rates, meaning that finding them is equivalent to finding the Feynman-Kac measured process. One might be tempted to use $D_{\mathrm{KL}}$ as an optimisation objective, but this is not possible because its gradient is biased if we neglect the boundary term
 $\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)$. Hence, we propose two alternatives.
 
 \subsubsection{Loss no. 1: Variance of $\tilde \ell$}
-The variance of quantity $\tilde{\ell}$
+The variance of the quantity $\tilde{\ell}$
 \begin{equation}
 	\tilde{\ell}=
 	\log \left(\frac{\mathrm{d} \mathbb{P}_{v}}{\mathrm{~d} \mathbb{P}_{F K}}(k(t))\right)
@@ -649,7 +647,7 @@ The variance of quantity $\tilde{\ell}$
  \begin{equation}
  	\log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)=\log \left(\frac{\varphi(k^{(n+1)})}{\varphi(k^{(n)})}\right),
  \end{equation}
- combined with the fact that the log Radon-Nikodym derivative is $0$ for correct transition rates $\Gamma^{(v)} = \Gamma^\prime$ means that $\operatorname{Var}[\tilde{\ell}]$ vanishes in that case, moreover it is bounded below by zero making it a suitable objective function. 
+ which when combined with the fact that the log Radon-Nikodym derivative is $0$ for correct transition rates $\Gamma^{(v)} = \Gamma^\prime$, means that $\operatorname{Var}[\tilde{\ell}]$ vanishes in for $\Gamma^{(v)} = \Gamma^\prime$. Moreover $\operatorname{Var}[\tilde \ell]$ is bounded from below by zero, making it a suitable objective function. 
  
 \subsubsection{Loss no. 2: Variance of log Radon-Nikodym derivative with fixed endpoints}
 While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\mathrm{FK}}\right)$ are not accessible, we can still make use of the logarithm RN derivative in eq.~\eqref{eq:logrn-discrete}. It vanishes for optimal rates and while we can treat $E_0 T$ as constant, we have no easy way to approximate the wave function $\varphi$ in the boundary term which in general does not have zero variance. We can exploit the fact that log RN must be constant on all trajectories and consider a batch of trajectories with fixed endpoints. The variance of the boundary term vanishes if this is the case
@@ -658,4 +656,4 @@ While the gradients of $D_{\mathrm{KL}}\left(\mathbb{P}_{\nu} \mid \mathbb{P}_{\
 +\sum_{n} \log \left(\frac{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}^{(v)}}{\Gamma_{k^{(n)} \rightarrow k^{(n+1)}}}\right)-E_{0} T-\log \left(\frac{\varphi(k^{(N)})}{\varphi(k^{(0)})}\right)
 \right] \underset{\Gamma^{(v)} = \Gamma^\prime}{\rightarrow} 0.
 \end{equation}
-The trajectories can be sampled using arbitrary rates $r$, but for convenience $\Gamma^{(v)}$ can be used. How to obtain a batch poses a technical challenge which is to be solved on a system by system basis, and is discussed in section~\ref{sec:qoptsampl}. This is the loss we focus on, we refer to it as the $\log \text{RN}$ loss. 
+The trajectories can be sampled using arbitrary rates $r$, but for convenience $\Gamma^{(v)}$ can be used. How to obtain a batch poses a technical challenge which is to be solved on a system by system basis, and is discussed in section~\ref{sec:qoptsampl}. This is the loss we focus on, and we refer to it as the $\log \text{RN}$ loss. 

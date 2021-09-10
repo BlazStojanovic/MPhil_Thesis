@@ -20,11 +20,11 @@ The \textbf{multilayer perceptron} (MLP), also referred to as \textbf{deep neura
 \begin{equation}
 	f(\mathbf{x}; ~\theta): \mathbb{R}^\text{in} \rightarrow \mathbb{R}^{\text{out}},
 \end{equation}
-which is structured in a certain way and depends on parameters $\theta$. The mapping is a composition of vector-valued functions $f$ which are called \emph{layers} of the network, and with each layer we associate variational parameters $\mathbf{w}$, or simply the weights. The MLP can be described with a directed acyclic graph which details the compositions of the layers. The simplest and most common is a chain of compositions, in Fig~\ref{fig:mlp}b, 
+which is structured in a certain way and depends on parameters $\theta$. The mapping is a composition of vector-valued functions $f$ which are called \emph{layers} of the network, and with each layer we associate the variational parameters $\mathbf{w}$, or simply the weights. The MLP can be described by a directed acyclic graph which details the compositions of the layers. The simplest and most common is a chain of compositions, in Fig~\ref{fig:mlp}b, 
 \begin{equation}
 f_{\text{MLP}} = \left(f^{(n)} \circ f^{(n-1)} \circ \cdots \circ f^{(2)} \circ f^{(1)} \right)(\mathbf{x}),
 \end{equation}
-where the input $\textbf{x}$ passes through \emph{hidden} layers before the \emph{output} layer outputs the result. The length of this chain is the \emph{depth} of the network, and the dimensionality of hidden layers is the \emph{width} of the network. We can interpret each transformation $f^{(i)}$ as consisting of a unit/node/neuron for each input dimension, which is a vector-to-scalar transformation, Fig~\ref{fig:mlp}a.
+where the input $\textbf{x}$ passes through \emph{hidden} layers before the \emph{output} layer outputs the result. The length of this chain is the \emph{depth} of the network, and the dimensionality of the hidden layers is the \emph{width} of the network. We can interpret each transformation $f^{(i)}$ as consisting of a unit/node/neuron for each input dimension, which is a vector-to-scalar transformation, Fig~\ref{fig:mlp}a.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/mlp.pdf}
@@ -44,13 +44,13 @@ A variety of activations have been used, namely $\tanh(\cdot)$ and the logistic 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Chapter4/Figs/Vector/activations}
-	\caption[$\operatorname{ReLu}$ and Softmax nonlinearities.]{\textbf{$\operatorname{ReLu}$ and Softmax nonlinearities.}}
+	\caption[$\operatorname{ReLu}$ and Softmax nonlinearities.]{\textbf{$\operatorname{ReLu}$ and Softplus nonlinearities.}}
 	\label{fig:activations}
 \end{figure}
 
 \subsection{Convolutional Neural Networks}
 \label{subsec:nn-cnn} 
-Convolutional neural networks (CNN)~\cite{lecun1989generalization} make use of three powerful concepts to increase performance, \textbf{sparse interactions}, \textbf{parameter sharing} and \textbf{equivariant representations}~\cite{goodfellow2016deep}. At the core of a CNN is the {convolutional} layer, in which the input $I$ is convolved with the \textbf{kernel} $K$ as 
+Convolutional neural networks (CNN)~\cite{lecun1989generalization} make use of three powerful concepts to increase performance. \textbf{Sparse interactions}, \textbf{parameter sharing} and \textbf{equivariant representations}~\cite{goodfellow2016deep}. At the core of a CNN is the {convolutional} layer, in which the input $I$ is convolved with the \textbf{kernel} $K$ as 
 \begin{equation}
 	\label{eq:convolution}
 	S_{i,j} = (I * K)_{i,j} = \sum_m \sum_n I_{m,n} K_{i-m, j-n},
@@ -59,13 +59,13 @@ in two dimensions, Fig.~\ref{fig:pcnn}a. Outputs of convolutions are referred to
 \begin{equation}
 	f: \mathbb{R}^{(N_b, N_w, N_h, N_c)} \rightarrow \mathbb{R}^{(N_b, O_w, O_h, N_c)}.
 \end{equation}
-The output dimensions also depend on the \textbf{stride} (how quick the kernel travels)~$N_S$ and \textbf{padding}~$N_P$ (how much the dimension of input is increased), Fig.~\ref{fig:pcnn}a,
+The output dimensions also depend on the \textbf{stride}~$N_S$ (how quick the kernel travels) and \textbf{padding}~$N_P$ (how much the dimension of input is increased), Fig.~\ref{fig:pcnn}a,
 \begin{equation}
 	O_{\text{out}} = \frac{N_{\text{in}}-N_K+2N_P}{N_S}+1.
 \end{equation}
-Alongside convolutional layers, CNNs often employ \emph{pooling} layers which downsample the input by combining a cluster of neurons into a single one. \emph{Max} and \emph{average} pooling are in common use, the pooling output is the max or average of the cluster respectively. A pooling layer can act globally, on the whole feature map, or locally. 
+Alongside convolutional layers, CNNs often employ \emph{pooling} layers which downsample the input by combining a cluster of neurons into a single one. \emph{Max} and \emph{average} pooling are in common use, and the pooling output is the max or average of the cluster respectively. A pooling layer can act globally, on the whole feature map, or locally. 
 
-The models we are interested in will be image-to-image networks that preserve the input shape, as the outputs will represent the rates corresponding to adjacent states. In the Ising model, the output at $(i, j)$ is the rate associated with transition $s \rightarrow s^\prime$ where the spin at $(i, j)$ is flipped.
+The models we are interested in will be image-to-image networks that preserve the input shape, as the outputs will represent the rates corresponding to adjacent states. In the Ising model, the output at $(i, j)$ is the rate associated with the transition $s \rightarrow s^\prime$ where the spin at $(i, j)$ is flipped.
 \subsubsection{Periodic CNN}
 The simplest model we will use is a CNN in which all layers preserve the shape of the input $N_\text{in} = O_\text{out}$. This means that the input into each layer needs to be padded
 \begin{equation}
@@ -75,23 +75,23 @@ for $N_S = 1$. Given that the underlying lattice is chosen to be periodic, we us
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/pcnn.pdf}
-	\caption[Periodic CNN]{\textbf{Periodic CNN.} Each layer consists of periodic padding, and then convolving. The output shape matches the input shape (\textbf{top}). The pCNN architecture, takes state $s$ as input and outputs rates $\Gamma(s)$, similar to~\cite{gispen2020ground} (\textbf{middle}). While the receptive field of a single node is reduced in a CNN, faraway nodes are still connected indirectly after enough layers, how many layers depends on the kernel size and stride. Figure shows successive applications of the convolutional layers for $N_s=1$ and $N_K = 3$ or $N_K=5$, (\textbf{bottom}).}
+	\caption[Periodic CNN]{\textbf{Periodic CNN.} Each layer consists of periodic padding, and then convolving. The output shape matches the input shape (\textbf{top}). The pCNN architecture, takes state $s$ as input and outputs rates $\Gamma(s)$, similar to~\cite{gispen2020ground} (\textbf{middle}). While the receptive field of a single node is reduced in a CNN, faraway nodes are still connected indirectly after enough layers, and how many layers depends on the kernel size and stride. Figure shows successive applications of the convolutional layers for $N_s=1$ and $N_K = 3$ or $N_K=5$, (\textbf{bottom}).}
 	\label{fig:pcnn}
 \end{figure}
 \subsection{Group-Equivariant CNN}
-The basic convolutional layer is translation equivariant, providing an advantage when we expect the same equivariant behaviour between the input and output. Alongside translational symmetry we can take advantage of other symmetries present in the lattice model. Recent work~\cite{bronstein2021geometric, cohen2016group} in the field of \textbf{geometric} deep learning has shown how to construct layers equivariant to arbitrary group symmetry, in the case of discrete grid-like data referred to as \textbf{group-equivariant} convolutional layers. At the core of {group convolution} is moving the filter using group action (rotation, translation, etc.). Adopting notation of Bronstein~\cite{bronstein2021geometric}, we write a group convolution as the inner product of the input $x$ and a filter transformed by group element $\mathfrak{g} \in \mathfrak{G}$ via group representation $\rho(\mathfrak{g})$ as $\rho(\mathfrak{g}) \theta_{u}=\theta_{\mathfrak{g}^{-1} u}$,
+The basic convolutional layer is translation equivariant, providing an advantage when we expect the same equivariant behaviour between the input and output. Alongside translational symmetry we can take advantage of other symmetries present in the lattice model. Recent work~\cite{bronstein2021geometric, cohen2016group} in the field of \textbf{geometric} deep learning has shown how to construct layers equivariant to an arbitrary group symmetry, in the case of discrete grid-like data referred to as \textbf{group-equivariant} convolutional layers. At the core of {group convolution} is moving the filter using group action (rotation, translation, etc.). Adopting the notation of Bronstein~\cite{bronstein2021geometric}, we write a group convolution as the inner product of the input $x$ and a filter transformed by group element $\mathfrak{g} \in \mathfrak{G}$ via group representation $\rho(\mathfrak{g})$ as $\rho(\mathfrak{g}) \theta_{u}=\theta_{\mathfrak{g}^{-1} u}$,
 \begin{equation}
 (x \star \theta)(\mathfrak{g})=\sum_{u \in \Omega} x_{u} \rho(\mathfrak{g}) \theta_{u}.
 \end{equation}
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/gcnn}
-	\caption[Group-equivariant convolution]{\textbf{g-CNN layer.} Comparison of rotated inputs passing through two $p4$ equivariant layers. The first layer $\mathbb{Z}^2 \rightarrow p4$ produces a structured output, one convolution per each rotation of the filter $\theta$, the second layer $p4 \rightarrow \mathbb{Z}^2$ is an elementwise convolution between the structured output and rotations of the second filter. The layers are equivariant to $\frac{\pi}{2}$ rotation.}
+	\caption[Group-equivariant convolution]{\textbf{g-CNN layer.} Comparison of rotated inputs passing through two $p4$ equivariant layers. The first layer $\mathbb{Z}^2 \rightarrow p4$ produces a structured output, one convolution per each rotation of the filter $\theta$. The second layer $p4 \rightarrow \mathbb{Z}^2$ is an elementwise convolution between the structured output and rotations of the second filter. The layers are equivariant to $\frac{\pi}{2}$ rotation.}
 	\label{fig:gcnn}
 \end{figure}
 We can separate the ordinary convolution from additional group transformations by writing a general group element $\mathfrak{g} \in \mathfrak{G}$ as a composition of a translation $\mathfrak{t}$ and rotation $\mathfrak{r}$, $\mathfrak g = \mathfrak{tr}$, and using  $\rho(\mathfrak{t r})=\rho(\mathfrak{t}) \rho(\mathfrak{r})$
 \begin{equation}
-	(x \star \theta)(\mathfrak{t r}) =\sum_{u \in \Omega} x_{u} \rho(\mathfrak{t}) \rho(\mathfrak{r}) \theta_{u} =\sum_{u \in \Omega} x_{u}(\rho(\mathfrak{r}) \theta)_{u-\mathfrak{t}},
+	(x \star \theta)(\mathfrak{t r}) =\sum_{u \in \Omega} x_{u} \rho(\mathfrak{t}) \rho(\mathfrak{r}) \theta_{u} =\sum_{u \in \Omega} x_{u}(\rho(\mathfrak{r}) \theta)_{u-\mathfrak{t}}.
 \end{equation}
 This yields a standard convolution with a transformed filter $\rho(\mathfrak{r})\theta$, meaning that we can implement the group-equivariant layer by first transforming the filter and performing convolution with each of these transformations, for details see Fig.~\ref{fig:gcnn} and~\cite{cohen2016group}.
 
@@ -102,14 +102,14 @@ This yields a standard convolution with a transformed filter $\rho(\mathfrak{r})
 \label{subsec:autodiff}
 The demand for automatic evaluation of derivatives is today greater than ever, and automatic differentiation has seen wide adoption within the scientific computing and machine learning communities~\cite{baydin2018automatic, lyu2013automatic, tamayo2018automatic}, with the development of high profile libraries such as \emph{PyTorch}~\cite{paszke2017automatic}, \emph{TensorFlow}~\cite{abadi2016tensorflow}, or \emph{JAX}~\cite{jax2018github}. \textbf{Automatic differentiation} (AD) provides a way to mechanically find derivatives of functions expressed as a computer program, with certain complexity guarantees~\cite{barak2016history}. While modern implementations employ a variety of tricks, AD has two basic \emph{modi operandi} of calculating partial derivatives of $f(x_1, x_2, \ldots, x_n): \mathbb{R}^n \rightarrow \mathbb{R}^m$ at $\mathbf{a}$. We start by representing the computation $y = f(\mathbf{x})$ as an \emph{evaluation trace} of elementary operations, composed of inputs, intermediate values, and outputs:
 \begin{itemize}
-	\item \textbf{Forward accumulation mode}~\cite{wengert1964simple}:  In forward mode, when evaluating the partial derivative w.r.t input $x_j$, we associate each intermediate value $v_i$ with the partial derivative $\frac{\partial v_i}{\partial x_j}$. We then apply the chain rule to each operation in the evaluation trace, producing the derivative trace. A single forward pass, in tandem passing both primals $v_i$ and their tangents $\frac{\partial v_i}{\partial x_j}$ through the trace, produces the output of the function, as well as the desired partial derivative. Forward mode AD produces one \emph{column} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \ll m$.
+	\item \textbf{Forward accumulation mode}~\cite{wengert1964simple}:  In forward mode, when evaluating the partial derivative w.r.t. input $x_j$, we associate each intermediate value $v_i$ with the partial derivative $\frac{\partial v_i}{\partial x_j}$. We then apply the chain rule to each operation in the evaluation trace, producing the derivative trace. A single forward pass, in tandem passing both primals $v_i$ and their tangents $\frac{\partial v_i}{\partial x_j}$ through the trace, produces the output of the function, as well as the desired partial derivative. Forward mode AD produces one \emph{column} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \ll m$.
 	
-	\item \textbf{Reverse accumulation mode}~\cite{speelpenning1980compiling}: In reverse mode, we associate each intermediate value $v_i$ with adjoint $\bar{v}_i = \frac{\partial y_i}{\partial v_i}$, partial derivative of the output $y_i$. Derivatives w.r.t inputs are then evaluated in a two step process. First, a forward pass populates intermediate values $v_i$ and stores their dependencies before the adjoints $\bar{v}_i$ are propagated in reverse, from outputs to inputs. Reverse mode AD produces one \emph{row} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \gg m$.
+	\item \textbf{Reverse accumulation mode}~\cite{speelpenning1980compiling}: In reverse mode, we associate each intermediate value $v_i$ with adjoint $\bar{v}_i = \frac{\partial y_i}{\partial v_i}$, partial derivative of the output $y_i$. Derivatives w.r.t. inputs are then evaluated in a two step process. First, a forward pass populates intermediate values $v_i$ and stores their dependencies before the adjoints $\bar{v}_i$ are propagated in reverse, from outputs to inputs. Reverse mode AD produces one \emph{row} of the Jacobian $\textbf{J}_f$ at each pass, and is suited for functions with $n \gg m$.
 \end{itemize}
-AD is most commonly implemented in one of two ways, either by \emph{operator overloading}, abstracting away the derivative part of the calculation, e.g. in \emph{TensorFlow} of \emph{JAX}~\cite{abadi2016tensorflow, jax2018github}. Or alternatively via \emph{source code transformation}, where a new function is constructed by altering the source code, see \emph{Zygote}~\cite{innes2018don}.
+AD is most commonly implemented in one of two ways, either by \emph{operator overloading}, abstracting away the derivative part of the calculation, e.g. in \emph{TensorFlow} or \emph{JAX}~\cite{abadi2016tensorflow, jax2018github}. Or alternatively via \emph{source code transformation}, where a new function is constructed by altering the source code, see \emph{Zygote}~\cite{innes2018don}.
 
 \subsection{Optimisation algorithms}
-Variants of the \textbf{stochastic gradient descent} (SGD) are by far the most used optimisation algorithms in ML. Instead of calculating the true gradient of the parameters w.r.t loss, it is estimated using an unbiased estimator which takes the average gradient on a minibatch of examples. SGD introduces only a single hyperparameter, the learning rate $\alpha$, which determines the size of correction $\theta \leftarrow \theta - \alpha \nabla_\theta L$ at each iteration. The main advantage of this approach is that the time complexity of an iteration does not depend on the number of examples. This is useful for cases with large, or even infinite in our case, training sets. The first improvement over vanilla SGD is the use of momentum~\cite{polyak1964some}, where an exponentially decaying average of past gradients determines the update direction. Second improvement is using an adaptive learning rate, \emph{ADAM}~\cite{kingma2014adam} is perhaps the most popular such algorithm. 
+Variants of the \textbf{stochastic gradient descent} (SGD) are by far the most used optimisation algorithms in ML. Instead of calculating the true gradient of the parameters w.r.t. loss, it is estimated using an unbiased estimator which takes the average gradient on a minibatch of examples. SGD introduces only a single hyperparameter, the learning rate $\alpha$, which determines the size of correction $\theta \leftarrow \theta - \alpha \nabla_\theta L$ at each iteration. The main advantage of this approach is that the time complexity of an iteration does not depend on the number of examples. This is useful for cases with large, or even infinite in our case, training sets. The first improvement over vanilla SGD is the use of momentum~\cite{polyak1964some}, where an exponentially decaying average of past gradients determines the update direction. The second improvement is using an adaptive learning rate. \emph{ADAM}~\cite{kingma2014adam} is perhaps the most popular such algorithm. 
 
 \section{Importance Sampling}
 \label{sec:Impl-MCIP}
@@ -117,13 +117,13 @@ Ultimately we want to use the optimal learned rates $\Gamma^{(v)}$ to evaluate o
 \begin{equation}
 	\hat {O}=\sum_{\boldsymbol{s}, \boldsymbol{s}^{\prime}} {O}_{\boldsymbol{s} \boldsymbol{s}^{\prime}}|\boldsymbol{s}\rangle \langle \boldsymbol{s}^{\prime}|,
 \end{equation}
-is diagonal $\hat{O}_{\boldsymbol{s} \boldsymbol{s}^{\prime}}^{D}={O}(\boldsymbol{s}) \delta_{\boldsymbol{s} \boldsymbol{s}^{\prime}}$ in our chosen basis $\{\boldsymbol{s}\}$, then its expectation simplifies to 
+is diagonal $\hat{O}_{\boldsymbol{s} \boldsymbol{s}^{\prime}}^{D}={O}(\boldsymbol{s}) \delta_{\boldsymbol{s} \boldsymbol{s}^{\prime}}$ in our chosen basis $\{\boldsymbol{s}\}$, then its expectation with $M$ samples simplifies to 
 \begin{equation}
 	\langle\hat{O^D}\rangle=\sum_{\boldsymbol{s}, \boldsymbol{s}^{\prime}} \psi^*(\boldsymbol{s}) \psi(\boldsymbol{s}^{\prime}) {O}_{\boldsymbol{s} \boldsymbol{s}^{\prime}} = \frac{1}{Z} \sum_{\boldsymbol{s}} \rho(\boldsymbol{s}) O({\boldsymbol{s}})  \approx \frac{1}{M} \sum_{k=1}^{M} O(\boldsymbol{s}_{k}),
 \end{equation}
 which is very easy to evaluate given the MC samples. Alternatively for off-diagonal observables the expectation becomes
 \begin{equation}
-	\left\langle\hat{O}^{OD}\right\rangle=\sum_{\boldsymbol{s}, \boldsymbol{s}^{\prime}} \psi^{*}(\boldsymbol{s}) \psi(\boldsymbol{s}^{\prime}) O_{\boldsymbol{s} \boldsymbol{s}^{\prime}} = \frac{1}{\sum_{\boldsymbol{s}}\left|\psi_{\boldsymbol{\lambda}}(\boldsymbol{s})\right|^{2}} \sum_{\boldsymbol{s} \boldsymbol{s}^{\prime}} \psi_{\boldsymbol{\lambda}}^{*}(\boldsymbol{s}) \psi_{\boldsymbol{\lambda}}(\boldsymbol{s}^{\prime}) O_{\boldsymbol{s} \boldsymbol{s}^{\prime}} \approx \frac{1}{M} \sum_{k=1}^{M} O^L(\boldsymbol{s}_{k}),
+	\left\langle\hat{O}^{OD}\right\rangle=\sum_{\boldsymbol{s}, \boldsymbol{s}^{\prime}} \psi^{*}(\boldsymbol{s}) \psi(\boldsymbol{s}^{\prime}) O_{\boldsymbol{s} \boldsymbol{s}^{\prime}} = \frac{1}{\sum_{\boldsymbol{s}}\left|\psi(\boldsymbol{s})\right|^{2}} \sum_{\boldsymbol{s} \boldsymbol{s}^{\prime}} \psi_{\boldsymbol{\lambda}}^{*}(\boldsymbol{s}) \psi_{\boldsymbol{\lambda}}(\boldsymbol{s}^{\prime}) O_{\boldsymbol{s} \boldsymbol{s}^{\prime}} \approx \frac{1}{M} \sum_{k=1}^{M} O^L(\boldsymbol{s}_{k}),
 \end{equation}
 where the local operator has the form
 \begin{equation}
@@ -163,7 +163,7 @@ In practice we are interested in sampling from the ground state $\psi_0$, and we
 \begin{equation}
 	T_{s \rightarrow s^{\prime}}=\frac{\Gamma_{s \rightarrow s^{\prime}}^{\theta}}{\sum_{s^{\prime} \neq s} \Gamma_{s \rightarrow s^{\prime}}^{\theta}}
 \end{equation}
-and a Metropolis correction step\footnote{Throwing away holding times $\tau_i$ biases the chain.} with ${\frac{\rho\left(\boldsymbol{s}^{\prime}\right)}{\rho(\boldsymbol{s})}} = \frac{\Gamma_{s \rightarrow s^{\prime}}}{\Gamma_{s^{\prime} \rightarrow s}}$. Alternatively it can be done in continuous time, where the stationary distribution $\rho = \left[ \tilde{\rho_1}, \tilde{\rho_2}, \tilde{\rho_3}, \ldots \right]$, where $\tilde \rho_i$ is the fraction of time spent in state $i$.
+and a Metropolis correction step\footnote{Throwing away holding times $\tau_i$ biases the chain.} with ${\frac{\rho\left(\boldsymbol{s}^{\prime}\right)}{\rho(\boldsymbol{s})}} = \frac{\Gamma_{s \rightarrow s^{\prime}}}{\Gamma_{s^{\prime} \rightarrow s}}$. Alternatively it can be done in continuous time, the stationary distribution $\rho = \left[ \tilde{\rho_1}, \tilde{\rho_2}, \tilde{\rho_3}, \ldots \right]$, where $\tilde \rho_i$ is the fraction of time spent in state $i$.
 
 \section{Software implementation details}
 \label{sec:qoptsampl}
@@ -185,7 +185,7 @@ The \textbf{training layer}, takes the input functions and partially compiles th
 		\ContinuedFloat
 		\centering
 		\includegraphics[width=\linewidth]{Chapter4/Figs/Vector/qsampl2}
-		\caption[Implementation details]{\textbf{Software implementation details.} The software implementation in JAX is divided into three layers. The input layer (\textbf{a}) specifies the Hamiltonian for which we are learning the rates, the model used to represent the rates and training hyperparameters. The trainer layer (\textbf{b}) specialises the general functions for the system at hand and training details (batch size, time, etc.), before training the rates and outputing a sampler object. The sampler object (\textbf{c}) can then be used to perform importance sampling using the trained rates in either discrete or continuous time, if operators are provided observables can be evaluated while sampling a trajectory.}
+		\caption[Implementation details]{\textbf{Software implementation details.} The software implementation in \emph{JAX} is divided into three layers. The input layer (\textbf{a}) specifies the Hamiltonian for which we are learning the rates, the model used to represent the rates and training hyperparameters. The trainer layer (\textbf{b}) specialises the general functions for the system at hand and training details (batch size, time, etc.), before training the rates and outputing a sampler object. The sampler object (\textbf{c}) can then be used to perform importance sampling using the trained rates in either discrete or continuous time. If operators are provided the observables can be evaluated while sampling a trajectory.}
 		\label{fig:qsampl}
 	\end{figure}
 	
@@ -193,7 +193,7 @@ The \textbf{training layer}, takes the input functions and partially compiles th
 \end{enumerate}
 The gradient of the $\log RN$ loss is then evaluated using an MC estimate and the parameters updated accordingly, the implementation only supports the \emph{ADAM} optimiser. 
 
-The \textbf{sampling layer} is essentially a wrapper that provides a friendly way of working with the learned rates. It implements functionality for sampling with rates in parallel, either in discrete or continuous time, as well as evaluation diagonal and off-diagonal observables. The sampling from a CTMC can be done with one of two implemented methods
+The \textbf{sampling layer} is essentially a wrapper that provides a friendly way of working with the learned rates. It implements functionality for sampling with rates in parallel, either in discrete or continuous time, as well as estimation of diagonal and off-diagonal observables. The sampling from a CTMC can be done with one of two implemented methods
 \begin{enumerate}[label=\roman*)]
 	\item \textbf{Max step (competing exponentials):} For all adjacent states sample a holding time $\tau_i \sim \operatorname{Exp}(\lambda_i)$, then move into the state with the minimum time $\tau_i$.
 	\item \textbf{Gumbel step:} The minimum of $n$ independent exponential distributions $\{\lambda_1, \lambda_2, \cdots, \lambda_n\}$ is also exponentially distributed with rate $\lambda = \sum_i \lambda_i$, its minimizer is distributed according to a multinomial distribution with $\pi_i =\frac{\lambda_{i}}{\lambda_{1}+\cdots+\lambda_{n}} $ and independent of time. We first sample a holding time $\tau$ from the exponential distribution and then the index from the multinomial.
